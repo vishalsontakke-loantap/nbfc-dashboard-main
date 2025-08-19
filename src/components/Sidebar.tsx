@@ -13,8 +13,8 @@ const Sidebar: React.FC = () => {
   return location.pathname === to;
   };
 
- return (
-  <aside className="sticky top-0 h-screen min-w-64 bg-gradient-to-b from-blue-50 to-white p-4 shadow-xl rounded-r-3xl flex flex-col">
+  return (
+     <aside className="sticky top-0 h-screen min-w-64 bg-gradient-to-b from-blue-50 to-white p-4 shadow-xl rounded-r-3xl flex flex-col">
     <div className="mb-6 flex flex-col items-center">
       <NavLink to="/" className="block">
         <img
@@ -56,7 +56,7 @@ const Sidebar: React.FC = () => {
       </ul>
     </nav>
   </aside>
-);
+  );
 };
 
 export default Sidebar;
