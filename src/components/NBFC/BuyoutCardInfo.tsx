@@ -7,6 +7,7 @@ type Capability = {
 
 type Functionality = {
     text: string;
+    img:string;
 };
 
 interface PoolBuyoutProps {
@@ -70,7 +71,7 @@ const BuyoutCardInfo: React.FC<PoolBuyoutProps> = ({
                                     key={idx}
                                     className="flex items-center text-sm text-gray-700"
                                 >
-                                    <span className="text-orange-500 mr-2">⚡</span>
+                                    <span className="mr-2"><img src={func.img} alt="" /></span>
                                     {func.text}
                                 </li>
                             ))}

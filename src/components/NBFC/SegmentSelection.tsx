@@ -5,7 +5,7 @@ import BuyoutCardInfo from "./BuyoutCardInfo";
 import { useState } from "react";
 
 const SegmentSelection = () => {
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [selectedCard, setSelectedCard] = useState<string | null>("Pool Buyout");
 
   const handleCardClick = (heading: string) => {
     setSelectedCard(heading);
@@ -118,9 +118,15 @@ const SegmentSelection = () => {
             { text: "Secure compliance tracking" },
           ]}
           functionalities={[
-            { text: "Real-time disbursement" },
-            { text: "Automated reconciliation" },
-            { text: "MIS, reporting & audit logs" },
+            { text: "Real-time disbursement",
+              img: "/images/functionlity1.svg"
+             },
+            { text: "Automated reconciliation",
+              img: "/images/functionlity2.svg"
+             },
+            { text: "MIS, reporting & audit logs",
+              img: "/images/functionlity3.svg"
+             },
           ]}
           onContinue={() => alert("Onboarding started!")}
           continueHref="/nbfc/nbfc-form"

@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-     <aside className="sticky top-0 h-screen min-w-64 bg-gradient-to-b from-blue-50 to-white p-4 shadow-xl rounded-r-3xl flex flex-col">
+     <aside className="sticky top-0 h-screen min-w-64 bg-white shadow-[0_2px_0_rgba(0,0,0,0.05)] p-4 shadow-xl  flex flex-col">
     <div className="mb-6 flex flex-col items-center">
       <NavLink to="/" className="block">
         <img
