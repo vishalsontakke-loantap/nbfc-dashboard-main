@@ -1,14 +1,25 @@
 import { Card, CardContent } from "@/components/ui/card";
-
 import { X } from "lucide-react";
 import SegmentsCard from "../SegmentsCard";
-import { Link } from "react-router-dom";
-import PoolBuyoutInfoCard from "./PoolBuyoutInfoCard";
+import BuyoutCardInfo from "./BuyoutCardInfo";
+import { useState } from "react";
 
 const SegmentSelection = () => {
+  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+
+  const handleCardClick = (heading: string) => {
+    setSelectedCard(heading);
+    setTimeout(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 100);
+  };
+
   return (
     <div className="max-w-[300dvh] mx-auto">
-      <div className="">
+      <div>
         <Card className="scale-95 p-5">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-bold">
@@ -17,12 +28,21 @@ const SegmentSelection = () => {
             <X className="text-muted-foreground cursor-pointer" size={16} />
           </div>
           <hr />
-          <p className="font-semibold text-[#333333] text-sm">
+          <p className="font-semibold text-[#333333] text-sm mt-2">
             Seamlessly onboard for Co-Lending or Pool Buyout and start your
             journey
           </p>
+
           <CardContent className="grid grid-cols-4 gap-4 mt-4">
-          <Link to={"/nbfc/nbfc-form"}>
+            {/* Pool Buyout */}
+            <div
+              onClick={() => handleCardClick("Pool Buyout")}
+              className={`cursor-pointer rounded-xl p-1 transition ${
+                selectedCard === "Pool Buyout"
+                  ? "bg-blue-100 ring-2 ring-blue-400"
+                  : "bg-transparent"
+              }`}
+            >
               <SegmentsCard
                 imgSrc="/images/Pool.svg"
                 imgAlt="Pool Buyout Segment"
@@ -30,38 +50,83 @@ const SegmentSelection = () => {
                 heading="Pool Buyout"
                 subtext="Acquire high-quality loan pools with ease and efficiency."
               />
-            </Link>
-            <Link to={"/nbfc/nbfc-form"}>
+            </div>
+
+            {/* Co-Lending */}
+            <div
+              onClick={() => handleCardClick("Co-Lending Segment")}
+              className={`cursor-pointer rounded-xl p-1 transition ${
+                selectedCard === "Co-Lending Segment"
+                  ? "bg-blue-100 ring-2 ring-blue-400"
+                  : "bg-transparent"
+              }`}
+            >
               <SegmentsCard
                 imgSrc="/images/co-landing.svg"
                 imgAlt="Co-Lending Segment"
                 heading="Co-Lending"
                 subtext="Partner seamlessly to co-lend and scale your lending business."
               />
-            </Link>
-            <Link to={"/nbfc/nbfc-form"}>
+            </div>
+
+            {/* Loan Product Management */}
+            <div
+              onClick={() => handleCardClick("Loan Product Management")}
+              className={`cursor-pointer rounded-xl p-1 transition ${
+                selectedCard === "Loan Product Management"
+                  ? "bg-blue-100 ring-2 ring-blue-400"
+                  : "bg-transparent"
+              }`}
+            >
               <SegmentsCard
                 imgSrc="/images/loan_product.svg"
-                imgAlt="Pool Buyout Segment"
-                // badge="Beta"
+                imgAlt="Loan Product Management"
                 heading="Loan Product Management"
                 subtext="Centralized platform to create, configure & manage loan offerings."
               />
-            </Link>
-            <Link to={"/nbfc/nbfc-form"}>
+            </div>
+
+            {/* Loan Marketplace */}
+            <div
+              onClick={() => handleCardClick("Loan Marketplace")}
+              className={`cursor-pointer rounded-xl p-1 transition ${
+                selectedCard === "Loan Marketplace"
+                  ? "bg-blue-100 ring-2 ring-blue-400"
+                  : "bg-transparent"
+              }`}
+            >
               <SegmentsCard
                 imgSrc="/images/loan_market_place.svg"
                 imgAlt="Loan Marketplace"
                 badge="Beta"
-                heading="Pool Buyout"
+                heading="Loan Marketplace"
                 subtext="Digital marketplace to source, distribute, and track loan leads."
               />
-            </Link>
+            </div>
           </CardContent>
         </Card>
-
-        <PoolBuyoutInfoCard/>
       </div>
+
+      {/* Info Card Below */}
+      {selectedCard && (
+        <BuyoutCardInfo
+          title={selectedCard}
+          subtitle="Streamlined disbursal with transparent bank-NBFC splits, automated settlement, and live compliance checks."
+          capabilities={[
+            { text: "Partner onboarding & product setup" },
+            { text: "Automated BRE integration" },
+            { text: "Secure compliance tracking" },
+          ]}
+          functionalities={[
+            { text: "Real-time disbursement" },
+            { text: "Automated reconciliation" },
+            { text: "MIS, reporting & audit logs" },
+          ]}
+          onContinue={() => alert("Onboarding started!")}
+          continueHref="/nbfc/nbfc-form"
+          policyHref=""
+        />
+      )}
     </div>
   );
 };
