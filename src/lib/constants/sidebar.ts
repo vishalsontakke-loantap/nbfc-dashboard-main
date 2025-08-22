@@ -12,10 +12,10 @@ export const sidebar: SidebarItem[] = [
     match: ["/", "/nbfc"],
   },
   {
-    to: "/",
+    to: "/nbfc-list",
     label: "NBFC List",
     icon: "/images/icons/nbfc_sidebar.svg",
-    match: ["/", "/nbfc"],
+    match: ["/nbfc-list"],
   },
   {
     to: "/upload-pool-file",

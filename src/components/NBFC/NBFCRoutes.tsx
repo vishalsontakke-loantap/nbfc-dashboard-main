@@ -7,6 +7,7 @@ import BREConfig from "./BREConfig";
 import LoanProductConfig from "./LoanProductConfig";
 import NotFound from "../NotFound";
 import ContactPage from "../Contact";
+import NbfcList from "./NbfcList";
 
 const NBFCRoutes = () => {
   return (
@@ -61,12 +62,21 @@ const NBFCRoutes = () => {
             </Layout>
           }
         />
+        <Route
+          path="/nbfc-list"
+          element={
+            <Layout>
+              <NbfcList />
+            </Layout>
+          }
+        />
 
         {/* 404 PAGE */}
         <Route path="*" element={<NotFound />} />
 
         {/* CONTACT PAGE */}
         <Route path="/contact" element={<ContactPage />} />
+
       </Routes>
     </>
   );

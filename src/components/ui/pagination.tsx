@@ -6,7 +6,7 @@ import {
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -14,7 +14,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
       role="navigation"
       aria-label="pagination"
       data-slot="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
+      className={cn("mx-auto flex w-full justify-end", className)} // center instead of right
       {...props}
     />
   )
@@ -27,7 +27,7 @@ function PaginationContent({
   return (
     <ul
       data-slot="pagination-content"
-      className={cn("flex flex-row items-center", className)}
+      className={cn("flex flex-row items-center gap-2", className)} // add spacing
       {...props}
     />
   )
@@ -45,7 +45,7 @@ type PaginationLinkProps = {
 function PaginationLink({
   className,
   isActive,
-  size = "icon",
+  size = "default",
   ...props
 }: PaginationLinkProps) {
   return (
@@ -54,10 +54,10 @@ function PaginationLink({
       data-slot="pagination-link"
       data-active={isActive}
       className={cn(
-        buttonVariants({
-          variant: isActive ? "outline" : "ghost",
-          size,
-        }),
+        "flex items-center justify-center w-8 h-8 rounded-md border text-sm transition-colors",
+        isActive
+          ? "bg-[#0089CF] text-white border-[#0089CF]" // active page style
+          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100",
         className
       )}
       {...props}
@@ -72,16 +72,12 @@ function PaginationPrevious({
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      size="default"
-      className={cn(
-        "gap-1 w-10 h-10 sm:pr-2.5 rounded-[100rem] bg-[#0089CF] hover:bg-[#0089CF]/80",
-        className
-      )}
+      className={cn("w-8 h-8", className)}
       {...props}
     >
-      <ChevronLeftIcon />
+      <ChevronLeftIcon className="h-4 w-4" />
     </PaginationLink>
-  );
+  )
 }
 
 function PaginationNext({
@@ -91,16 +87,12 @@ function PaginationNext({
   return (
     <PaginationLink
       aria-label="Go to next page"
-      size="default"
-      className={cn(
-        "gap-1 w-10 h-10 sm:pr-2.5 rounded-[100rem] bg-[#0089CF] hover:bg-[#0089CF]/80",
-        className
-      )}
+      className={cn("w-8 h-8", className)}
       {...props}
     >
-      <ChevronRightIcon />
+      <ChevronRightIcon className="h-4 w-4" />
     </PaginationLink>
-  );
+  )
 }
 
 function PaginationEllipsis({
@@ -111,10 +103,10 @@ function PaginationEllipsis({
     <span
       aria-hidden
       data-slot="pagination-ellipsis"
-      className={cn("flex size-9 items-center justify-center", className)}
+      className={cn("flex w-8 h-8 items-center justify-center text-gray-500", className)}
       {...props}
     >
-      <MoreHorizontalIcon className="size-4" />
+      <MoreHorizontalIcon className="h-4 w-4" />
       <span className="sr-only">More pages</span>
     </span>
   )

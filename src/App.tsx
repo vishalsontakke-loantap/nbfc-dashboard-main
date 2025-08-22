@@ -8,6 +8,7 @@ import ManagerUserRoutes from "./components/Manager User/ManagerUserRoutes";
 import ReportRoutes from "./components/Reports/ReportRoutes";
 import HelpRoutes from "./components/Help/HelpRoutes";
 import UploadPoolFileRoutes from "./components/Upload Pool File/UploadPoolFileRoutes";
+// import NbfcList from "./components/NBFC/NbfcList";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/manager-user/*" element={<ManagerUserRoutes />} />
         <Route path="/reports/*" element={<ReportRoutes />} />
         <Route path="/help/*" element={<HelpRoutes />} />
+        {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
       </Routes>
     </>
   );
