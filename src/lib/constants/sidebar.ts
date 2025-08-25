@@ -15,7 +15,7 @@ export const sidebar: SidebarItem[] = [
     to: "/nbfc-list",
     label: "NBFC List",
     icon: "/images/icons/nbfc_sidebar.svg",
-    match: ["/nbfc-list"],
+    match: ["/nbfc-list","/nbfc-details"],
   },
   {
     to: "/upload-pool-file",
