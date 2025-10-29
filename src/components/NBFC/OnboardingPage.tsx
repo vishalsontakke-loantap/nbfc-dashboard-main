@@ -29,7 +29,7 @@ const OnboardingPage = () => {
               Register New NBFC
               <ChevronRight />
             </Button>
-          </Link>
+          </Link> ̰
         </CardContent>
         <CardFooter className="mb-auto">
           <img src="/images/onboarding_row.svg" alt="row" />

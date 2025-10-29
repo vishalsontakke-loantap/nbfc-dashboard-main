@@ -109,14 +109,18 @@ export default function LoanProducts() {
       <NBFCInfoCard nbfc={data.nbfc} />
 
       {/* Loan Products */}
-      <div className="grid md:grid-cols-2 gap-6 bg-white mb-6 p-6 shadow">
+      <div className=" bg-white mb-6 p-6 shadow">
+
+      <div className="grid md:grid-cols-2 gap-6">
         {data.products.map((product) => (
           <LoanCard key={product.id} product={product} />
         ))}
-        <div className="flex justify-center">
+      </div>
+      <div className="flex justify-center mt-4">
           <Button variant="blue">Add New Loan Product</Button>
         </div>
-      </div>
     </div>
+    </div>
+
   );
 }

@@ -3,9 +3,12 @@ import { X } from "lucide-react";
 import SegmentsCard from "../SegmentsCard";
 import BuyoutCardInfo from "./BuyoutCardInfo";
 import { useState } from "react";
+import ProgressBar from "../ProgressBar";
 
 const SegmentSelection = () => {
-  const [selectedCard, setSelectedCard] = useState<string | null>("Pool Buyout");
+  const [selectedCard, setSelectedCard] = useState<string | null>(
+    "Pool Buyout"
+  );
 
   const handleCardClick = (heading: string) => {
     setSelectedCard(heading);
@@ -118,21 +121,28 @@ const SegmentSelection = () => {
             { text: "Secure compliance tracking" },
           ]}
           functionalities={[
-            { text: "Real-time disbursement",
-              img: "/images/functionlity1.svg"
-             },
-            { text: "Automated reconciliation",
-              img: "/images/functionlity2.svg"
-             },
-            { text: "MIS, reporting & audit logs",
-              img: "/images/functionlity3.svg"
-             },
+            {
+              text: "Real-time disbursement",
+              img: "/images/functionlity1.svg",
+            },
+            {
+              text: "Automated reconciliation",
+              img: "/images/functionlity2.svg",
+            },
+            {
+              text: "MIS, reporting & audit logs",
+              img: "/images/functionlity3.svg",
+            },
           ]}
           onContinue={() => alert("Onboarding started!")}
-          continueHref="/nbfc/nbfc-form"
+          continueHref="/nbfc/nbfc-segment"
           policyHref=""
         />
       )}
+
+      <div className="p-6">
+        <ProgressBar totalSteps={4} currentStep={1} stepName="Product Setup" />
+      </div>
     </div>
   );
 };

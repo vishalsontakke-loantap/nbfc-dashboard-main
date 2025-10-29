@@ -9,6 +9,7 @@ import NotFound from "../NotFound";
 import ContactPage from "../Contact";
 import NbfcList from "./NbfcList";
 import LoanProducts from "./LoanProducts";
+import BuyOutSegment from "./BuyOutSegment";
 
 const NBFCRoutes = () => {
   return (
@@ -76,6 +77,14 @@ const NBFCRoutes = () => {
           element={
             <Layout>
             <LoanProducts />
+            </Layout>
+          }
+        />
+        <Route
+          path="/nbfc/nbfc-segment"
+          element={
+            <Layout>
+            <BuyOutSegment/>
             </Layout>
           }
         />
