@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { PageHeader } from '../PageHeader';
-import { Card } from '../ui/card';
-import { Button } from '../ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Badge } from '../ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { PageHeader } from './PageHeader';
+import { Card } from './card';
+import { Button } from './button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
+import { Badge } from './badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './dialog';
 import { UserPlus, Edit, Shield, Clock } from 'lucide-react';
 
 const users = [
