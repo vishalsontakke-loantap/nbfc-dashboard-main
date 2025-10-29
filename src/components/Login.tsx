@@ -27,7 +27,7 @@ export function Login({ onLogin }: LoginProps) {
       label: 'Bank Branch User',
       icon: Building2,
       description: 'Branch-level operations and approvals',
-      defaultEmail: 'branch@bom.in',
+      defaultEmail: 'mahabranch@bom.in',
     },
     {
       type: 'NBFC' as const,
