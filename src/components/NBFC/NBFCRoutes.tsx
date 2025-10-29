@@ -17,7 +17,7 @@ const NBFCRoutes = () => {
       <Routes>
         {/* ONBOARDING */}
         <Route
-          path="/"
+          path="/onboarding"
           element={
             <Layout>
               <OnboardingPage />

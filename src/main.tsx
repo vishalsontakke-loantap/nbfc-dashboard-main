@@ -7,7 +7,7 @@ import App from './App.tsx'
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <App />
       {/* <Analytics /> */}
       <Toaster />

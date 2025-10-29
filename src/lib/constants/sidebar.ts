@@ -6,7 +6,7 @@ export const sidebar: SidebarItem[] = [
     match: ["/overview"],
   },
   {
-    to: "/",
+    to: "/onboarding",
     label: "NBFC Onboarding",
     icon: "/images/icons/nbfc_sidebar.svg",
     match: ["/", "/nbfc"],
