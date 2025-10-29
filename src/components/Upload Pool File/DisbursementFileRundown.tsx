@@ -8,7 +8,7 @@ import { SkeletonTable } from "../ui/skeleton-table";
 import { Button } from "../ui/button";
 import {DataTable} from "@/components/ui/data-table";
 import { PoolBuyoutConfirmation } from "./PoolBuyoutConfirmation";
-import { getFormattedDateTime } from "@/lib/utils";
+import { getFormattedDateTime, assetPath } from "@/lib/utils";
 
 const DisbursementFileRundown = () => {
     const [loading, setLoading] = useState(true);
@@ -69,13 +69,13 @@ const DisbursementFileRundown = () => {
           <span className="flex items-center justify-center space-x-4">
             <span className="flex space-x-2 text-sm text-[#62748E]">
               <img
-                src="/images/icons/calendar_disbursement.svg"
+                src={assetPath("/images/icons/calendar_disbursement.svg")}
                 alt="calender"
               />
               <DateDisplay date={new Date().toISOString()} />
             </span>
             <span className="flex space-x-2 text-sm text-[#62748E]">
-              <img src="/images/icons/user_disbursement.svg" alt="User" />
+              <img src={assetPath("/images/icons/user_disbursement.svg")} alt="User" />
               <p>User, U53R1D</p>
             </span>
           </span>
@@ -182,7 +182,7 @@ const DisbursementFileRundown = () => {
         >
           <p>Run NBFC BRE</p>
           <img
-            src="/images/icons/NBFC_BRE_disbursement.svg"
+            src={assetPath("/images/icons/NBFC_BRE_disbursement.svg")}
             alt="NBFC_BRE_disbursement"
           />
         </Button>

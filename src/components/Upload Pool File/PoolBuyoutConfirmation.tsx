@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { poolBuyoutConfirmModal } from "@/lib/constants";
 import { CircleX } from "lucide-react";
 import { Link } from "react-router-dom";
+import { assetPath } from "@/lib/utils";
 
 export function PoolBuyoutConfirmation() {
   return (
@@ -21,7 +22,7 @@ export function PoolBuyoutConfirmation() {
       <AlertDialogTrigger asChild>
         <Button className="flex justify-between min-w-[11rem] items-center bg-[#0089CF] hover:bg-[#0089CF]/75">
           <p>Disbursed Total POS Amount</p>
-          <img src="/images/icons/upload-2-fill.svg" alt="" />
+          <img src={assetPath("/images/icons/upload-2-fill.svg")} alt="" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="scale-105">
@@ -49,7 +50,7 @@ export function PoolBuyoutConfirmation() {
         </section>
         <section className="min-h-[40px] w-full flex items-center justify-around">
           <img
-            src="/images/icons/alert-fill.svg"
+            src={assetPath("/images/icons/alert-fill.svg")}
             alt="alert"
             className="scale-130"
           />

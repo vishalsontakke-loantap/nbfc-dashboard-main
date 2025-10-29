@@ -36,3 +36,8 @@ export const getFormattedDateTime = () => {
   return `${parts[0]} ${parts[1]}, ${parts[2]} ${parts[3]}`;
 };
 
+export function assetPath(path: string): string {
+  const base = (import.meta.env.BASE_URL ?? "/").replace(/\/*$/, "/");
+  return `${base}${path.replace(/^\//, "")}`;
+}
+

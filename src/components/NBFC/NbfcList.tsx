@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "../ui/card";
+import { assetPath } from "@/lib/utils";
 import {
     Pagination,
     PaginationContent,
@@ -21,7 +22,7 @@ const nbfcData = [
         loanProducts: 2,
         business: 115,
         openIssues: 115,
-        logo: "/images/Muthoot.png",
+        logo: assetPath("/images/Muthoot.png"),
     },
     {
         name: "Capri Global Capital",
@@ -30,7 +31,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/capri.png",
+        logo: assetPath("/images/nbfc/capri.png"),
     },
     {
         name: "Bajaj Finance Limited",
@@ -39,7 +40,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/bajaj.png",
+        logo: assetPath("/images/nbfc/bajaj.png"),
     },
     {
         name: "Ugro Capital",
@@ -48,7 +49,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/ugro.png",
+        logo: assetPath("/images/nbfc/ugro.png"),
     },
     {
         name: "Google Cloud Organization",
@@ -57,7 +58,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/google.png",
+        logo: assetPath("/images/nbfc/google.png"),
     },
     {
         name: "AWS - Research",
@@ -66,7 +67,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/aws.png",
+        logo: assetPath("/images/nbfc/aws.png"),
     },
     {
         name: "Azure Tenant",
@@ -75,7 +76,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/azure.png",
+        logo: assetPath("/images/nbfc/azure.png"),
     },
     {
         name: "Alibaba - testing",
@@ -84,7 +85,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/alibaba.png",
+        logo: assetPath("/images/nbfc/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -93,7 +94,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/alibaba.png",
+        logo: assetPath("/images/nbfc/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -102,7 +103,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/alibaba.png",
+        logo: assetPath("/images/nbfc/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -111,7 +112,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/alibaba.png",
+        logo: assetPath("/images/nbfc/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -120,7 +121,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/alibaba.png",
+        logo: assetPath("/images/nbfc/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -129,7 +130,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/alibaba.png",
+        logo: assetPath("/images/nbfc/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -138,7 +139,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: "/images/nbfc/alibaba.png",
+        logo: assetPath("/images/nbfc/alibaba.png"),
     },
 ];
 
@@ -210,10 +211,10 @@ const NbfcList: React.FC = () => {
                                 {/* Icons */}
                                 <div className="flex items-center gap-2">
                                     <button className="border px-2 py-1 rounded text-xs">
-                                        <img src="/images/list.svg" alt="" />
+                                        <img src={assetPath("/images/list.svg")} alt="" />
                                     </button>
                                     <button className="border px-2 py-1 rounded text-xs">
-                                        <img src="/images/grid.svg" alt="" />
+                                        <img src={assetPath("/images/grid.svg")} alt="" />
                                     </button>
                                 </div>
                             </div>

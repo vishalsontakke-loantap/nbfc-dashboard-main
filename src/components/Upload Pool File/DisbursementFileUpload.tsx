@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import CardHeader from "../CardHeader";
 import CardHeadline from "../CardHeadline";
+import { assetPath } from "@/lib/utils";
 
 import { ChevronDown } from "lucide-react";
 
@@ -89,7 +90,7 @@ const DisbursementFileUpload = () => {
             {/* Wrap all form components within the Form provider */}
             <span className="flex flex-col items-center justify-center p-10">
               <img
-                src="/images/icons/file_open.svg" // adjust filename as needed
+                src={assetPath("/images/icons/file_open.svg")}
                 alt="Upload Disbursement File"
                 className="w-14"
               />
@@ -161,7 +162,7 @@ const DisbursementFileUpload = () => {
 
               <div className="flex justify-center items-center space-x-2 mt-4">
                 <img
-                  src="/images/icons/learn_more.svg"
+                  src={assetPath("/images/icons/learn_more.svg")}
                   alt="learn more"
                   id="learn_more"
                 />

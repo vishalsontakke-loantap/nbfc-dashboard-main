@@ -1,6 +1,7 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { assetPath } from "@/lib/utils";
 type Capability = {
     text: string;
 };
@@ -53,7 +54,7 @@ const BuyoutCardInfo: React.FC<PoolBuyoutProps> = ({
                         <ul className="space-y-1">
                             {capabilities.map((cap, idx) => (
                                 <li key={idx} className="flex items-center text-sm text-gray-700">
-                                    <span className="mr-2"><img src="/images/righticon.svg" alt="" /></span>
+                                    <span className="mr-2"><img src={assetPath("/images/righticon.svg")} alt="" /></span>
                                     {cap.text}
                                 </li>
                             ))}
@@ -71,7 +72,7 @@ const BuyoutCardInfo: React.FC<PoolBuyoutProps> = ({
                                     key={idx}
                                     className="flex items-center text-sm text-gray-700"
                                 >
-                                    <span className="mr-2"><img src={func.img} alt="" /></span>
+                                    <span className="mr-2"><img src={assetPath(func.img)} alt="" /></span>
                                     {func.text}
                                 </li>
                             ))}

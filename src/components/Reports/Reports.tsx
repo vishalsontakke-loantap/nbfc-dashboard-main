@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "../ui/PageHeader";
 import { Download, FileText, TrendingUp } from "lucide-react";
+import { assetPath } from "@/lib/utils";
 import {
   BarChart,
   Bar,
@@ -292,7 +293,7 @@ const Reports = () => {
 
           {/* Placeholder Card
           <SegmentsCard
-            imgSrc="/images/pool_buyout_segment.svg"
+            imgSrc={assetPath("/images/pool_buyout_segment.svg")}
             imgAlt="Pool Buyout Segment"
             badge="Reports"
             heading="Reports"

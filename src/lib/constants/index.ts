@@ -206,17 +206,17 @@ export const breConfigTableHeaders = [
   {
     name: "Parameter",
     key: "parameter",
-    icon: "/images/icons/bre_config_th_icon.svg",
+    icon: (import.meta as any).env ? `${(import.meta as any).env.BASE_URL.replace(/\/*$/, '/')}${'images/icons/bre_config_th_icon.svg'}` : "/images/icons/bre_config_th_icon.svg",
   },
   {
     name: "Value",
     key: "value",
-    icon: "/images/icons/bre_config_th_icon.svg",
+    icon: (import.meta as any).env ? `${(import.meta as any).env.BASE_URL.replace(/\/*$/, '/')}${'images/icons/bre_config_th_icon.svg'}` : "/images/icons/bre_config_th_icon.svg",
   },
   {
     name: "Weightage",
     key: "weightage",
-    icon: "/images/icons/bre_config_th_icon.svg",
+    icon: (import.meta as any).env ? `${(import.meta as any).env.BASE_URL.replace(/\/*$/, '/')}${'images/icons/bre_config_th_icon.svg'}` : "/images/icons/bre_config_th_icon.svg",
   },
   {
     name: "Mandatory",
@@ -435,12 +435,12 @@ export const loanProductConfigTableHeaders = [
   {
     name: "Parameter",
     key: "parameter",
-    icon: "/images/icons/bre_config_th_icon.svg",
+    icon: (import.meta as any).env ? `${(import.meta as any).env.BASE_URL.replace(/\/*$/, '/')}${'images/icons/bre_config_th_icon.svg'}` : "/images/icons/bre_config_th_icon.svg",
   },
   {
     name: "Value",
     key: "value",
-    icon: "/images/icons/bre_config_th_icon.svg",
+    icon: (import.meta as any).env ? `${(import.meta as any).env.BASE_URL.replace(/\/*$/, '/')}${'images/icons/bre_config_th_icon.svg'}` : "/images/icons/bre_config_th_icon.svg",
   },
   {
     name: "Mandatory",

@@ -1,4 +1,5 @@
 import React from "react";
+import { assetPath } from "@/lib/utils";
 
 const Header: React.FC = () => {
   return (
@@ -23,7 +24,7 @@ const Header: React.FC = () => {
           <div className="mr-4">
             <a href="#" className="text-gray-700">
               <img
-                src="/images/icons/bell-icon.png"
+                src={assetPath("/images/icons/bell-icon.png")}
                 alt="Notification icon"
                 className="w-11"
               />

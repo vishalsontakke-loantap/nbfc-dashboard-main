@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import React from "react";
+import { assetPath } from "@/lib/utils";
 import { sidebar } from "@/lib/constants/sidebar";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +19,7 @@ const Sidebar: React.FC = () => {
     <div className="mb-6 flex flex-col items-center">
       <NavLink to="/" className="block">
         <img
-          src="/images/Bank_of_Maharashtra_logo.svg"
+          src={assetPath("/images/Bank_of_Maharashtra_logo.svg")}
           alt="Bank of Maharashtra Logo"
           className="w-40 h-auto mb-2"
         />

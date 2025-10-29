@@ -2,6 +2,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { assetPath } from "@/lib/utils";
 
 const OnboardingPage = () => {
   return (
@@ -19,7 +20,7 @@ const OnboardingPage = () => {
           <Button variant={"outline"}>
             Learn More
             <img
-              src="/images/icons/learn_more_onboarding_page.svg" // adjust filename as needed
+              src={assetPath("/images/icons/learn_more_onboarding_page.svg")}
               alt={"Learn More"}
               className={"w-6"}
             />
@@ -32,7 +33,7 @@ const OnboardingPage = () => {
           </Link> ̰
         </CardContent>
         <CardFooter className="mb-auto">
-          <img src="/images/onboarding_row.svg" alt="row" />
+          <img src={assetPath("/images/onboarding_row.svg")} alt="row" />
         </CardFooter>
       </Card>
     </div>

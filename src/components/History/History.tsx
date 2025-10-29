@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import SegmentsCard from "../SegmentsCard";
 import CardHeadline from "../CardHeadline";
+import { assetPath } from "@/lib/utils";
 
 const History = () => {
   return (
@@ -9,7 +10,7 @@ const History = () => {
         <CardHeadline title="History" />
         <CardContent>
           <SegmentsCard
-            imgSrc="/images/pool_buyout_segment.svg"
+            imgSrc={assetPath("/images/pool_buyout_segment.svg")}
             imgAlt="Pool Buyout Segment"
             badge="History"
             heading="History"

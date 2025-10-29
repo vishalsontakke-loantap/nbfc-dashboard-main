@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { X } from "lucide-react";
+import { assetPath } from "@/lib/utils";
 import SegmentsCard from "../SegmentsCard";
 import BuyoutCardInfo from "./BuyoutCardInfo";
 import { useState } from "react";
@@ -47,7 +48,7 @@ const SegmentSelection = () => {
               }`}
             >
               <SegmentsCard
-                imgSrc="/images/Pool.svg"
+                imgSrc={assetPath("/images/Pool.svg")}
                 imgAlt="Pool Buyout Segment"
                 badge="Beta"
                 heading="Pool Buyout"
@@ -65,7 +66,7 @@ const SegmentSelection = () => {
               }`}
             >
               <SegmentsCard
-                imgSrc="/images/co-landing.svg"
+                imgSrc={assetPath("/images/co-landing.svg")}
                 imgAlt="Co-Lending Segment"
                 heading="Co-Lending"
                 subtext="Partner seamlessly to co-lend and scale your lending business."
@@ -82,7 +83,7 @@ const SegmentSelection = () => {
               }`}
             >
               <SegmentsCard
-                imgSrc="/images/loan_product.svg"
+                imgSrc={assetPath("/images/loan_product.svg")}
                 imgAlt="Loan Product Management"
                 heading="Loan Product Management"
                 subtext="Centralized platform to create, configure & manage loan offerings."
@@ -99,7 +100,7 @@ const SegmentSelection = () => {
               }`}
             >
               <SegmentsCard
-                imgSrc="/images/loan_market_place.svg"
+                imgSrc={assetPath("/images/loan_market_place.svg")}
                 imgAlt="Loan Marketplace"
                 badge="Beta"
                 heading="Loan Marketplace"
@@ -123,15 +124,15 @@ const SegmentSelection = () => {
           functionalities={[
             {
               text: "Real-time disbursement",
-              img: "/images/functionlity1.svg",
+              img: assetPath("/images/functionlity1.svg"),
             },
             {
               text: "Automated reconciliation",
-              img: "/images/functionlity2.svg",
+              img: assetPath("/images/functionlity2.svg"),
             },
             {
               text: "MIS, reporting & audit logs",
-              img: "/images/functionlity3.svg",
+              img: assetPath("/images/functionlity3.svg"),
             },
           ]}
           onContinue={() => alert("Onboarding started!")}

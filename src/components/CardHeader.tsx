@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { clampPercentage, cn } from "@/lib/utils";
+import { clampPercentage, cn, assetPath } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
 const CardHeader = forwardRef<CardHeaderHandle, CardHeaderProps>(
@@ -46,7 +46,7 @@ const CardHeader = forwardRef<CardHeaderHandle, CardHeaderProps>(
                 }
               }}
             />
-            <img src="/images/icons/weightage_icon.svg" alt="edit" />
+            <img src={assetPath("/images/icons/weightage_icon.svg")} alt="edit" />
           </span>
         )}
       </span>

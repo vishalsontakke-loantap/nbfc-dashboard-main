@@ -3,7 +3,7 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Shield, Building2, Users } from 'lucide-react';
-import bomLogo from '/images/Bank_of_Maharashtra_logo.svg';
+import { assetPath } from '@/lib/utils';
 
 interface LoginProps {
   onLogin: (userType: 'SuperAdmin' | 'BankBranch' | 'NBFC', name: string, org?: string) => void;
@@ -59,7 +59,7 @@ export function Login({ onLogin }: LoginProps) {
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Left Side - Branding */}
         <div className="text-center lg:text-left space-y-6">
-          <img src={bomLogo} alt="Bank of Maharashtra" className="h-16 mx-auto lg:mx-0" />
+          <img src={assetPath('/images/Bank_of_Maharashtra_logo.svg')} alt="Bank of Maharashtra" className="h-16 mx-auto lg:mx-0" />
           <div>
             <h1 className="text-[#0B5FFF] mb-2">Co-Lending Module</h1>
             <h2 className="text-foreground mb-4">CLM-I Middleware Platform</h2>
