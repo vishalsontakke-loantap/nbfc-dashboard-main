@@ -41,7 +41,7 @@ const ManagerUser = () => {
   return (
     <div className="grid place-items-center min-h-[89.5dvh] p-5">
       <Card className="scale-95 w-full h-full flex flex-col items-start p-10 space-y-6 overflow-y-auto">
-        <CardHeadline title="Manager User" />
+        {/* <CardHeadline title="Manager User" /> */}
 
         {/* Header Actions */}
         <div className="flex justify-end w-full">
