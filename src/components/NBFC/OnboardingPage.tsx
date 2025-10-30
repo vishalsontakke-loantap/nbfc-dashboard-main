@@ -6,7 +6,7 @@ import { assetPath } from "@/lib/utils";
 
 const OnboardingPage = () => {
   return (
-    <div className="grid place-items-center min-h-[89.5dvh] p-5">
+    <div className="">
       <Card className="scale-95 w-full h-full flex items-center p-10">
         <div className="flex flex-col items-center max-w-[120dvh]">
           <h1 className="text-3xl font-bold">Welcome to Onboarding</h1>

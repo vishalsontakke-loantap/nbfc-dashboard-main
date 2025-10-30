@@ -19,10 +19,13 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
+  ComposedChart,
 } from "recharts";
 
 // import SegmentsCard from "../SegmentsCard";
-import CardHeadline from "../CardHeadline";
+// import CardHeadline from "../CardHeadline";
+import LoanDistributionChart from "../LoanDistributionChart";
+import LoanAccountPerformanceRBI from "../LoanAccountPerformanceRBI";
 
 // --- Data Sets ---
 const conversionFunnelData = [
@@ -58,19 +61,44 @@ const breTrendsData = [
   { month: "Oct", avgScore: 77, approvalRate: 82 },
 ];
 
-const productDistributionData = [
-  { name: "Personal Loan", value: 520, color: "#0B5FFF" },
-  { name: "Business Loan", value: 340, color: "#00A676" },
-  { name: "Home Loan", value: 210, color: "#FFB020" },
-  { name: "Vehicle Loan", value: 180, color: "#8B5CF6" },
+// const productDistributionData = [
+//   { name: "Personal Loan", value: 520, color: "#0B5FFF" },
+//   { name: "Business Loan", value: 340, color: "#00A676" },
+//   { name: "Home Loan", value: 210, color: "#FFB020" },
+//   { name: "Vehicle Loan", value: 180, color: "#8B5CF6" },
+// ];
+
+
+const combinedData = [
+  { month: "Jan", leads: 120, approved: 90, disbursed: 70, buyouts: 45, repayments: 30 },
+  { month: "Feb", leads: 150, approved: 100, disbursed: 85, buyouts: 60, repayments: 42 },
+  { month: "Mar", leads: 180, approved: 130, disbursed: 110, buyouts: 75, repayments: 55 },
+  { month: "Apr", leads: 160, approved: 120, disbursed: 95, buyouts: 50, repayments: 38 },
+  { month: "May", leads: 200, approved: 160, disbursed: 140, buyouts: 80, repayments: 60 },
 ];
+
+// Product mix (Pie segment)
+const productDistributionData1 = [
+  { name: "Personal Loan", value: 40, color: "#0B5FFF" },
+  { name: "Home Loan", value: 25, color: "#00A676" },
+  { name: "Vehicle Loan", value: 20, color: "#FFB020" },
+  { name: "Business Loan", value: 15, color: "#E11D48" },
+];
+
+// State-wise for Pie
+// const statewiseData = [
+//   { name: "Maharashtra", value: 65, color: "#0B5FFF" },
+//   { name: "Gujarat", value: 15, color: "#00A676" },
+//   { name: "Madhya Pradesh", value: 10, color: "#FFB020" },
+//   { name: "Goa", value: 10, color: "#E11D48" },
+// ];
 
 // --- Main Component ---
 const Reports = () => {
   return (
-    <div className="grid place-items-center min-h-[89.5dvh] p-5">
-      <Card className="scale-95 w-full h-full flex flex-col items-start p-10">
-        <CardHeadline title="Reports & Analytics" />
+    <div className="">
+      <Card className="scale-95 w-full h-full flex flex-col items-start ">
+        {/* <CardHeadline title="Reports & Analytics" /> */}
         <CardContent className="w-full space-y-6">
           <PageHeader
             title=""
@@ -138,35 +166,88 @@ const Reports = () => {
             ))}
           </div>
 
-          {/* Conversion Funnel */}
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3>Lead Conversion Funnel</h3>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                CSV
-              </Button>
-            </div>
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={conversionFunnelData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                <XAxis type="number" stroke="#64748B" />
-                <YAxis dataKey="stage" type="category" width={120} stroke="#64748B" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#FFFFFF",
-                    border: "1px solid #E2E8F0",
-                    borderRadius: "8px",
-                  }}
-                />
-                <Bar dataKey="count" fill="#0B5FFF" radius={[0, 8, 8, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Conversion Funnel */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3>Lead Conversion Funnel</h3>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  CSV
+                </Button>
+              </div>
+              <ResponsiveContainer width="100%" height={350}>
+                <BarChart data={conversionFunnelData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                  <XAxis type="number" stroke="#64748B" />
+                  <YAxis dataKey="stage" type="category" width={120} stroke="#64748B" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#FFFFFF",
+                      border: "1px solid #E2E8F0",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <Bar dataKey="count" fill="#0B5FFF" radius={[0, 8, 8, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+            <div>
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg ">Loan & Performance Overview</h3>
+                  <Button variant="outline" size="sm">
+                    <Download className="h-4 w-4 mr-2" />
+                    PDF
+                  </Button>
+                </div>
 
-          {/* NBFC Performance + Product Distribution */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* NBFC Performance */}
+                <div className="">
+                  {/* Main Combined Chart */}
+                  <div className="col-span-2">
+                    <ResponsiveContainer width="100%" height={350}>
+                      <ComposedChart data={combinedData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                        <XAxis dataKey="month" stroke="#64748B" />
+                        <YAxis yAxisId="left" stroke="#64748B" />
+                        <YAxis yAxisId="right" orientation="right" stroke="#64748B" />
+                        <Tooltip contentStyle={{ backgroundColor: "#FFF", border: "1px solid #E2E8F0" }} />
+                        <Legend />
+
+                        {/* NBFC Performance */}
+                        <Bar yAxisId="left" dataKey="leads" fill="#0B5FFF" name="Total Leads" radius={[6, 6, 0, 0]} />
+                        <Bar yAxisId="left" dataKey="approved" fill="#00A676" name="Approved" radius={[6, 6, 0, 0]} />
+                        <Bar yAxisId="left" dataKey="disbursed" fill="#FFB020" name="Disbursed" radius={[6, 6, 0, 0]} />
+
+                        {/* Pool Buyout Performance */}
+                        <Line
+                          yAxisId="right"
+                          type="monotone"
+                          dataKey="buyouts"
+                          stroke="#E11D48"
+                          strokeWidth={2}
+                          name="Buyouts"
+                        />
+                        <Line
+                          yAxisId="right"
+                          type="monotone"
+                          dataKey="repayments"
+                          stroke="#9333EA"
+                          strokeWidth={2}
+                          name="Repayments"
+                        />
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
+
+
+                </div>
+              </Card>
+            </div>
+          </div>
+
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3>NBFC Performance Metrics</h3>
@@ -201,7 +282,7 @@ const Reports = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={productDistributionData}
+                    data={productDistributionData1}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
@@ -209,7 +290,7 @@ const Reports = () => {
                     outerRadius={100}
                     dataKey="value"
                   >
-                    {productDistributionData.map((entry, index) => (
+                    {productDistributionData1.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -217,79 +298,89 @@ const Reports = () => {
                 </PieChart>
               </ResponsiveContainer>
             </Card>
+            {/* </div> */}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3>Collection Efficiency Trends</h3>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Excel
+                </Button>
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={collectionEfficiencyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                  <XAxis dataKey="month" stroke="#64748B" />
+                  <YAxis stroke="#64748B" />
+                  <Tooltip contentStyle={{ backgroundColor: "#FFF", border: "1px solid #E2E8F0" }} />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="collected"
+                    stackId="1"
+                    stroke="#00A676"
+                    fill="#00A676"
+                    fillOpacity={0.6}
+                    name="Collected %"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="target"
+                    stackId="2"
+                    stroke="#E2E8F0"
+                    fill="#E2E8F0"
+                    fillOpacity={0.3}
+                    name="Target %"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Card>
+            <LoanAccountPerformanceRBI />
           </div>
 
           {/* Collection Efficiency */}
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3>Collection Efficiency Trends</h3>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Excel
-              </Button>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={collectionEfficiencyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                <XAxis dataKey="month" stroke="#64748B" />
-                <YAxis stroke="#64748B" />
-                <Tooltip contentStyle={{ backgroundColor: "#FFF", border: "1px solid #E2E8F0" }} />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="collected"
-                  stackId="1"
-                  stroke="#00A676"
-                  fill="#00A676"
-                  fillOpacity={0.6}
-                  name="Collected %"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="target"
-                  stackId="2"
-                  stroke="#E2E8F0"
-                  fill="#E2E8F0"
-                  fillOpacity={0.3}
-                  name="Target %"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </Card>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <LoanDistributionChart />
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3>BRE Effectiveness Trends</h3>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  CSV
+                </Button>
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={breTrendsData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                  <XAxis dataKey="month" stroke="#64748B" />
+                  <YAxis stroke="#64748B" />
+                  <Tooltip contentStyle={{ backgroundColor: "#FFF", border: "1px solid #E2E8F0" }} />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="avgScore"
+                    stroke="#0B5FFF"
+                    strokeWidth={2}
+                    name="Avg BRE Score"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="approvalRate"
+                    stroke="#00A676"
+                    strokeWidth={2}
+                    name="Approval Rate %"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
           {/* BRE Effectiveness */}
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3>BRE Effectiveness Trends</h3>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                CSV
-              </Button>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={breTrendsData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                <XAxis dataKey="month" stroke="#64748B" />
-                <YAxis stroke="#64748B" />
-                <Tooltip contentStyle={{ backgroundColor: "#FFF", border: "1px solid #E2E8F0" }} />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="avgScore"
-                  stroke="#0B5FFF"
-                  strokeWidth={2}
-                  name="Avg BRE Score"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="approvalRate"
-                  stroke="#00A676"
-                  strokeWidth={2}
-                  name="Approval Rate %"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </Card>
+
+
 
           {/* Placeholder Card
           <SegmentsCard

@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "../ui/PageHeader";
-import CardHeadline from "../CardHeadline";
+// import { PageHeader } from "../ui/PageHeader";
+// import CardHeadline from "../CardHeadline";
 // import { assetPath } from "@/lib/utils";
 // import SegmentsCard from "../SegmentsCard";
 // import { StatCard } from "../StatCard";
@@ -55,17 +55,17 @@ const monthlyTrendData = [
 
 const Dashboard = () => {
   return (
-    <div className="grid place-items-center min-h-[89.5dvh] p-5">
-      <Card className="scale-95 w-full h-full flex flex-col p-10">
+    <div className="">
+      <Card className="scale-95 w-full h-full flex flex-col">
         {/* Section Title */}
-        <CardHeadline title="Dashboard Overview" />
+        {/* <CardHeadline title="Dashboard Overview" /> */}
 
         <CardContent className="space-y-6">
           {/* Header */}
-          <PageHeader
+          {/* <PageHeader
             title=""
             description="Pool Buyout Module Overview - Real-time insights and performance metrics"
-          />
+          /> */}
 
           {/* Quick Actions */}
           <Card className="p-6 bg-gradient-to-r from-[#0B5FFF] to-[#00A676] text-white shadow-lg">
@@ -85,13 +85,13 @@ const Dashboard = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-white text-white hover:bg-white/10"
+                 className="bg-white text-[#0B5FFF] hover:bg-blue-50"
                 >
                   Manage NBFCs
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-white text-white hover:bg-white/10"
+                  className="bg-white text-[#0B5FFF] hover:bg-blue-50"
                 >
                   View Reports
                 </Button>
