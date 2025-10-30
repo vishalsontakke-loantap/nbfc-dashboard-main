@@ -62,7 +62,7 @@ export function Login({ onLogin }: LoginProps) {
           <img src={assetPath('/images/Bank_of_Maharashtra_logo.svg')} alt="Bank of Maharashtra" className="h-16 mx-auto lg:mx-0" />
           <div>
             <h1 className="text-[#0B5FFF] mb-2">Pool Buyout Module</h1>
-            <h2 className="text-foreground mb-4">CLM-I Middleware Platform</h2>
+            {/* <h2 className="text-foreground mb-4">CLM-I Middleware Platform</h2> */}
             <p className="text-muted-foreground">
               Unified platform for Bank of Maharashtra and NBFC partners to collaborate on Pool Buyout operations with seamless application management, compliance, and reporting.
             </p>
