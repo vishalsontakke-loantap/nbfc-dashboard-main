@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { UserPlus, Edit, Shield, Clock } from "lucide-react";
-import CardHeadline from "../CardHeadline";
+// import CardHeadline from "../CardHeadline";
 
 // ----------------- MOCK DATA -----------------
 const users = [

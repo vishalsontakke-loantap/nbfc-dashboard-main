@@ -31,7 +31,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/capri.png"),
+        logo: assetPath("/images/capri.png"),
     },
     {
         name: "Bajaj Finance Limited",
@@ -40,7 +40,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/bajaj.png"),
+        logo: assetPath("/images/bajaj.jpg"),
     },
     {
         name: "Ugro Capital",
@@ -49,16 +49,16 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/ugro.png"),
+        logo: assetPath("/images/ugro.jpg"),
     },
     {
-        name: "Google Cloud Organization",
+        name: "Clix",
         new: false,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/google.png"),
+        logo: assetPath("/images/clix.jpg"),
     },
     {
         name: "AWS - Research",
@@ -67,7 +67,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/aws.png"),
+        logo: assetPath("/images/aws.png"),
     },
     {
         name: "Azure Tenant",
@@ -76,7 +76,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/azure.png"),
+        logo: assetPath("/images/azure.png"),
     },
     {
         name: "Alibaba - testing",
@@ -85,7 +85,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/alibaba.png"),
+        logo: assetPath("/images/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -94,7 +94,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/alibaba.png"),
+        logo: assetPath("/images/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -103,7 +103,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/alibaba.png"),
+        logo: assetPath("/images/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -112,7 +112,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/alibaba.png"),
+        logo: assetPath("/images/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -121,7 +121,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/alibaba.png"),
+        logo: assetPath("/images/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -130,7 +130,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/alibaba.png"),
+        logo: assetPath("/images/alibaba.png"),
     },
     {
         name: "Alibaba - testing",
@@ -139,7 +139,7 @@ const nbfcData = [
         loanProducts: 7,
         business: 115,
         openIssues: 115,
-        logo: assetPath("/images/nbfc/alibaba.png"),
+        logo: assetPath("/images/alibaba.png"),
     },
 ];
 

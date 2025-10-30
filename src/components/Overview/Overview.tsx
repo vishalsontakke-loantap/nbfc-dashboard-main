@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 // import { assetPath } from "@/lib/utils";
 // import SegmentsCard from "../SegmentsCard";
 // import { StatCard } from "../StatCard";
+import { useNavigate } from "react-router-dom";
 import {
   TrendingUp,
   Users,
@@ -54,6 +55,15 @@ const monthlyTrendData = [
 ];
 
 const Dashboard = () => {
+
+ const navigate = useNavigate();
+  const handleDone = () => {
+    navigate("/nbfc-list");
+  };
+
+  const handlereports = () => {
+    navigate("/reports");
+  };
   return (
     <div className="">
       <Card className="scale-95 w-full h-full flex flex-col">
@@ -79,19 +89,21 @@ const Dashboard = () => {
               <div className="flex gap-3 flex-wrap">
                 <Button
                   variant="secondary"
-                  className="bg-white text-[#0B5FFF] hover:bg-blue-50"
+                  className="bg-white text-[#0B5FFF] hover:bg-blue-50 cursor-pointer"
                 >
                   View Leads <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button
-                  variant="outline"
-                 className="bg-white text-[#0B5FFF] hover:bg-blue-50"
+                  variant="secondary"
+                 className="bg-white text-[#0B5FFF] hover:bg-blue-50 cursor-pointer"
+                  onClick={handleDone}
                 >
                   Manage NBFCs
                 </Button>
                 <Button
-                  variant="outline"
-                  className="bg-white text-[#0B5FFF] hover:bg-blue-50"
+                  variant="secondary"
+                  className="bg-white text-[#0B5FFF] hover:bg-blue-50 cursor-pointer"
+                  onClick={handlereports}
                 >
                   View Reports
                 </Button>
