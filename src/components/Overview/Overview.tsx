@@ -63,8 +63,8 @@ const Dashboard = () => {
         <CardContent className="space-y-6">
           {/* Header */}
           <PageHeader
-            title="Dashboard"
-            description="Co-Lending Module Overview - Real-time insights and performance metrics"
+            title=""
+            description="Pool Buyout Module Overview - Real-time insights and performance metrics"
           />
 
           {/* Quick Actions */}
@@ -268,7 +268,7 @@ const Dashboard = () => {
             imgAlt="Pool Buyout Segment"
             badge="overview"
             heading="Dashboard Summary"
-            subtext="A complete visual overview of co-lending activity."
+            subtext="A complete visual overview of Pool Buyout activity."
           /> */}
         </CardContent>
       </Card>

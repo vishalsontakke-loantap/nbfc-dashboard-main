@@ -33,7 +33,7 @@ const SegmentSelection = () => {
           </div>
           <hr />
           <p className="font-semibold text-[#333333] text-sm mt-2">
-            Seamlessly onboard for Co-Lending or Pool Buyout and start your
+            Seamlessly onboard for Pool Buyout or Pool Buyout and start your
             journey
           </p>
 
@@ -56,19 +56,19 @@ const SegmentSelection = () => {
               />
             </div>
 
-            {/* Co-Lending */}
+            {/* Pool Buyout */}
             <div
-              onClick={() => handleCardClick("Co-Lending Segment")}
+              onClick={() => handleCardClick("Pool Buyout Segment")}
               className={`cursor-pointer rounded-xl p-1 transition ${
-                selectedCard === "Co-Lending Segment"
+                selectedCard === "Pool Buyout Segment"
                   ? "bg-blue-100 ring-2 ring-blue-400"
                   : "bg-transparent"
               }`}
             >
               <SegmentsCard
                 imgSrc={assetPath("/images/co-landing.svg")}
-                imgAlt="Co-Lending Segment"
-                heading="Co-Lending"
+                imgAlt="Pool Buyout Segment"
+                heading="Pool Buyout"
                 subtext="Partner seamlessly to co-lend and scale your lending business."
               />
             </div>

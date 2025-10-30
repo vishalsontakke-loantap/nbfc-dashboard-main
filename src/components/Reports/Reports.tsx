@@ -70,10 +70,10 @@ const Reports = () => {
   return (
     <div className="grid place-items-center min-h-[89.5dvh] p-5">
       <Card className="scale-95 w-full h-full flex flex-col items-start p-10">
-        <CardHeadline title="Reports" />
+        <CardHeadline title="Reports & Analytics" />
         <CardContent className="w-full space-y-6">
           <PageHeader
-            title="Reports & Analytics"
+            title=""
             description="Comprehensive insights and performance metrics"
             actions={
               <div className="flex gap-2">

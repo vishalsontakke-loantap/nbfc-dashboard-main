@@ -23,7 +23,7 @@ const BuyOutSegment: React.FC = () => {
 
         {/* Subtitle */}
         <p className="font-semibold text-[#333333] text-sm mt-2">
-          Seamlessly onboard for Co-Lending or Pool Buyout and start your
+          Seamlessly onboard for Pool Buyout or Pool Buyout and start your
           journey
         </p>
 
