@@ -43,7 +43,7 @@ export function Login({ onLogin }: LoginProps) {
     
     // Mock login - in real app would validate credentials
     const mockUsers = {
-      SuperAdmin: { name: 'Amit Shah', org: 'Bank of Maharashtra HO' },
+      SuperAdmin: { name: 'Amit Shah', org: 'Bank HO' },
       BankBranch: { name: 'Priya Desai', org: 'Mumbai Branch' },
       NBFC: { name: 'Suresh Kumar', org: 'Muthoot Finance' },
     };
@@ -64,7 +64,7 @@ export function Login({ onLogin }: LoginProps) {
             <h1 className="text-[#0B5FFF] mb-2">Pool Buyout Module</h1>
             {/* <h2 className="text-foreground mb-4">CLM-I Middleware Platform</h2> */}
             <p className="text-muted-foreground">
-              Unified platform for Bank of Maharashtra and NBFC partners to collaborate on Pool Buyout operations with seamless application management, compliance, and reporting.
+              Unified platform for Bank and NBFC partners to collaborate on Pool Buyout operations with seamless application management, compliance, and reporting.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-4 pt-6">
