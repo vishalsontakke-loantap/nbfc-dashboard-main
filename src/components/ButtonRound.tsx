@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn,assetPath } from "@/lib/utils";
 
 const ButtonRound: React.FC<ButtonRoundProps> = ({
   src,
@@ -26,7 +26,7 @@ const ButtonRound: React.FC<ButtonRoundProps> = ({
         )}
       >
         <img
-          src={`/images/icons/${src}.svg`}
+          src={assetPath(`/images/icons/${src}.svg`)}
           alt={alt}
           id={id}
           className={progress !== 100 ? "filter-gray" : ""}
