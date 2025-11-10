@@ -2,24 +2,15 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Redirecting…</title>
+    <meta http-equiv="refresh" content="0; url=/nbfc-dashboard-main/" />
     <script>
-      (function() {
-        // Your GitHub repo name (base path)
-        const repo = "/nbfc-dashboard-main";
-
-        // Save the original path (everything after the repo name)
-        const path = window.location.pathname.replace(repo, "");
-        const search = window.location.search || "";
-        const hash = window.location.hash || "";
-
-        // Redirect back to your SPA entry point, preserving path/query/hash
-        const target = `${repo}/index.html?redirect=${encodeURIComponent(
-          path + search + hash
-        )}`;
-
-        window.location.replace(target);
-      })();
+      // Extract the path after your repo name
+      const path = window.location.pathname.replace(
+        /^\/nbfc-dashboard-main/,
+        ""
+      );
+      // Redirect back to index.html within your app
+      window.location.replace(`/nbfc-dashboard-main${path}`);
     </script>
   </head>
   <body></body>
