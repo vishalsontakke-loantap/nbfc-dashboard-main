@@ -13,17 +13,24 @@ export function ActionBar() {
           Run BRE Again
         </Button>
 
-        <Button 
+        {/* <Button 
           variant="outline"
           className="gap-2 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors"
         >
           <FileText className="w-4 h-4" />
           View Loan Applications
+        </Button> */}
+
+         <Button 
+          className="gap-2 bg-green-600 hover:bg-green-700 text-white transition-colors"
+        >
+          <CheckCircle className="w-4 h-4" />
+          View Loan Applications
         </Button>
         
         <Button 
           variant="outline"
-          className="gap-2 hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors"
+          className="gap-2 hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors disabled:opacity-50"
         >
           <XCircle className="w-4 h-4" />
           Reject Entire Batch
