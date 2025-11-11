@@ -164,7 +164,7 @@ export const columns: ColumnDef<typeof poolBatchList[0]>[] = [
             size="sm"
             className="text-[#0A4DA2] border border-[#BBDFFF] hover:bg-[#E3F5FF]"
             onClick={() =>
-              navigate(`/history/loan-applications/${row.original.poolBatchId}`)
+              navigate(`/history/pool-batch/details`)
             }
           >
             <Eye className="h-4 w-4 mr-1" />

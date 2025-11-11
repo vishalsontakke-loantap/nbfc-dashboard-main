@@ -12,6 +12,7 @@ import { Login } from "./components/Login";
 import LoanApplicationsPage from "./components/LoanApplicationsPage";
 import Layout from "./components/Layout";
 import DetailsView from "./components/DeatilsView";
+import PoolBatchView from "./components/PoolBatchView";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -45,6 +46,14 @@ function App() {
           element={
             <Layout>
               <DetailsView />
+            </Layout>
+          }
+        />
+         <Route
+          path="/history/pool-batch/details"
+          element={
+            <Layout>
+              <PoolBatchView />
             </Layout>
           }
         />

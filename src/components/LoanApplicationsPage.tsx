@@ -145,6 +145,30 @@ export const columns: ColumnDef<typeof loanApplications[number]>[] = [
       return <p className="text-center">₹ {value.toLocaleString()}</p>;
     },
   },
+
+   {
+    id: "actions",
+    header: () => <p className="text-center">Actions</p>,
+    cell: ({ row }) => {
+      const navigate = useNavigate();
+      const handleViewMore = () => {
+        // optionally pass an ID if needed, e.g. /details/:id
+        navigate("/history/loan-applications/details");
+      };
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleViewMore}
+            className="text-blue-600 hover:bg-blue-50"
+          >
+            View More
+          </Button>
+        </div>
+      );
+    },
+  },
 ];
 
 
