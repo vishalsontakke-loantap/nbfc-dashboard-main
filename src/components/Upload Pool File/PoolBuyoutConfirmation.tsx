@@ -26,7 +26,7 @@ export function PoolBuyoutConfirmation() {
 
   const handleDone = () => {
     setShowSuccess(false);
-    navigate("/upload-pool-file");
+    navigate("/history/pool-batch/details");
   };
 
   return (
