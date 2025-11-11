@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { 
-  ArrowLeft, 
+
   User, 
-  FileText, 
-  Briefcase, 
+  FileText,  
   CreditCard,
   Calendar,
   TrendingUp,
@@ -49,6 +48,7 @@ import { Card, CardContent, CardDescription, CardTitle } from './ui/card';
 import { Separator } from '@radix-ui/react-select';
 import { Progress } from '@radix-ui/react-progress';
 import { Button } from './ui/button';
+import { useNavigate } from 'react-router-dom';
 
 // Mock data for demonstration
 const loanApplication = {
@@ -111,19 +111,22 @@ const paymentHistoryData = [
 
 export default function DetailsView() {
   const [currentStatus] = useState(loanApplication.status);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Approved':
-        return 'bg-green-500';
-      case 'Rejected':
-        return 'bg-red-500';
-      case 'Pending':
-        return 'bg-amber-500';
-      default:
-        return 'bg-gray-500';
-    }
+  const navigate = useNavigate();
+  const repaymentView = () => {
+    navigate("/history/payment-details");
   };
+  // const getStatusColor = (status: string) => {
+  //   switch (status) {
+  //     case 'Approved':
+  //       return 'bg-green-500';
+  //     case 'Rejected':
+  //       return 'bg-red-500';
+  //     case 'Pending':
+  //       return 'bg-amber-500';
+  //     default:
+  //       return 'bg-gray-500';
+  //   }
+  // };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -208,12 +211,12 @@ export default function DetailsView() {
               <h2>Loan Application Detail View</h2>
               <p className="text-gray-600 mt-1">Complete overview of loan application and risk assessment</p>
             </div>
-            <Badge 
+            {/* <Badge 
               className={`${getStatusColor(currentStatus)} text-white px-4 py-2 gap-2 rounded-full`}
             >
               {getStatusIcon(currentStatus)}
               {currentStatus}
-            </Badge>
+            </Badge> */}
           </div>
         </div>
 
@@ -636,14 +639,15 @@ export default function DetailsView() {
                   <CardTitle className='ml-2'>Actions</CardTitle>
                 {/* </CardHeader> */}
                 <CardContent className="space-y-3">
-                  <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white">
+                  <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+                  onClick={repaymentView}>
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    Approve Loan
+                    View Repayment Schedule
                   </Button>
-                  <Button variant="destructive" className="w-full">
+                  {/* <Button variant="destructive" className="w-full">
                     <XCircle className="w-4 h-4 mr-2" />
                     Reject Loan
-                  </Button>
+                  </Button> */}
                   <Button variant="outline" className="w-full">
                     <AlertCircle className="w-4 h-4 mr-2" />
                     Request Additional Info
