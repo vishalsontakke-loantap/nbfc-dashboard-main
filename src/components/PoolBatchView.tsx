@@ -4,7 +4,6 @@ import { BREUnderwritingCard } from "./BREUnderwritingCard";
 import { ComplianceAuditCard } from "./ComplianceAuditCard";
 import { DisbursementSummaryCard } from "./DisbursementSummaryCard";
 import { KPISummaryStrip } from "./KPISummaryStrip";
-import { NBFCPerformanceTable } from "./NBFCPerformanceTable";
 import { PoolBatchHeader } from "./PoolBatchHeader";
 import { RiskAnalyticsCard } from "./RiskAnalyticsCard";
 

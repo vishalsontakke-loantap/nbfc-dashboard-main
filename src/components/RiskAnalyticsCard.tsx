@@ -1,6 +1,5 @@
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Progress } from './ui/progress';
-import { AlertTriangle } from 'lucide-react';
 
 export function RiskAnalyticsCard() {
   const riskDistribution = [
@@ -23,11 +22,11 @@ export function RiskAnalyticsCard() {
     { stage: 'Disbursement', count: 72 },
   ];
 
-  const topRiskyNBFCs = [
-    { name: 'Shriram Finance', riskScore: 42, loans: 124 },
-    { name: 'IIFL Finance', riskScore: 38, loans: 89 },
-    { name: 'L&T Finance', riskScore: 35, loans: 76 },
-  ];
+  // const topRiskyNBFCs = [
+  //   { name: 'Shriram Finance', riskScore: 42, loans: 124 },
+  //   { name: 'IIFL Finance', riskScore: 38, loans: 89 },
+  //   { name: 'L&T Finance', riskScore: 35, loans: 76 },
+  // ];
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">

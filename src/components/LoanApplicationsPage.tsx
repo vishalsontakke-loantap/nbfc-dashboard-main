@@ -149,7 +149,7 @@ export const columns: ColumnDef<typeof loanApplications[number]>[] = [
    {
     id: "actions",
     header: () => <p className="text-center">Actions</p>,
-    cell: ({ row }) => {
+    cell: ({  }) => {
       const navigate = useNavigate();
       const handleViewMore = () => {
         // optionally pass an ID if needed, e.g. /details/:id

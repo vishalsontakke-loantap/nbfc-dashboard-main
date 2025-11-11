@@ -155,7 +155,7 @@ export const columns: ColumnDef<typeof poolBatchList[0]>[] = [
   {
     id: "actions",
     header: () => <p className="text-center">Action</p>,
-    cell: ({ row }) => {
+    cell: ({  }) => {
       const navigate = useNavigate();
       return (
         <div className="text-center">

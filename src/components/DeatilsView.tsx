@@ -43,15 +43,9 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
-  Legend,
-  PieChart,
-  Pie,
-  Cell
+ 
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardTitle } from './ui/card';
-import CardHeader from './CardHeader';
 import { Separator } from '@radix-ui/react-select';
 import { Progress } from '@radix-ui/react-progress';
 import { Button } from './ui/button';
@@ -107,13 +101,13 @@ const paymentHistoryData = [
   { month: 'Aug', onTime: 100, delayed: 0 },
 ];
 
-const creditScoreData = [
-  {
-    name: 'Credit Score',
-    value: loanApplication.creditScore,
-    fill: '#10b981',
-  },
-];
+// const creditScoreData = [
+//   {
+//     name: 'Credit Score',
+//     value: loanApplication.creditScore,
+//     fill: '#10b981',
+//   },
+// ];
 
 export default function DetailsView() {
   const [currentStatus] = useState(loanApplication.status);
@@ -277,7 +271,7 @@ export default function DetailsView() {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Loan Type</p>
-                      <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200">
+                      <Badge  className="bg-sky-50 text-sky-700 border-sky-200">
                         {loanApplication.loanType}
                       </Badge>
                     </div>

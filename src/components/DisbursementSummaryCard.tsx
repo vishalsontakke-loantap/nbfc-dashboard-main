@@ -1,4 +1,4 @@
-import { CheckCircle2, DollarSign, Clock, XCircle, CreditCard, User, Download } from 'lucide-react';
+import { DollarSign, Clock, XCircle, CreditCard, User, Download } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';

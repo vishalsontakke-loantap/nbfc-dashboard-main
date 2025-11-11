@@ -1,5 +1,4 @@
-import { ChevronLeft, Package } from 'lucide-react';
-import { Button } from './ui/button';
+import {  Package } from 'lucide-react';
 import { Badge } from './ui/badge';
 
 export function PoolBatchHeader() {

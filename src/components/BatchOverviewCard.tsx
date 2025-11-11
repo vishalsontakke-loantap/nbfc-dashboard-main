@@ -1,6 +1,5 @@
-import { User, Building2, Calendar, FileText, DollarSign, TrendingUp, Clock, Download } from 'lucide-react';
+import { User, Building2, FileText, DollarSign, TrendingUp, Clock, Download } from 'lucide-react';
 import { Button } from './ui/button';
-import { Progress } from './ui/progress';
 
 export function BatchOverviewCard() {
   return (

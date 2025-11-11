@@ -1,4 +1,4 @@
-import { Play, CheckCircle, XCircle, Send, Download, FileText } from 'lucide-react';
+import { Play, CheckCircle, XCircle, Send, Download } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function ActionBar() {
