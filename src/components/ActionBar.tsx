@@ -1,7 +1,13 @@
 import { Play, CheckCircle, XCircle, Send, Download } from 'lucide-react';
 import { Button } from './ui/button';
+import {  useNavigate } from "react-router-dom";
 
 export function ActionBar() {
+
+  const navigate = useNavigate();
+  const handleViewLoanApplications = () => {
+    navigate("/history/loan-applications/:P02238382");
+  }
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="flex flex-wrap gap-4 justify-center md:justify-end">
@@ -13,16 +19,11 @@ export function ActionBar() {
           Run BRE Again
         </Button>
 
-        {/* <Button 
-          variant="outline"
-          className="gap-2 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors"
-        >
-          <FileText className="w-4 h-4" />
-          View Loan Applications
-        </Button> */}
-
          <Button 
           className="gap-2 bg-green-600 hover:bg-green-700 text-white transition-colors"
+          onClick={
+           handleViewLoanApplications
+          }
         >
           <CheckCircle className="w-4 h-4" />
           View Loan Applications

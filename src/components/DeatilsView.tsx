@@ -154,7 +154,7 @@ export default function DetailsView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+      {/* <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -174,7 +174,7 @@ export default function DetailsView() {
             </Button>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
@@ -224,7 +224,7 @@ export default function DetailsView() {
             <Card className="shadow-md rounded-2xl border-0">
               {/* <CardHeader className="bg-gradient-to-r from-sky-50 to-blue-50 rounded-t-2xl"> */}
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center ml-2">
                     <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -284,7 +284,7 @@ export default function DetailsView() {
             <Card className="shadow-md rounded-2xl border-0">
               {/* <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-t-2xl"> */}
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-full flex items-center justify-center ml-2">
                     <DollarSign className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -356,7 +356,7 @@ export default function DetailsView() {
             <Card className="shadow-md rounded-2xl border-0">
               {/* <CardHeader className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-t-2xl"> */}
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center ml-2">
                     <BarChart3 className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -496,7 +496,7 @@ export default function DetailsView() {
             <Card className="shadow-md rounded-2xl border-0">
               {/* <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-t-2xl"> */}
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center ml-2">
                     <FileText className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -633,7 +633,7 @@ export default function DetailsView() {
               {/* Action Buttons */}
               <Card className="shadow-md rounded-2xl border-0">
                 {/* <CardHeader> */}
-                  <CardTitle>Actions</CardTitle>
+                  <CardTitle className='ml-2'>Actions</CardTitle>
                 {/* </CardHeader> */}
                 <CardContent className="space-y-3">
                   <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white">
