@@ -5,9 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { UserPlus, Edit, Shield, Clock } from "lucide-react";
-// import CardHeadline from "../CardHeadline";
 
-// ----------------- MOCK DATA -----------------
 const users = [
   { id: 1, name: "Amit Shah", email: "amit.shah@bom.in", role: "SuperAdmin", accessLevel: "Full Access", lastLogin: "2024-10-23 09:15 AM", status: "active" },
   { id: 2, name: "Priya Desai", email: "priya.desai@bom.in", role: "Admin", accessLevel: "Bank Operations", lastLogin: "2024-10-23 08:45 AM", status: "active" },

@@ -9,6 +9,9 @@ import ReportRoutes from "./components/Reports/ReportRoutes";
 import HelpRoutes from "./components/Help/HelpRoutes";
 import UploadPoolFileRoutes from "./components/Upload Pool File/UploadPoolFileRoutes";
 import { Login } from "./components/Login";
+import LoanApplicationsPage from "./components/LoanApplicationsPage";
+import Layout from "./components/Layout";
+import DetailsView from "./components/DeatilsView";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -29,6 +32,22 @@ function App() {
         <Route path="/reports/*" element={<ReportRoutes />} />
         <Route path="/help/*" element={<HelpRoutes />} />
         <Route path="/" element={<LoginPageWrapper />} />
+       <Route
+          path="/history/loan-applications/:batchId"
+          element={
+            <Layout>
+              <LoanApplicationsPage />
+            </Layout>
+          }
+        />
+         <Route
+          path="/history/loan-applications/details"
+          element={
+            <Layout>
+              <DetailsView />
+            </Layout>
+          }
+        />
         {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
       </Routes>
     </>
