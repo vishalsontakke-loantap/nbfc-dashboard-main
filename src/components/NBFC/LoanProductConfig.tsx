@@ -13,6 +13,7 @@ import LoanProductTables from "./LoanProductTables";
 import { loanProductConfigTabs, loanProductConfigTabContent } from "@/lib/constants";
 import { useTabStore } from "@/lib/store/useTabStore"; // Zustand store
 import { SkeletonTableShimmer } from "../ui/skeleton-table";
+import ProgressBar from "../ProgressBar";
 
 
 const LoanProductConfig = () => {
@@ -88,6 +89,10 @@ const LoanProductConfig = () => {
               </TabsContent>
             ))}
           </Tabs>)}
+           
+      <div className="p-6">
+        <ProgressBar totalSteps={4} currentStep={4} stepName="Loan Product Configuration" />
+      </div>
     </div>
   );
 };

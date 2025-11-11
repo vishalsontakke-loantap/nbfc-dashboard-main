@@ -30,6 +30,7 @@ import CardHeadline from "../CardHeadline";
 
 import { rbiLisenceTypes} from "@/lib/constants";
 import { formatIndianNumber } from "@/lib/utils";
+import ProgressBar from "../ProgressBar";
 
 const fileSchema = z
   .instanceof(File, { message: "File is required" })
@@ -913,6 +914,9 @@ const NBFCform = () => {
           </form>
         </Form>
       )}
+      <div className="p-6">
+        <ProgressBar totalSteps={4} currentStep={3} stepName="NBFC Profile Details" />
+      </div>
     </div>
   );
 };

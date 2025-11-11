@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 
 import NBFCRoutes from "./components/NBFC/NBFCRoutes";
@@ -8,7 +8,13 @@ import ManagerUserRoutes from "./components/Manager User/ManagerUserRoutes";
 import ReportRoutes from "./components/Reports/ReportRoutes";
 import HelpRoutes from "./components/Help/HelpRoutes";
 import UploadPoolFileRoutes from "./components/Upload Pool File/UploadPoolFileRoutes";
+import { Login } from "./components/Login";
 // import NbfcList from "./components/NBFC/NbfcList";
+
+function LoginPageWrapper() {
+  const navigate = useNavigate();
+  return <Login onLogin={() => navigate("/overview")} />;
+}
 
 function App() {
   return (
@@ -22,6 +28,7 @@ function App() {
         <Route path="/manager-user/*" element={<ManagerUserRoutes />} />
         <Route path="/reports/*" element={<ReportRoutes />} />
         <Route path="/help/*" element={<HelpRoutes />} />
+        <Route path="/" element={<LoginPageWrapper />} />
         {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
       </Routes>
     </>
