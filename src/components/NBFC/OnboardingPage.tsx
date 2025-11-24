@@ -33,7 +33,7 @@ const OnboardingPage = () => {
           </Link> ̰
         </CardContent>
         <CardFooter className="mb-auto">
-          <img src={assetPath("/images/onboarding_row.svg")} alt="row" />
+          <img src={assetPath("/loaders/nbfc.gif")} alt="row" />
         </CardFooter>
       </Card>
     </div>
