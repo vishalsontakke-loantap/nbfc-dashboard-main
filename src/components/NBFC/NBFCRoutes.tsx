@@ -4,11 +4,11 @@ import OnboardingPage from "./OnboardingPage";
 import SegmentSelection from "./SegmentSelection";
 import NBFCform from "./NBFCform";
 import BREConfig from "./BREConfig";
-import LoanProductConfig from "./LoanProductConfig";
+
 import NotFound from "../NotFound";
 import ContactPage from "../Contact";
 import NbfcList from "./NbfcList";
-import LoanProducts from "./LoanProducts";
+import LoanProducts from "../LoanProduct/LoanProducts";
 import BuyOutSegment from "./BuyOutSegment";
 
 const NBFCRoutes = () => {
@@ -45,7 +45,7 @@ const NBFCRoutes = () => {
           }
         />
 
-        {/* LOAN PRODUCT CONFIG */}
+        {/* LOAN PRODUCT CONFIG
         <Route
           path="/nbfc/product-config"
           element={
@@ -53,7 +53,7 @@ const NBFCRoutes = () => {
               <LoanProductConfig />
             </Layout>
           }
-        />
+        /> */}
 
         {/* BRE CONFIG */}
         <Route

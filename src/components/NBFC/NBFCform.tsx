@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import axios from "axios";
 
 import { useNavigate } from "react-router-dom";
 
@@ -59,16 +60,16 @@ const fileSchema = z
   .optional();
 
 const formSchema = z.object({
-  nbfcName: z.string().min(4, { message: "NBFC Name is required" }),
+  nbfc_name: z.string().min(4, { message: "NBFC Name is required" }),
 
-  regNum: z
+  registration_number: z
     .string()
     .min(1, { message: "Registration Number is required" })
     .regex(/^[a-zA-Z0-9]+$/, {
       message: "Registration Number must be alphanumeric",
     }),
 
-  rbiLicenseType: z.enum(
+  rbi_license_type: z.enum(
     [
       "Investment and Credit Company",
       "Infrastructure Finance Company",
@@ -86,32 +87,32 @@ const formSchema = z.object({
     { message: "RBI License Type is required" }
   ),
 
-  dateOfIncorporation: z.coerce.date({
+  date_of_incorporation: z.coerce.date({
     required_error: "Date of Incorporation is required",
     invalid_type_error: "Invalid date format",
   }),
 
-  bussinessLimit: z.coerce
+  business_limit: z.coerce
     .number()
     .min(2, { message: "Business Limit is required" }),
 
-  regAddress: z.string().min(4, {
+  registered_address: z.string().min(4, {
     message: "Registration Address is required",
   }),
 
-  contactPerson: z.string().min(4, {
+  contact_person: z.string().min(4, {
     message: "Contact Person is required",
   }),
 
-  email: z.string().email({
+  contact_email: z.string().email({
     message: "Invalid email address",
   }),
 
-  phoneNumber: z
+  phone_number: z
     .string()
     .regex(/^\d{10}$/, { message: "Phone Number must be exactly 10 digits" }),
 
-  website: z
+  website_url: z
     .string()
     .url({ message: "Invalid URL format" })
     .optional()
@@ -140,16 +141,16 @@ const NBFCform = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nbfcName: "",
-      regNum: undefined,
-      rbiLicenseType: "Investment and Credit Company",
-      dateOfIncorporation: undefined,
-      bussinessLimit: undefined,
-      regAddress: "",
-      contactPerson: "",
-      email: "",
-      phoneNumber: "",
-      website: "",
+      nbfc_name: "",
+      registration_number: undefined,
+      rbi_license_type: "Investment and Credit Company",
+      date_of_incorporation: undefined,
+      business_limit: undefined,
+      registered_address: "",
+      contact_person: "",
+      contact_email: "",
+      phone_number: "",
+      website_url: "",
 
       rbiRegCertificate: undefined,
       boardRes: undefined,
@@ -159,9 +160,21 @@ const NBFCform = () => {
       companyLogo: undefined,
     },
   });
-
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const authToken = import.meta.env.VITE_API_AUTH_TOKEN;
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
     console.log("NBFC Form submitted with data:", data);
+    axios.post(`${apiBaseUrl}/create-partner`, data,{
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        })
+      .then((response) => {
+        console.log("Data successfully saved:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error saving data:", error);
+      });
     // Add your processing logic here (e.g., API calls to save data).
     navigate("/nbfc/product-config");
   };
@@ -196,7 +209,7 @@ const NBFCform = () => {
               <span className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 space-x-4 space-y-1">
                 <FormField
                   control={form.control}
-                  name="nbfcName"
+                  name="nbfc_name"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>NBFC Name</FormLabel>
@@ -216,7 +229,7 @@ const NBFCform = () => {
 
                 <FormField
                   control={form.control}
-                  name="regNum"
+                  name="registration_number"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>Registration Number</FormLabel>
@@ -236,7 +249,7 @@ const NBFCform = () => {
 
                 <FormField
                   control={form.control}
-                  name="rbiLicenseType"
+                  name="rbi_license_type"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>RBI License Type</FormLabel>
@@ -264,7 +277,7 @@ const NBFCform = () => {
 
                 <FormField
                   control={form.control}
-                  name="dateOfIncorporation"
+                  name="date_of_incorporation"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>Date of Incorporation</FormLabel>
@@ -304,7 +317,7 @@ const NBFCform = () => {
 
                 <FormField
                   control={form.control}
-                  name="bussinessLimit"
+                  name="business_limit"
                   render={({ field }) => {
                     return (
                       <FormItem className="mb-4">
@@ -347,7 +360,7 @@ const NBFCform = () => {
               <span className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 space-x-4 space-y-1">
                 <FormField
                   control={form.control}
-                  name="regAddress"
+                  name="registered_address"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>Registration Address</FormLabel>
@@ -361,7 +374,7 @@ const NBFCform = () => {
 
                 <FormField
                   control={form.control}
-                  name="contactPerson"
+                  name="contact_person"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>Contact Person</FormLabel>
@@ -375,7 +388,7 @@ const NBFCform = () => {
 
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="contact_email"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>Email</FormLabel>
@@ -389,7 +402,7 @@ const NBFCform = () => {
 
                 <FormField
                   control={form.control}
-                  name="phoneNumber"
+                  name="phone_number"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>Phone Number</FormLabel>
@@ -412,7 +425,7 @@ const NBFCform = () => {
 
                 <FormField
                   control={form.control}
-                  name="website"
+                  name="website_url"
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel>Website (Optional) </FormLabel>

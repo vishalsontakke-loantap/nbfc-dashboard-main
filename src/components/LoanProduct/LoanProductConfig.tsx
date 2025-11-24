@@ -8,12 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CircleCheck } from "lucide-react";
 
 import CardHeader from "../CardHeader";
-import LoanProductTables from "./LoanProductTables";
 
 import { loanProductConfigTabs, loanProductConfigTabContent } from "@/lib/constants";
 import { useTabStore } from "@/lib/store/useTabStore"; // Zustand store
 import { SkeletonTableShimmer } from "../ui/skeleton-table";
 import ProgressBar from "../ProgressBar";
+import LoanProductTables from "./LoanProductTables";
 
 
 const LoanProductConfig = () => {

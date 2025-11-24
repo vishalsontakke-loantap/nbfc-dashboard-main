@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import NBFCInfoCard from "./NBFCInfoCard";
-import LoanCard from "./LoanCard";
+import NBFCInfoCard from "../NBFC/NBFCInfoCard";
+import LoanCard from "../NBFC/LoanCard";
 import { NBFCInfoSkeleton, LoanCardSkeleton } from "@/components/ui/SkeletonLoader";
 
 interface NBFCData {
