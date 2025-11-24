@@ -1,3 +1,4 @@
+import { assetPath } from "@/lib/utils";
 import { motion } from "framer-motion";
 export default function LoadingScreen() {
   return (
@@ -14,7 +15,7 @@ export default function LoadingScreen() {
           className="mb-8"
         >
           <img 
-            src={"/loaders/bom.png"} 
+            src={assetPath("/loaders/bom.png")} 
             alt="Bank of Maharashtra" 
             className="h-24 mx-auto mb-8"
           />
@@ -27,7 +28,7 @@ export default function LoadingScreen() {
           className="mb-6"
         >
           <img 
-            src={"/loaders/login.gif"} 
+            src={assetPath("/loaders/login.gif")} 
             alt="Security" 
             className="h-64 mx-auto mb-8"
           />

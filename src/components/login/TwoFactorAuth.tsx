@@ -4,6 +4,7 @@ import { Shield, Smartphone, CheckCircle2, ArrowLeft } from 'lucide-react';
 // import bomLogo from 'figma:asset/8fb8b9c0deb45ee9f26fa8c75997f5fb7ba44f22.png';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { assetPath } from '@/lib/utils';
 
 interface TwoFactorAuthProps {
   onBack: () => void;
@@ -61,7 +62,7 @@ export default function TwoFactorAuth({ onBack }: TwoFactorAuthProps) {
         {/* Logo */}
         <div className="text-center mb-8">
           <img 
-            src={"/loaders/bom.png"} 
+            src={assetPath("/loaders/bom.png")} 
             alt="Bank of Maharashtra" 
             className="h-14 mx-auto mb-4"
           />

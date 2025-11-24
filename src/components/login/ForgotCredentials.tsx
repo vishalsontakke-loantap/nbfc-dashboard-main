@@ -4,6 +4,7 @@ import { RadioGroup } from '@radix-ui/react-dropdown-menu';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
+import { assetPath } from '@/lib/utils';
 // import { RadioGroupItem } from '../ui/radio-group';
 
 interface ForgotCredentialsProps {
@@ -467,7 +468,7 @@ export default function ForgotCredentials({ onBack }: ForgotCredentialsProps) {
     >
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src={"/loaders/bom.png"} alt="Bank of Maharashtra" className="h-14 mx-auto mb-4" />
+          <img src={assetPath("/loaders/bom.png")} alt="Bank of Maharashtra" className="h-14 mx-auto mb-4" />
         </div>
 
         <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden">

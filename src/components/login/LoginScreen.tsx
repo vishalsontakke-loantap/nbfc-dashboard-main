@@ -3,6 +3,7 @@ import { Lock, User, RefreshCw, Eye, EyeOff, Shield } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
+import { assetPath } from '@/lib/utils';
 
 interface LoginScreenProps {
   onLoginSubmit: () => void;
@@ -26,7 +27,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
 
   const refreshCaptcha = () => {
     // Refresh captcha logic would go here
-    
+
   };
 
   return (
@@ -37,7 +38,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
           {/* Logo and Header */}
           <div className="mb-8 text-center">
             <img 
-              src={"/loaders/bom.png"} 
+              src={assetPath("/loaders/bom.png")} 
               alt="Bank of Maharashtra" 
               className="h-16 mx-auto mb-6"
             />
@@ -202,7 +203,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
       >
         <div className="max-w-lg">
           <img 
-            src={"/loaders/login.gif"} 
+            src={assetPath("/loaders/login.gif")} 
             alt="Security Illustration" 
             className="w-full h-auto"
           />
