@@ -1,3 +1,31 @@
+import { Value } from "@radix-ui/react-select";
+
+export const rllrConfigParams = [
+  {
+    name: "RBI Repo Rate",
+    key: "repoRate",
+    subtitle: "External Benchmark Rate (%)",
+    type: "percent",
+  },
+  {
+    name: "Bank Spread (%)",
+    key: "bankSpread",
+    subtitle: "Bank's fixed spread over repo rate.",
+    type: "percent",
+  },
+  {
+    name: "Credit Risk Premium (%)",
+    key: "creditRiskPremium",
+    subtitle: "Optional based on use case",
+    type: "percent",
+  },
+  {
+    name: "Final Lending Rate",
+    key: "finalLendingRate",
+    subtitle: "Calculated RLLR (%)",
+    type: "percent",
+  },
+];
 //SELECT DROPDOWNS
 
 export const rbiLisenceTypes = [
@@ -513,7 +541,8 @@ export const loanProductConfigTabs = [
   { name: "2. Loan Amount & Tenure", key: "loanAmountAndTenure" },
   { name: "3. Charges & Fees", key: "chargesAndFees" },
   { name: "4. Repayment & Schedule", key: "repaymentAndSchedule" },
-  { name: "5. Collateral & Risk Controls", key: "collateralAndRiskControls" }
+  { name: "5. Share distribution", key: "shareDistribution" },
+  { name: "6. Collateral & Risk Controls", key: "collateralAndRiskControls" }
 ];
 
 export const loanProductConfigTableHeaders = [
@@ -647,6 +676,21 @@ export const loanProductConfigCollateralParams = [
   },
 ];
 
+export const LoanProductShareDistributionParams = [
+  {
+    name: "Nbfc Share %",
+    key: "internalShare",
+    subtitle: "Percentage of loan funded by the NBFC",
+    type: "percent",
+  },
+  {
+    name: "Bank Share %",
+    key: "externalShare",
+    subtitle: "Percentage of loan funded by external partners/investors",
+    type: "percent",
+  },
+]
+
 //loan product - tab content (ALL TABS)
 export const loanProductConfigTabContent = [
   {
@@ -676,6 +720,13 @@ export const loanProductConfigTabContent = [
     subtitle: "Get Validate income consistency.",
     navTo: "collateralAndRiskControls",
     paramsArr: loanProductConfigRepaymentParams,
+  },
+  {
+    value: "shareDistribution",
+    title: "Share Distribution",
+    subtitle: "Understand stability and risk based on employment",
+    navTo: "collateralAndRiskControls",
+    paramsArr: LoanProductShareDistributionParams,
   },
   {
     value: "collateralAndRiskControls",

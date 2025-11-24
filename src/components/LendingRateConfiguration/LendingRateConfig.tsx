@@ -10,10 +10,10 @@ import { CircleCheck } from "lucide-react";
 import CardHeader from "../CardHeader";
 
 
-import { breConfigTenorParams, LendingRateConfigTabs } from "@/lib/constants";
+import { breConfigTenorParams, LendingRateConfigTabs, rllrConfigParams } from "@/lib/constants";
 import { useTabStore } from "@/lib/store/useTabStore"; // Zustand store
 import { SkeletonTableShimmer } from "../ui/skeleton-table";
-import BRETables from "../Bre/BRETables";
+import LendingRateTable from "./LendingRateTable";
 
 
 
@@ -46,11 +46,11 @@ const LendingRateConfig = () => {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    navigate(`#${tab}`); // update URL hash
+    navigate(`#${tab}`); 
   };
 
   const handleFormSubmit = (tab: string) => {
-    markTabAsSubmitted(tab); // Mark the tab as submitted
+    markTabAsSubmitted(tab); 
   };
 
   return (
@@ -82,13 +82,12 @@ const LendingRateConfig = () => {
           </TabsList>
           {LendingRateConfigTabs.map((tab) => (
             <TabsContent key={tab.value} value={tab.value}>
-              <BRETables
+              <LendingRateTable
                 title={tab.name}
                 subtitle={tab.value === "mclr"
                   ? "Configure tenor-wise MCLR rates and effective dates as per bank circulars."
-                  : "Configure RLLR rates and effective dates as per bank circulars."}
-                navTo={tab.value}
-                paramsArr={breConfigTenorParams}
+                  : "Configure Repo-linked lending rates and effective dates as per RBI circulars."}
+                paramsArr={tab.value === "mclr" ? breConfigTenorParams : rllrConfigParams}
                 onSubmit={() => handleFormSubmit(tab.value)}
               />
             </TabsContent>

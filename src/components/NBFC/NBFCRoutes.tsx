@@ -24,14 +24,14 @@ const NBFCRoutes = () => {
         />
 
         {/* SEGMENT SELECTION */}
-        <Route
+        {/* <Route
           path="/nbfc/segment-selection"
           element={
             <Layout>
               <SegmentSelection />
             </Layout>
           }
-        />
+        /> */}
 
         {/* NBFC FORM */}
         <Route

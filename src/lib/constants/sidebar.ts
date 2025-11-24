@@ -34,6 +34,12 @@ export const sidebar: SidebarItem[] = [
     icon: withBase("/images/icons/nbfc_sidebar.svg"),
     match: ["/bre"],
   },
+   {
+    to: "/rlr-config",
+    label: "RLR Configuration",
+    icon: withBase("/images/icons/nbfc_sidebar.svg"),
+    match: ["/rlr-config"],
+  },
   {
     to: "/upload-pool-file",
     label: "Upload Pool File",
