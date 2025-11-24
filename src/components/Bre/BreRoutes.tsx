@@ -3,9 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import Layout from "../Layout";
 import NotFound from "../NotFound";
 import ContactPage from "../Contact";
-import LoanProductConfig from "./LoanProductConfig";
+import BREConfig from "./BREConfig";
 
-const LoanProductRoutes = () => {
+const BreRoutes = () => {
   return (
     <>
       <Routes>
@@ -14,7 +14,7 @@ const LoanProductRoutes = () => {
           path="/"
           element={
             <Layout>
-              <LoanProductConfig />
+              <BREConfig />
             </Layout>
           }
         />
@@ -31,4 +31,4 @@ const LoanProductRoutes = () => {
   );
 };
 
-export default LoanProductRoutes;
+export default BreRoutes;

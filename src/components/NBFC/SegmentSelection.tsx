@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { X } from "lucide-react";
 import { assetPath } from "@/lib/utils";
 import SegmentsCard from "../SegmentsCard";
-import BuyoutCardInfo from "./BuyoutCardInfo";
+import BuyoutCardInfo from "../Bre/BuyoutCardInfo";
 import { useState } from "react";
 import ProgressBar from "../ProgressBar";
 

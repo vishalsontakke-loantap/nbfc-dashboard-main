@@ -3,8 +3,6 @@ import Layout from "../Layout";
 import OnboardingPage from "./OnboardingPage";
 import SegmentSelection from "./SegmentSelection";
 import NBFCform from "./NBFCform";
-import BREConfig from "./BREConfig";
-
 import NotFound from "../NotFound";
 import ContactPage from "../Contact";
 import NbfcList from "./NbfcList";
@@ -55,15 +53,6 @@ const NBFCRoutes = () => {
           }
         /> */}
 
-        {/* BRE CONFIG */}
-        <Route
-          path="/nbfc/bre-config"
-          element={
-            <Layout>
-              <BREConfig />
-            </Layout>
-          }
-        />
         <Route
           path="/nbfc-list"
           element={

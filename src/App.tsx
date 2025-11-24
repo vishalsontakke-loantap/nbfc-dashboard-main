@@ -15,6 +15,7 @@ import DetailsView from "./components/DeatilsView";
 import PoolBatchView from "./components/PoolBatchView";
 import { RepaymentSchedule } from "./components/RepaymentSchedule";
 import LoanProductRoutes from "./components/LoanProduct/LoanProductRoutes";
+import BreRoutes from "./components/Bre/BreRoutes";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -35,7 +36,8 @@ function App() {
         <Route path="/reports/*" element={<ReportRoutes />} />
         <Route path="/help/*" element={<HelpRoutes />} />
         <Route path="/" element={<LoginPageWrapper />} />
-        <Route path="/loan-products" element={<LoanProductRoutes />} />
+        <Route path="/loan-products/*" element={<LoanProductRoutes />} />
+        <Route path="/bre" element={<BreRoutes />} />
        <Route
           path="/history/loan-applications/:batchId"
           element={
