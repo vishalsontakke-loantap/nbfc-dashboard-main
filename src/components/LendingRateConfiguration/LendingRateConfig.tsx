@@ -10,13 +10,14 @@ import { CircleCheck } from "lucide-react";
 import CardHeader from "../CardHeader";
 
 
-import { breConfigTabs, breConfigTabContent } from "@/lib/constants";
+import { breConfigTenorParams, LendingRateConfigTabs } from "@/lib/constants";
 import { useTabStore } from "@/lib/store/useTabStore"; // Zustand store
 import { SkeletonTableShimmer } from "../ui/skeleton-table";
-import BRETables from "./BRETables";
+import BRETables from "../Bre/BRETables";
 
 
-const BREConfig = () => {
+
+const LendingRateConfig = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const BREConfig = () => {
   const navigate = useNavigate();
 
   // Extract tab from hash (without the `#`)
-  const currentHash = location.hash.replace("#", "") || "bureau";
+  const currentHash = location.hash.replace("#", "") || "mclr";
   const [activeTab, setActiveTab] = useState(currentHash);
 
   // Get and update submittedTabs from Zustand store
@@ -39,7 +40,7 @@ const BREConfig = () => {
 
   // Sync active tab with hash
   useEffect(() => {
-    const hash = location.hash.replace("#", "") || "bureau";
+    const hash = location.hash.replace("#", "") || "mclr";
     setActiveTab(hash);
   }, [location.hash]);
 
@@ -54,19 +55,17 @@ const BREConfig = () => {
 
   return (
     <div className="flex flex-col space-y-4 p-5">
-      <CardHeader title="BRE Configuration" />
+      <CardHeader title="Lending Rate Configuration" />
       {loading ? (
         <Card className="w-[67rem] mt-40">
           <CardContent>
             <SkeletonTableShimmer rows={4} columns={3} />
           </CardContent>
         </Card>
-      ):(<Tabs
-          value={activeTab}
-          onValueChange={handleTabChange}
-        >
+      ) : (
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
           <TabsList>
-            {breConfigTabs.map((tab) => (
+            {LendingRateConfigTabs.map((tab) => (
               <TabsTrigger
                 className="bre-tabs"
                 value={tab.value}
@@ -81,21 +80,23 @@ const BREConfig = () => {
               </TabsTrigger>
             ))}
           </TabsList>
-
-          {breConfigTabContent.map((tab) => (
+          {LendingRateConfigTabs.map((tab) => (
             <TabsContent key={tab.value} value={tab.value}>
               <BRETables
-                title={tab.title}
-                subtitle={tab.subtitle}
-                navTo={tab.navTo}
-                paramsArr={tab.paramsArr}
-                onSubmit={() => handleFormSubmit(tab.value)} // Pass the submission callback
+                title={tab.name}
+                subtitle={tab.value === "mclr"
+                  ? "Configure tenor-wise MCLR rates and effective dates as per bank circulars."
+                  : "Configure RLLR rates and effective dates as per bank circulars."}
+                navTo={tab.value}
+                paramsArr={breConfigTenorParams}
+                onSubmit={() => handleFormSubmit(tab.value)}
               />
             </TabsContent>
           ))}
-        </Tabs>)}
+        </Tabs>
+      )}
     </div>
   );
 };
 
-export default BREConfig;
+export default LendingRateConfig;

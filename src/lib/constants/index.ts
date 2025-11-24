@@ -202,6 +202,11 @@ export const breConfigTabs = [
   { name: "6. Demographic", value: "demographic" },
 ];
 
+export const LendingRateConfigTabs = [
+  { name: "1. Marginal Cost of Funds based Lending Rate (MCLR)", value: "mclr" },
+  { name: "2. Repo Linked Lending Rate (RLLR)", value: "rllr" },
+ ]
+;
 export const breConfigTableHeaders = [
   {
     name: "Parameter",
@@ -258,6 +263,53 @@ export const breConfigBureauParams = [
   },
 ];
 
+export const lendingRateConfigTableHeaders = [
+  {
+    name: "Tenor",
+    key: "tenor",
+    icon: (import.meta as any).env ? `${(import.meta as any).env.BASE_URL.replace(/\/*$/, '/')}${'images/icons/bre_config_th_icon.svg'}` : "/images/icons/bre_config_th_icon.svg",
+  },
+  {
+    name: "Value",
+    key: "value",
+    icon: (import.meta as any).env ? `${(import.meta as any).env.BASE_URL.replace(/\/*$/, '/')}${'images/icons/bre_config_th_icon.svg'}` : "/images/icons/bre_config_th_icon.svg",
+  },
+  {
+    name: "Effective From",
+    key: "effectiveFrom",
+    icon: (import.meta as any).env ? `${(import.meta as any).env.BASE_URL.replace(/\/*$/, '/')}${'images/icons/bre_config_th_icon.svg'}` : "/images/icons/bre_config_th_icon.svg",
+  },
+];
+//lending rate config - bre params
+export const breConfigMclrParams = [
+  {
+    name: "Overnight",
+    key: "overnight",
+    subtitle: "1 Day",
+  },
+  {
+    name: "1 Month",
+    key: "oneMonth",
+    subtitle: "More than 1 Day to 1 Month",
+  },
+  {
+    name: "3 Month",
+    key: "threeMonth",
+    subtitle: "More than 1 Month to 3 Months",
+  },
+  {
+    name: "6 Month",
+    key: "sixMonth",
+    subtitle: "More than 3 Months to 6 Months",
+  },
+  {
+    name: "1 Year",
+    key: "oneYear",
+    subtitle: "More than 6 Months",
+  },
+ ];
+
+
 export const breConfigBankStatementParams = [
   {
     name: "Average Monthly Balance",
@@ -292,6 +344,39 @@ export const breConfigBankStatementParams = [
     key: "eodBalanceThreshold",
     subtitle: "Min EOD Balance",
     type: "money",
+  },
+];
+
+export const breConfigTenorParams = [
+  {
+    name: "Overnight",
+    key: "overnight",
+    subtitle: "1 Day",
+    type: "percentOrNumber", // value can be number or %
+  },
+  {
+    name: "1 Month",
+    key: "oneMonth",
+    subtitle: "More than 1 Day to 1 Month",
+    type: "percent",
+  },
+  {
+    name: "3 Month",
+    key: "threeMonth",
+    subtitle: "More than 1 Month to 3 Months",
+    type: "percent",
+  },
+  {
+    name: "6 Month",
+    key: "sixMonth",
+    subtitle: "More than 3 Months to 6 Months",
+    type: "percent",
+  },
+  {
+    name: "1 Year",
+    key: "oneYear",
+    subtitle: "More than 6 Months",
+    type: "percent",
   },
 ];
 

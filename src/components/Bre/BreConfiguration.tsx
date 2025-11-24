@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Tabs from "../components/Tabs";
-import ConfigForm from "../components/ConfigForm";
+import Tabs from "../Tabs";
+import ConfigForm from "../ConfigForm";
 
 const BreConfiguration: React.FC = () => {
   const [activeTab, setActiveTab] = useState(1);

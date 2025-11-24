@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import NBFCInfoCard from "../NBFC/NBFCInfoCard";
 import LoanCard from "../NBFC/LoanCard";
 import { NBFCInfoSkeleton, LoanCardSkeleton } from "@/components/ui/SkeletonLoader";
+import { useNavigate } from "react-router-dom";
 
 interface NBFCData {
   name: string;
@@ -78,6 +79,13 @@ const dummyData: LoanData = {
 
 export default function LoanProducts() {
   const [data, setData] = useState<LoanData | null>(null);
+  const navigate = useNavigate();
+
+  const addNewLoanProduct =()=>{
+    //functionality to add new loan product
+    navigate("/loan-products");
+  }
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -117,7 +125,7 @@ export default function LoanProducts() {
         ))}
       </div>
       <div className="flex justify-center mt-4">
-          <Button variant="blue">Add New Loan Product</Button>
+          <Button variant="blue" onClick={addNewLoanProduct}>Add New Loan Product</Button>
         </div>
     </div>
     </div>
