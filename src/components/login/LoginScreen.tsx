@@ -26,6 +26,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
 
   const refreshCaptcha = () => {
     // Refresh captcha logic would go here
+    
   };
 
   return (
