@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Shield, Building2, Users } from 'lucide-react';
+// import { Shield, Building2, Users } from 'lucide-react';
 import { assetPath } from '@/lib/utils';
 
 interface LoginProps {
@@ -10,33 +10,33 @@ interface LoginProps {
 }
 
 export function Login({ onLogin }: LoginProps) {
-  const [selectedUserType, setSelectedUserType] = useState<'SuperAdmin' | 'BankBranch' | 'NBFC'>('SuperAdmin');
+  const [selectedUserType] = useState<'SuperAdmin' | 'BankBranch' | 'NBFC'>('SuperAdmin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const userTypes = [
-    {
-      type: 'SuperAdmin' as const,
-      label: 'Bank HO (Super Admin)',
-      icon: Shield,
-      description: 'Full system access and administration',
-      defaultEmail: 'admin@bom.in',
-    },
-    {
-      type: 'BankBranch' as const,
-      label: 'Bank Branch User',
-      icon: Building2,
-      description: 'Branch-level operations and approvals',
-      defaultEmail: 'mahabranch@bom.in',
-    },
-    {
-      type: 'NBFC' as const,
-      label: 'NBFC Partner',
-      icon: Users,
-      description: 'Partner portal access',
-      defaultEmail: 'partner@muthoot.com',
-    },
-  ];
+  // const userTypes = [
+  //   {
+  //     type: 'SuperAdmin' as const,
+  //     label: 'Bank HO (Super Admin)',
+  //     icon: Shield,
+  //     description: 'Full system access and administration',
+  //     defaultEmail: 'admin@bom.in',
+  //   },
+  //   {
+  //     type: 'BankBranch' as const,
+  //     label: 'Bank Branch User',
+  //     icon: Building2,
+  //     description: 'Branch-level operations and approvals',
+  //     defaultEmail: 'mahabranch@bom.in',
+  //   },
+  //   {
+  //     type: 'NBFC' as const,
+  //     label: 'NBFC Partner',
+  //     icon: Users,
+  //     description: 'Partner portal access',
+  //     defaultEmail: 'partner@muthoot.com',
+  //   },
+  // ];
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

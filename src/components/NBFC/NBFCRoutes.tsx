@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "../Layout";
 import OnboardingPage from "./OnboardingPage";
-import SegmentSelection from "./SegmentSelection";
+// import SegmentSelection from "./SegmentSelection"; // Removed unused import
 import NBFCform from "./NBFCform";
 import NotFound from "../NotFound";
 import ContactPage from "../Contact";
