@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Shield, Smartphone, CheckCircle2, ArrowLeft } from 'lucide-react';
 
 // import bomLogo from 'figma:asset/8fb8b9c0deb45ee9f26fa8c75997f5fb7ba44f22.png';
@@ -11,6 +12,7 @@ interface TwoFactorAuthProps {
 }
 
 export default function TwoFactorAuth({ onBack }: TwoFactorAuthProps) {
+  const navigate = useNavigate();
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
@@ -46,7 +48,7 @@ export default function TwoFactorAuth({ onBack }: TwoFactorAuthProps) {
       setIsVerified(true);
       // Redirect or handle success
       setTimeout(() => {
-        alert('Login successful! Redirecting to dashboard...');
+        navigate('/overview/');
       }, 1500);
     }, 2000);
   };
