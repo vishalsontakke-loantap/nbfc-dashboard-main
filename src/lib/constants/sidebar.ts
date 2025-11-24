@@ -36,7 +36,7 @@ export const sidebar: SidebarItem[] = [
   },
    {
     to: "/rlr-config",
-    label: "RLR Configuration",
+    label: "Lending Rate Config",
     icon: withBase("/images/icons/nbfc_sidebar.svg"),
     match: ["/rlr-config"],
   },

@@ -60,9 +60,8 @@ export function Login({ onLogin }: LoginProps) {
             {/* Left Side - Branding */}
             <div className="text-center lg:text-left space-y-6">
               <img src={assetPath('/images/Bank_of_Maharashtra_logo.svg')} alt="Bank of Maharashtra" className="h-16 mx-auto lg:mx-0" />
-              <div>
+              {/* <div>
                 <h1 className="text-[#0B5FFF] mb-2">Pool Buyout Module</h1>
-                {/* <h2 className="text-foreground mb-4">CLM-I Middleware Platform</h2> */}
                 <p className="text-muted-foreground">
                   Unified platform for Bank and NBFC partners to collaborate on Pool Buyout operations with seamless application management, compliance, and reporting.
                 </p>
@@ -80,7 +79,7 @@ export function Login({ onLogin }: LoginProps) {
                   <h3 className="text-[#FFB020]">96%</h3>
                   <p className="text-muted-foreground">Collection Rate</p>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Right Side - Login Form */}
@@ -88,7 +87,7 @@ export function Login({ onLogin }: LoginProps) {
               <h2 className="mb-6 text-center">Sign In to Portal</h2>
 
               {/* User Type Selection */}
-              <div className="space-y-3 mb-6">
+              {/* <div className="space-y-3 mb-6">
                 <label className="block text-muted-foreground mb-2">Select User Type</label>
                 {userTypes.map((userType) => {
                   const Icon = userType.icon;
@@ -116,7 +115,7 @@ export function Login({ onLogin }: LoginProps) {
                     </button>
                   );
                 })}
-              </div>
+              </div> */}
 
               {/* Login Form */}
               <form onSubmit={handleLogin} className="space-y-4">

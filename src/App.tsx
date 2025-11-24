@@ -17,6 +17,7 @@ import { RepaymentSchedule } from "./components/RepaymentSchedule";
 import LoanProductRoutes from "./components/LoanProduct/LoanProductRoutes";
 import BreRoutes from "./components/Bre/BreRoutes";
 import LendingRateRoutes from "./components/LendingRateConfiguration/LendingRateRoute";
+import AuthScreens from "./components/login/AuthScreens";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -29,6 +30,7 @@ function App() {
     <>
       <Routes>
         {/*NBFC ROUTES */}
+         <Route path="/" element={<AuthScreens />} />
         <Route path="/overview/*" element={<OverviewRoutes />} />
         <Route path="/*" element={<NBFCRoutes />} />
         <Route path="/upload-pool-file/*" element={<UploadPoolFileRoutes />} />
