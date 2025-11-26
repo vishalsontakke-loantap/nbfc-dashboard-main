@@ -30,6 +30,7 @@ import CardHeadline from "../CardHeadline";
 import { rbiLisenceTypes} from "@/lib/constants";
 import { formatIndianNumber } from "@/lib/utils";
 import ProgressBar from "../ProgressBar";
+import { fileToBase64 } from "@/lib/Base64Convert";
 
 const fileSchema = z
   .instanceof(File, { message: "File is required" })
@@ -126,6 +127,7 @@ const formSchema = z.object({
 
 const NBFCform = () => {
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -133,6 +135,10 @@ const NBFCform = () => {
     }, 200);
     return () => clearTimeout(timer);
   }, []);
+
+  const toMySqlDate = (date: Date) => {
+    return date.toISOString().split("T")[0]; // YYYY-MM-DD
+  };
 
   const navigate = useNavigate();
 
@@ -160,23 +166,60 @@ const NBFCform = () => {
   });
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const authToken = import.meta.env.VITE_API_AUTH_TOKEN;
-  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
-    console.log("NBFC Form submitted with data:", data);
-    axios.post(`${apiBaseUrl}/create-partner`, data,{
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        })
-      .then((response) => {
-        console.log("Data successfully saved:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error saving data:", error);
-      });
-    // Add your processing logic here (e.g., API calls to save data).
-    navigate("/nbfc/product-config");
-  };
 
+const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
+  console.log("NBFC Form submitted with data:", data);
+   setIsSubmitting(true);
+
+  try {
+    // Convert all files to Base64 strings
+    const rbiRegCertificate = await fileToBase64(data.rbiRegCertificate);
+    const boardRes = await fileToBase64(data.boardRes);
+    const gstCertificate = await fileToBase64(data.gstCertificate);
+    const panAndTanDocs = await fileToBase64(data.panAndTanDocs);
+    const cancelledCheque = await fileToBase64(data.cancelledCheque);
+    const companyLogo = await fileToBase64(data.companyLogo);
+    const payload = {
+      nbfc_name: data.nbfc_name,
+      registration_number: data.registration_number,
+      rbi_license_type: data.rbi_license_type,
+      date_of_incorporation: toMySqlDate(data.date_of_incorporation),
+      business_limit: data.business_limit,
+      registered_address: data.registered_address,
+      contact_person: data.contact_person,
+      contact_email: data.contact_email,
+      phone_number: data.phone_number,
+      website_url: data.website_url || null,
+      business_unit_id: 1, // static for now
+      partner_id: 1, // static for now
+
+      documents: {
+        rbi_registration_certificate: rbiRegCertificate,
+        board_resolutions: boardRes,
+        gst_certificate: gstCertificate,
+        pan_tan: panAndTanDocs,
+        cancelled_cheque: cancelledCheque,
+        logo: companyLogo,
+      },
+    };
+    const response = await axios.post(
+      `${apiBaseUrl}/create-partner`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    navigate("/loan-products");
+
+  } catch (error) {
+    console.error("Error saving data:", error);
+  }finally {  
+    setIsSubmitting(false);
+  }
+};
   return (
     <div className="flex flex-col space-y-4 p-5">
       <CardHeader
@@ -918,8 +961,9 @@ const NBFCform = () => {
               <Button
                 className="p-5 text-lg rounded-sm bg-blue-500 hover:bg-blue-600 text-white flex"
                 type="submit"
+                disabled={isSubmitting} 
               >
-                Submit
+                {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </span>
           </form>
