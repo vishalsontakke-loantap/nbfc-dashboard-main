@@ -17,6 +17,7 @@ const pageSize = 5; // number of rows per page
 const nbfcData = [
     {
         name: "Muthoot Finance",
+        id: 1,
         new: true,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 2,
@@ -27,6 +28,7 @@ const nbfcData = [
     {
         name: "Capri Global Capital",
         new: false,
+        id: 2,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -36,6 +38,7 @@ const nbfcData = [
     {
         name: "Bajaj Finance Limited",
         new: false,
+        id: 3,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -45,6 +48,7 @@ const nbfcData = [
     {
         name: "Ugro Capital",
         new: false,
+        id: 4,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -54,6 +58,7 @@ const nbfcData = [
     {
         name: "Clix",
         new: false,
+        id: 5,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -63,6 +68,7 @@ const nbfcData = [
     {
         name: "AWS - Research",
         new: false,
+        id: 6,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -72,6 +78,7 @@ const nbfcData = [
     {
         name: "Azure Tenant",
         new: false,
+        id: 7,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -79,8 +86,9 @@ const nbfcData = [
         logo: assetPath("/images/azure.png"),
     },
     {
-        name: "Alibaba - testing",
+        name: "Alibaba - testing", 
         new: false,
+        id: 8,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -90,6 +98,7 @@ const nbfcData = [
     {
         name: "Alibaba - testing",
         new: false,
+        id: 9,  
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -99,6 +108,7 @@ const nbfcData = [
     {
         name: "Alibaba - testing",
         new: false,
+        id: 10,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -108,6 +118,7 @@ const nbfcData = [
     {
         name: "Alibaba - testing",
         new: false,
+        id: 11,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -117,6 +128,7 @@ const nbfcData = [
     {
         name: "Alibaba - testing",
         new: false,
+        id: 12,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -126,6 +138,7 @@ const nbfcData = [
     {
         name: "Alibaba - testing",
         new: false,
+        id: 13,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -135,6 +148,7 @@ const nbfcData = [
     {
         name: "Alibaba - testing",
         new: false,
+        id: 14,
         cin: "CIN: 65910K1J97PG1C01300",
         loanProducts: 7,
         business: 115,
@@ -280,7 +294,7 @@ const NbfcList: React.FC = () => {
                                             <td className="py-3 px-4 text-sm">
                                                
                                                 <Link
-                                                    to={`/nbfc-details`}
+                                                    to={`/nbfc/details/${nbfc.id}`}
                                                     className="text-[#0077c2] hover:underline flex items-center gap-1"
                                                 >
                                                     View details <img src="" alt="" />

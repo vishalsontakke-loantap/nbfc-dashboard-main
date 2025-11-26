@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import NBFCInfoCard from "../NBFC/NBFCInfoCard";
 import LoanCard from "../NBFC/LoanCard";
 import { NBFCInfoSkeleton, LoanCardSkeleton } from "@/components/ui/SkeletonLoader";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface NBFCData {
   name: string;
@@ -80,10 +80,11 @@ const dummyData: LoanData = {
 export default function LoanProducts() {
   const [data, setData] = useState<LoanData | null>(null);
   const navigate = useNavigate();
+  const { id } = useParams();
+  console.log("NBFC ID from params:", id);
 
   const addNewLoanProduct =()=>{
-    //functionality to add new loan product
-    navigate("/loan-products");
+    navigate(`/nbfc/product/${id}`);
   }
 
 

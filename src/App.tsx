@@ -42,7 +42,7 @@ function App() {
         <Route path="/reports/*" element={<ReportRoutes />} />
         <Route path="/help/*" element={<HelpRoutes />} />
         <Route path="/" element={<LoginPageWrapper />} />
-        <Route path="/loan-products/*" element={<LoanProductRoutes />} />
+        {/* <Route path="/loan-products/*" element={<LoanProductRoutes />} /> */}
         <Route path="/bre" element={<BreRoutes />} />
         <Route path="/roles-management/*" element={<UserRolesRoutes />} />
         <Route path="/rlr-config/*" element={<LendingRateRoutes />} />
