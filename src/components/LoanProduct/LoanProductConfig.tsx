@@ -89,10 +89,7 @@ const LoanProductConfig = () => {
               </TabsContent>
             ))}
           </Tabs>)}
-           
-      <div className="p-6">
-        <ProgressBar totalSteps={4} currentStep={4} stepName="Loan Product Configuration" />
-      </div>
+        
     </div>
   );
 };

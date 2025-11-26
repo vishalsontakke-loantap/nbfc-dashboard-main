@@ -18,6 +18,8 @@ import LoanProductRoutes from "./components/LoanProduct/LoanProductRoutes";
 import BreRoutes from "./components/Bre/BreRoutes";
 import LendingRateRoutes from "./components/LendingRateConfiguration/LendingRateRoute";
 import AuthScreens from "./components/login/AuthScreens";
+import ApiDocumentationRoutes from "./components/API-Documentation/ApiDocumentationRoutes";
+import UserRolesRoutes from "./components/Roles/UserRolesRoutes";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -35,12 +37,14 @@ function App() {
         <Route path="/*" element={<NBFCRoutes />} />
         <Route path="/upload-pool-file/*" element={<UploadPoolFileRoutes />} />
         <Route path="/history/*" element={<HistoryRoutes />} />
-        <Route path="/manager-user/*" element={<ManagerUserRoutes />} />
+        <Route path="/manage-user/*" element={<ManagerUserRoutes />} />
+        <Route path="/api-documentation/*" element={<ApiDocumentationRoutes />} />
         <Route path="/reports/*" element={<ReportRoutes />} />
         <Route path="/help/*" element={<HelpRoutes />} />
         <Route path="/" element={<LoginPageWrapper />} />
         <Route path="/loan-products/*" element={<LoanProductRoutes />} />
         <Route path="/bre" element={<BreRoutes />} />
+        <Route path="/roles-management/*" element={<UserRolesRoutes />} />
         <Route path="/rlr-config/*" element={<LendingRateRoutes />} />
        <Route
           path="/history/loan-applications/:batchId"
