@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Form,
@@ -138,6 +138,7 @@ const formSchema = z.object({
 const LoanProductConfig = () => {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { id } = useParams();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -209,6 +210,7 @@ const LoanProductConfig = () => {
       console.error("Error saving data:", error);
     } finally {
       setIsSubmitting(false);
+      navigate(`/nbfc/details/${id}`);
     }
   };
   return (
