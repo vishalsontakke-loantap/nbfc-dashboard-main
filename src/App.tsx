@@ -3,7 +3,7 @@ import "./App.css";
 
 import NBFCRoutes from "./components/NBFC/NBFCRoutes";
 import OverviewRoutes from "./components/Overview/OverviewRoutes";
-import HistoryRoutes from "./components/History/HistoryRoutes";
+import ApplicationRoutes from "./components/Application/ApplicationRoutes";
 import ManagerUserRoutes from "./components/Manager User/ManagerUserRoutes";
 import ReportRoutes from "./components/Reports/ReportRoutes";
 import HelpRoutes from "./components/Help/HelpRoutes";
@@ -20,6 +20,7 @@ import LendingRateRoutes from "./components/LendingRateConfiguration/LendingRate
 import AuthScreens from "./components/login/AuthScreens";
 import ApiDocumentationRoutes from "./components/API-Documentation/ApiDocumentationRoutes";
 import UserRolesRoutes from "./components/Roles/UserRolesRoutes";
+import PrivateRoutes from "./components/HOC/PrivateRoutes";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -31,22 +32,21 @@ function App() {
   return (
     <>
       <Routes>
-        {/*NBFC ROUTES */}
-         <Route path="/" element={<AuthScreens />} />
-        <Route path="/overview/*" element={<OverviewRoutes />} />
-        <Route path="/*" element={<NBFCRoutes />} />
-        <Route path="/upload-pool-file/*" element={<UploadPoolFileRoutes />} />
-        <Route path="/history/*" element={<HistoryRoutes />} />
-        <Route path="/manage-user/*" element={<ManagerUserRoutes />} />
-        <Route path="/api-documentation/*" element={<ApiDocumentationRoutes />} />
-        <Route path="/reports/*" element={<ReportRoutes />} />
-        <Route path="/help/*" element={<HelpRoutes />} />
+        <Route path="/" element={<AuthScreens />} />
+        <Route path="/overview/*" element={<PrivateRoutes><OverviewRoutes /></PrivateRoutes>} />
+        <Route path="/*" element={<PrivateRoutes><NBFCRoutes /></PrivateRoutes>} />
+        <Route path="/upload-pool-file/*" element={<PrivateRoutes><UploadPoolFileRoutes /></PrivateRoutes>} />
+        <Route path="/applications/*" element={<PrivateRoutes><ApplicationRoutes /></PrivateRoutes>} />
+        <Route path="/manage-user/*" element={<PrivateRoutes><ManagerUserRoutes /></PrivateRoutes>} />
+        <Route path="/api-documentation/*" element={<PrivateRoutes><ApiDocumentationRoutes /></PrivateRoutes>} />
+        <Route path="/reports/*" element={<PrivateRoutes><ReportRoutes /></PrivateRoutes>} />
+        <Route path="/help/*" element={<PrivateRoutes><HelpRoutes /></PrivateRoutes>} />
         <Route path="/" element={<LoginPageWrapper />} />
-        {/* <Route path="/loan-products/*" element={<LoanProductRoutes />} /> */}
-        <Route path="/bre" element={<BreRoutes />} />
-        <Route path="/roles-management/*" element={<UserRolesRoutes />} />
-        <Route path="/rlr-config/*" element={<LendingRateRoutes />} />
-       <Route
+        <Route path="/loan-products/*" element={<PrivateRoutes><LoanProductRoutes /></PrivateRoutes>} />
+        <Route path="/bre" element={<PrivateRoutes><BreRoutes /></PrivateRoutes>} />
+        <Route path="/roles-management/*" element={<PrivateRoutes><UserRolesRoutes /></PrivateRoutes>} />
+        <Route path="/rlr-config/*" element={<PrivateRoutes><LendingRateRoutes /></PrivateRoutes>} />
+        <Route
           path="/history/loan-applications/:batchId"
           element={
             <Layout>
@@ -54,15 +54,15 @@ function App() {
             </Layout>
           }
         />
-         <Route
-          path="/history/loan-applications/details"
+        <Route
+          path="/applications/:id"
           element={
             <Layout>
               <DetailsView />
             </Layout>
           }
         />
-         <Route
+        <Route
           path="/history/pool-batch/details"
           element={
             <Layout>

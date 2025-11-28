@@ -230,6 +230,12 @@ export const breConfigTabs = [
   { name: "6. Demographic", value: "demographic" },
 ];
 
+export const applicationsTabs = [
+  { name: "Pending", value: "pending" },
+  { name: "Approved", value: "approved" },
+  { name: "Rejected", value: "rejected" },
+];
+
 export const LendingRateConfigTabs = [
   { name: "1. Marginal Cost of Funds based Lending Rate (MCLR)", value: "mclr" },
   { name: "2. Repo Linked Lending Rate (RLLR)", value: "rllr" },
