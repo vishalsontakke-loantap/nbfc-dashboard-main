@@ -15,20 +15,28 @@ interface LoginScreenProps {
   setUserId: (value: string) => void;
   password: string;
   setPassword: (value: string) => void;
-  captcha: string;
-  setCaptcha: (value: string) => void;
+  // captcha: string;
+  // setCaptcha: (value: string) => void;
   showPassword: boolean;
   setShowPassword: (value: boolean) => void;
   rememberMe: boolean;
   setRememberMe: (value: boolean) => void;
 }
 
-export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId, setUserId, password, setPassword, captcha, setCaptcha, showPassword, setShowPassword, rememberMe, setRememberMe }: LoginScreenProps) {
-  const [captchaCode] = useState('7K9M3P');
+export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId, setUserId, password, setPassword, showPassword, setShowPassword, rememberMe, setRememberMe }: LoginScreenProps) {
+  // const [captchaCode] = useState('7K9M3P');
+  const [ captcha, setCaptcha] = useState('');
+  const [captchaCode, setCaptchaCode] = useState('');
   const [loginTrigger, loginResult] = useLoginMutation();
   const dispatch = useDispatch();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (captcha !== captchaCode) {
+      alert("Invalid CAPTCHA. Please try again.");
+      generateCaptcha(); // refresh automatically
+      return;
+    }
     const pf_no = userId.includes('@') ? 'email' : 'pf_no';
 
     if (!userId || !password || !captcha) return;
@@ -62,10 +70,28 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
     }
   }, [loginResult.isSuccess, loginResult.isError, loginResult.data, loginResult.error, dispatch, onLoginSubmit]);
 
-  const refreshCaptcha = () => {
-    // Refresh captcha logic would go here
+  // useEffect(() => {
+  //   loadCaptchaEnginge(6);
+  // }, []);
 
+
+  const generateCaptcha = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let result = "";
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setCaptchaCode(result);
   };
+
+  useEffect(() => {
+    generateCaptcha();
+  }, []);
+
+  const refreshCaptcha = () => {
+    generateCaptcha();
+  };
+
 
   return (
     <div className="min-h-screen flex">
