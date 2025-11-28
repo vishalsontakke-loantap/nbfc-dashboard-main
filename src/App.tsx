@@ -3,7 +3,7 @@ import "./App.css";
 
 import NBFCRoutes from "./components/NBFC/NBFCRoutes";
 import OverviewRoutes from "./components/Overview/OverviewRoutes";
-import HistoryRoutes from "./components/History/HistoryRoutes";
+import ApplicationRoutes from "./components/Application/ApplicationRoutes";
 import ManagerUserRoutes from "./components/Manager User/ManagerUserRoutes";
 import ReportRoutes from "./components/Reports/ReportRoutes";
 import HelpRoutes from "./components/Help/HelpRoutes";
@@ -36,7 +36,7 @@ function App() {
         <Route path="/overview/*" element={<PrivateRoutes><OverviewRoutes /></PrivateRoutes>} />
         <Route path="/*" element={<PrivateRoutes><NBFCRoutes /></PrivateRoutes>} />
         <Route path="/upload-pool-file/*" element={<PrivateRoutes><UploadPoolFileRoutes /></PrivateRoutes>} />
-        <Route path="/history/*" element={<PrivateRoutes><HistoryRoutes /></PrivateRoutes>} />
+        <Route path="/applications/*" element={<PrivateRoutes><ApplicationRoutes /></PrivateRoutes>} />
         <Route path="/manage-user/*" element={<PrivateRoutes><ManagerUserRoutes /></PrivateRoutes>} />
         <Route path="/api-documentation/*" element={<PrivateRoutes><ApiDocumentationRoutes /></PrivateRoutes>} />
         <Route path="/reports/*" element={<PrivateRoutes><ReportRoutes /></PrivateRoutes>} />
@@ -55,7 +55,7 @@ function App() {
           }
         />
         <Route
-          path="/history/loan-applications/details"
+          path="/applications/:id"
           element={
             <Layout>
               <DetailsView />

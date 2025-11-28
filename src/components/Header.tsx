@@ -1,77 +1,84 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { assetPath } from "@/lib/utils";
-import { ProfileModal } from "@/components/ProfileModal"; // <-- adjust path if needed
+import { Menu } from "lucide-react";
+import { useLogoutMutation } from "@/redux/features/auth/authApi";
 
 const Header: React.FC = () => {
-  const [isModalOpen, setModalOpen] = useState(true);
-  const [modalPosition, setModalPosition] = useState({ top: 0, right: 0 });
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [logoutTrigger] = useLogoutMutation();
 
-  const profileRef = useRef<HTMLButtonElement>(null);
-
-  // Sample User Data (replace with real authentication data)
-  const userData = {
-    name: "John Doe",
-    role: "Administrator",
-    employeeId: "EMP1234",
-    mobileNo: "+91 98765 43210",
-    lastLogin: "2025-02-01 10:24 AM",
-    profileImage: assetPath("/images/avatar/default-avatar.png"),
-  };
-
-  const handleProfileClick = () => {
-    if (profileRef.current) {
-      const rect = profileRef.current.getBoundingClientRect();
-
-      setModalPosition({
-        top: rect.bottom + 10, // space below icon
-        right: window.innerWidth - rect.right,
-      });
+  const handleLogout = async () => {
+    try {
+      await logoutTrigger();
     }
+    catch (err) {
+      console.error("Logout failed", err);
+    }
+  }
 
-    setModalOpen(true);
-  };
+  // Close menu on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-[0_2px_0_rgba(0,0,0,0.05)]">
       <div className="w-full">
-        <nav className="flex items-center justify-end py-3">
-          {/* Profile Section */}
-          <button
-            ref={profileRef}
-            onClick={handleProfileClick}
-            className="flex items-center space-x-3 focus:outline-none mr-6"
-          >
-            {/* Avatar */}
-            <img
-              src={userData.profileImage}
-              alt="User avatar"
-              className="w-10 h-10 rounded-full"
-            />
+        <nav className="flex items-center justify-between py-3">
+          {/* Left Navigation */}
+          <div>
+            <ul className="flex space-x-4">
+              <li>
+                <a
+                  href="#"
+                  className="flex items-center px-24 py-2 bg-blue-100 text-blue-600 rounded-full font-bold"
+                >
+                  Admin
+                </a>
+              </li>
+            </ul>
+          </div>
 
-            {/* Name */}
-            {/* <span className="font-semibold text-gray-700">{userData.name}</span> */}
-
-            {/* Dropdown Icon (optional visual only) */}
-            {/* <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
+          {/* RIGHT: Profile Menu */}
+          <div className="relative mr-6" ref={menuRef}>
+            <button
+              onClick={() => setOpen(!open)}
+              className="flex items-center space-x-2 focus:outline-none"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /> */}
-            {/* </svg> */}
-          </button>
+              <Menu className="w-6 h-6 text-gray-600 cursor-pointer" />
+            </button>
 
-          {/* Profile Modal */}
-          <ProfileModal
-            isOpen={isModalOpen}
-            onClose={() => setModalOpen(false)}
-            position={modalPosition}
-            userData={userData}
-            onResetPassword={() => alert("Reset Password")}
-            onLogout={() => alert("Logged Out")}
-          />
+            {/* Dropdown Menu */}
+            {open && (
+              <div className="absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2 animate-fade-in">
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Profile
+                </a>
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Settings
+                </a>
+                <button
+                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </nav>
       </div>
     </header>

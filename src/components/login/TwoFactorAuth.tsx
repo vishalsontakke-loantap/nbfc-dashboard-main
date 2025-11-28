@@ -8,6 +8,7 @@ import { setCredentials } from '@/redux/features/auth/authSlice';
 import { useDispatch } from 'react-redux';
 import { useValidateOTPMutation } from '@/redux/features/auth/authApi';
 import { getKey } from '@/utils/localStorage';
+import { toast } from 'sonner';
 
 interface TwoFactorAuthProps {
   onBack: () => void;
@@ -60,7 +61,6 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
         dispatch(
           setCredentials({
             user: res.user ?? { id: userId, name: res?.user?.name ?? '', email: res?.user?.email ?? '' },
-            accessToken: res?.token ?? res?.accessToken ?? '',
           })
         );
         setIsVerified(true);
@@ -73,6 +73,7 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
 
     if (otpResult.isError) {
       console.error('OTP validation error', otpResult.error);
+      toast.error((otpResult.error as any)?.data?.message || (otpResult.error as any)?.message || 'OTP validation failed');
       setIsVerifying(false);
     }
   }, [otpResult.isSuccess, otpResult.isError, otpResult.data, otpResult.error, dispatch, navigate, userId]);
@@ -119,7 +120,6 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
         dispatch(
           setCredentials({
             user: response.user ?? { id: userId, name: response?.user?.name ?? '', email: response?.user?.email ?? '' },
-            accessToken: response?.token ?? response?.accessToken ?? '',
           })
         );
         setIsVerified(true);

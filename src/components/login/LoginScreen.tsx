@@ -7,6 +7,7 @@ import { assetPath } from '@/lib/utils';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '@/redux/features/auth/authApi';
 import { setKey } from '@/utils/localStorage';
+import { toast } from 'sonner';
 
 interface LoginScreenProps {
   onLoginSubmit: () => void;
@@ -37,30 +38,39 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
       await loginTrigger({ pf_no: userId, password, login_with: pf_no }).unwrap();
       // the hook will update loginResult and cause a rerender -> useEffect will run
     } catch (err: any) {
-      console.error('login error', err);
+      console.error('login error', err.data.message);
+      toast.error(err.data.message);
       // optionally you can set local error state here
     }
   };
 
   // react to the mutation result
-  useEffect(() => {
-    if (loginResult.isSuccess) {
-      const response = loginResult.data;
-      // verify payload shape/flags from your API
-      if (response?.success) {
-        const otpRef = response?.otp_reference_id ?? '';
-        otpRef && setKey('otp_reference_id', otpRef);
-        onLoginSubmit();
-      } else {
-        console.log('Login returned success:false', response);
-      }
+useEffect(() => {
+  if (loginResult.isSuccess) {
+    const response = loginResult.data;
+    if (response?.success) {
+      const otpRef = response?.otp_reference_id ?? '';
+      otpRef && setKey('otp_reference_id', otpRef);
+      onLoginSubmit();
     }
+    // optionally reset success state if you want:
+    // loginResult.reset();
+  }
+}, [loginResult.isSuccess, loginResult.data]);
 
-    if (loginResult.isError) {
-      console.error('loginResult error', loginResult.error);
-      // show error toast
-    }
-  }, [loginResult.isSuccess, loginResult.isError, loginResult.data, loginResult.error, dispatch, onLoginSubmit]);
+useEffect(() => {
+  if (loginResult.isError) {
+    const errMsg =
+      (loginResult.error as any)?.data?.message ||
+      (loginResult.error as any)?.message ||
+      'Login failed';
+    toast.error(errMsg);
+    console.error('loginResult error', loginResult.error);
+
+    // Clear the error so it doesn't persist across renders
+    loginResult.reset();
+  }
+}, [loginResult.isError, loginResult.error]);
 
   const refreshCaptcha = () => {
     // Refresh captcha logic would go here
