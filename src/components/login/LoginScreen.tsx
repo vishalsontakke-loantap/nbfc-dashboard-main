@@ -34,7 +34,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
     e.preventDefault();
 
     if (captcha !== captchaCode) {
-      alert("Invalid CAPTCHA. Please try again.");
+      toast.error("Invalid CAPTCHA. Please try again.");
       generateCaptcha(); // refresh automatically
       return;
     }
