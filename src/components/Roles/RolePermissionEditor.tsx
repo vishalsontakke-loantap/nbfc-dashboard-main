@@ -151,7 +151,7 @@ export function RolePermissionEditor({
       toast.error('Please add at least one module permission');
       return;
     }
-
+    
     setLoading(true);
 
     setTimeout(() => {
@@ -164,7 +164,7 @@ export function RolePermissionEditor({
         createdAt: role?.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-
+console.log(JSON.stringify(updatedRole));
       onSave(updatedRole);
       setLoading(false);
       onClose();

@@ -1,29 +1,66 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Lock, User, RefreshCw, Eye, EyeOff, Shield } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { assetPath } from '@/lib/utils';
+import { useDispatch } from 'react-redux';
+import { useLoginMutation } from '@/redux/features/auth/authApi';
+import { setKey } from '@/utils/localStorage';
 
 interface LoginScreenProps {
   onLoginSubmit: () => void;
   onForgotCredentials: () => void;
+  userId: string;
+  setUserId: (value: string) => void;
+  password: string;
+  setPassword: (value: string) => void;
+  captcha: string;
+  setCaptcha: (value: string) => void;
+  showPassword: boolean;
+  setShowPassword: (value: boolean) => void;
+  rememberMe: boolean;
+  setRememberMe: (value: boolean) => void;
 }
 
-export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: LoginScreenProps) {
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
-  const [captcha, setCaptcha] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId, setUserId, password, setPassword, captcha, setCaptcha, showPassword, setShowPassword, rememberMe, setRememberMe }: LoginScreenProps) {
   const [captchaCode] = useState('7K9M3P');
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loginTrigger, loginResult] = useLoginMutation();
+  const dispatch = useDispatch();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (userId && password && captcha) {
-      onLoginSubmit();
+    const pf_no = userId.includes('@') ? 'email' : 'pf_no';
+
+    if (!userId || !password || !captcha) return;
+    try {
+      // call trigger (don't try to inspect loginResult here)
+      await loginTrigger({ pf_no: userId, password, login_with: pf_no }).unwrap();
+      // the hook will update loginResult and cause a rerender -> useEffect will run
+    } catch (err: any) {
+      console.error('login error', err);
+      // optionally you can set local error state here
     }
   };
+
+  // react to the mutation result
+  useEffect(() => {
+    if (loginResult.isSuccess) {
+      const response = loginResult.data;
+      // verify payload shape/flags from your API
+      if (response?.success) {
+        const otpRef = response?.otp_reference_id ?? '';
+        otpRef && setKey('otp_reference_id', otpRef);
+        onLoginSubmit();
+      } else {
+        console.log('Login returned success:false', response);
+      }
+    }
+
+    if (loginResult.isError) {
+      console.error('loginResult error', loginResult.error);
+      // show error toast
+    }
+  }, [loginResult.isSuccess, loginResult.isError, loginResult.data, loginResult.error, dispatch, onLoginSubmit]);
 
   const refreshCaptcha = () => {
     // Refresh captcha logic would go here
@@ -37,9 +74,9 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
         <div className="w-full max-w-md">
           {/* Logo and Header */}
           <div className="mb-8 text-center">
-            <img 
-              src={assetPath("/loaders/bom.png")} 
-              alt="Bank of Maharashtra" 
+            <img
+              src={assetPath("/loaders/bom.png")}
+              alt="Bank of Maharashtra"
               className="h-16 mx-auto mb-6"
             />
             {/* <h1 className="mb-2" style={{ color: '#1B4E9B' }}>
@@ -108,9 +145,9 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
                   Verify you are not a robot
                 </label>
                 <div className="flex gap-3 mb-3">
-                  <div 
+                  <div
                     className="flex-1 h-12 rounded-xl flex items-center justify-center tracking-widest select-none"
-                    style={{ 
+                    style={{
                       background: 'linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%)',
                       border: '2px solid #ddd',
                       fontFamily: 'monospace',
@@ -155,12 +192,12 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
                     Remember Me
                   </label>
                 </div>
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className="text-[#00ADEF] hover:text-[#1B4E9B] transition-colors"
                   onClick={(e) => {
                     e.preventDefault();
-                    onForgotCredentials();
+                    console.log('Forgot credentials clicked');
                   }}
                 >
                   Forgot User ID / Password?
@@ -171,9 +208,9 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
               <Button
                 type="submit"
                 className="w-full h-12 rounded-xl text-white hover:bg-[#1B4E9B] bg-[#00ADEF]"
-                // style={{ 
-                //   background: 'linear-gradient(135deg, #1B4E9B 0%, #00ADEF 100%)'
-                // }}
+              // style={{ 
+              //   background: 'linear-gradient(135deg, #1B4E9B 0%, #00ADEF 100%)'
+              // }}
               >
                 <Lock className="w-5 h-5 mr-2" />
                 Login Securely
@@ -197,14 +234,14 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials }: Logi
       </div>
 
       {/* Right Panel - Illustration */}
-      <div 
+      <div
         className="hidden lg:flex flex-1 items-center justify-center p-8"
         style={{ backgroundColor: '#1B4E9B' }}
       >
         <div className="max-w-lg">
-          <img 
-            src={assetPath("/loaders/login.gif")} 
-            alt="Security Illustration" 
+          <img
+            src={assetPath("/loaders/login.gif")}
+            alt="Security Illustration"
             className="w-full h-auto"
           />
           <div className="text-center mt-8 text-white">
