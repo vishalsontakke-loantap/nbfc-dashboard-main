@@ -35,8 +35,8 @@ export default function AuthScreens() {
           setUserId={setUserId}
           password={password}
           setPassword={setPassword}
-          captcha={captcha}
-          setCaptcha={setCaptcha}
+          // captcha={captcha}
+          // setCaptcha={setCaptcha}
           showPassword={showPassword}
           setShowPassword={setShowPassword}
           rememberMe={rememberMe}
