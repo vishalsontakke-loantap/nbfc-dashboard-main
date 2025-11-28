@@ -66,7 +66,7 @@ const Dashboard = () => {
   };
   return (
     <div className="">
-      <Card className="scale-95 w-full h-full flex flex-col">
+      <Card className="scale-95 w-full h-full flex flex-col p-6">
         {/* Section Title */}
         {/* <CardHeadline title="Dashboard Overview" /> */}
 
@@ -231,7 +231,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Recent Activity */}
-          <Card className="p-6">
+          {/* <Card className="p-6">
             <h3 className="mb-4 font-semibold">Recent Activity</h3>
             <div className="space-y-4">
               {[
@@ -272,7 +272,7 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
-          </Card>
+          </Card> */}
 
           {/* Decorative Segment */}
           {/* <SegmentsCard

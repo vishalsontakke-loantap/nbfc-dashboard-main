@@ -81,7 +81,7 @@ export default function LoanProducts() {
   const [data, setData] = useState<LoanData | null>(null);
   const navigate = useNavigate();
 
-  const addNewLoanProduct =()=>{
+  const addNewLoanProduct = () => {
     //functionality to add new loan product
     navigate("/loan-products");
   }
@@ -117,17 +117,22 @@ export default function LoanProducts() {
       <NBFCInfoCard nbfc={data.nbfc} />
 
       {/* Loan Products */}
-      <div className=" bg-white mb-6 p-6 shadow">
-
-      <div className="grid md:grid-cols-2 gap-6">
-        {data.products.map((product) => (
-          <LoanCard key={product.id} product={product} />
-        ))}
-      </div>
-      <div className="flex justify-center mt-4">
-          <Button variant="blue" onClick={addNewLoanProduct}>Add New Loan Product</Button>
+      <div className="bg-white mb-6 p-6 shadow">
+        <div className="grid md:grid-cols-2 gap-6">
+          {data.products.map((product) => (
+            <div key={product.id} className="h-full">
+              <LoanCard product={product} />
+            </div>
+          ))}
         </div>
-    </div>
+
+        <div className="flex justify-center mt-4">
+          <Button variant="blue" onClick={addNewLoanProduct}>
+            Add New Loan Product
+          </Button>
+        </div>
+      </div>
+
     </div>
 
   );

@@ -115,7 +115,7 @@ export function RoleManagementScreen({
 
       <div className="grid grid-cols-3 gap-6">
         {/* Roles List */}
-        <Card>
+        <Card className='px-6'>
           <CardHeader>
             <CardTitle>Roles</CardTitle>
             <CardDescription>Select a role to view permissions</CardDescription>
@@ -189,7 +189,7 @@ export function RoleManagementScreen({
         </Card>
 
         {/* Permissions Matrix */}
-        <Card className="col-span-2">
+        <Card className="col-span-2 px-6">
           <CardHeader>
             <CardTitle>Permission Matrix</CardTitle>
             <CardDescription>

@@ -162,8 +162,8 @@ const NbfcList: React.FC = () => {
     };
 
     return (
-        <div className="bg-[#eaf6ff] min-h-screen p-6">
-            <div className="max-w-6xl mx-auto">
+        <div className=" min-h-screen p-6">
+            <div>
                 <div className="flex justify-between items-center mb-2">
                     <div>
                         <h2 className="text-2xl font-semibold">List of Onboarded NBFC</h2>
@@ -293,7 +293,7 @@ const NbfcList: React.FC = () => {
                         </div>
 
                         {/* Pagination */}
-                        <div className="flex justify-end mt-4">
+                        <div className="flex justify-end mt-4 mr-2">
                             <Pagination>
                                 <PaginationContent>
                                     {/* Previous */}

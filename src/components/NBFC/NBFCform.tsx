@@ -31,6 +31,7 @@ import { rbiLisenceTypes} from "@/lib/constants";
 import { formatIndianNumber } from "@/lib/utils";
 import ProgressBar from "../ProgressBar";
 import { fileToBase64 } from "@/lib/Base64Convert";
+import { tr } from "zod/v4/locales";
 
 const fileSchema = z
   .instanceof(File, { message: "File is required" })
@@ -131,7 +132,7 @@ const NBFCform = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false);
+      setLoading(true);
     }, 200);
     return () => clearTimeout(timer);
   }, []);
@@ -228,8 +229,8 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
       />
 
       {loading ? (
-        <div className="container py-10 mx-auto">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex flex-col space-y-4 p-5">
+          <div className="mx-auto">
             <MultiSectionForm
               sections={formSkeletons}
               inputColumns={3}
