@@ -14,7 +14,6 @@ createRoot(document.getElementById("root")!).render(
       <AuthInitializer>
       <Router basename={import.meta.env.BASE_URL}>
         <App />
-        {/* <Analytics /> */}
         <Toaster />
       </Router>
       </AuthInitializer>

@@ -40,12 +40,12 @@ export const sidebar: SidebarItem[] = [
     icon: withBase("/images/icons/upload_pool_file_sidebar.svg"),
     match: ["/upload-pool-file"],
   },
-  // {
-  //   to: "/history",
-  //   label: "History",
-  //   icon: withBase("/images/icons/history_sidebar.svg"),
-  //   match: ["/history"],
-  // },
+  {
+    to: "/applications",
+    label: "Applications",
+    icon: withBase("/images/icons/history_sidebar.svg"),
+    match: ["/applications"],
+  },
   {
     to: "/manage-user",
     label: "User Managaement",

@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "../Layout";
-import History from "./History";
+import Applications from "./Application";
 import NotFound from "../NotFound";
 
-const HistoryRoutes = () => {
+const ApplicationRoutes = () => {
   return (
     <>
       <Routes>
@@ -11,7 +11,7 @@ const HistoryRoutes = () => {
           path=""
           element={
             <Layout>
-              <History />
+              <Applications />
             </Layout>
           }
         />
@@ -23,4 +23,4 @@ const HistoryRoutes = () => {
   );
 };
 
-export default HistoryRoutes;
+export default ApplicationRoutes;

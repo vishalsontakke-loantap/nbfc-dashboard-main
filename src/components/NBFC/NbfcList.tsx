@@ -176,7 +176,7 @@ const NbfcList: React.FC = () => {
                         Add New NBFC
                     </button>
                 </div>
-                <Card className="w-full">
+                <Card className="w-full p-2">
                     <CardContent>
                         {/* Filters */}
                         <div className="flex items-center justify-between mb-4 bg-gray-100 p-2 rounded">
