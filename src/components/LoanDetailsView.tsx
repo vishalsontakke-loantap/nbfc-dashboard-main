@@ -109,11 +109,11 @@ const paymentHistoryData = [
 //   },
 // ];
 
-export default function DetailsView() {
+export default function LoanDetailsView() {
   const [currentStatus] = useState(loanApplication.status);
   const navigate = useNavigate();
   const repaymentView = () => {
-    navigate("/history/payment-details");
+    navigate(`/loans/repayment/${loanApplication.applicationId}`);
   };
   // const getStatusColor = (status: string) => {
   //   switch (status) {
@@ -220,7 +220,7 @@ export default function DetailsView() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content - Left Side */}
           <div className="lg:col-span-2 space-y-6 ">
             {/* Applicant Overview Card */}
@@ -587,7 +587,7 @@ export default function DetailsView() {
               </Card> */}
 
               {/* Action Buttons */}
-              {/* <Card className="shadow-md rounded-2xl border-0 p-2">
+               <Card className="shadow-md rounded-2xl border-0 p-2">
                 <CardTitle className='ml-2'>Actions</CardTitle>
                 <CardContent className="space-y-3">
                   <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
@@ -604,7 +604,7 @@ export default function DetailsView() {
                     Download Report
                   </Button>
                 </CardContent>
-              </Card> */}
+              </Card> 
             </div>
           </div>
         </div>

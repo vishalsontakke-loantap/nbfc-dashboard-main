@@ -21,6 +21,8 @@ import AuthScreens from "./components/login/AuthScreens";
 import ApiDocumentationRoutes from "./components/API-Documentation/ApiDocumentationRoutes";
 import UserRolesRoutes from "./components/Roles/UserRolesRoutes";
 import PrivateRoutes from "./components/HOC/PrivateRoutes";
+import LoanAccountRoutes from "./components/LoanAccount/LoanAccountRoutes";
+import LoanDetailsView from "./components/LoanDetailsView";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -37,6 +39,7 @@ function App() {
         <Route path="/*" element={<PrivateRoutes><NBFCRoutes /></PrivateRoutes>} />
         <Route path="/upload-pool-file/*" element={<PrivateRoutes><UploadPoolFileRoutes /></PrivateRoutes>} />
         <Route path="/applications/*" element={<PrivateRoutes><ApplicationRoutes /></PrivateRoutes>} />
+        <Route path="/loans/*" element={<PrivateRoutes><LoanAccountRoutes /></PrivateRoutes>} />
         <Route path="/manage-user/*" element={<PrivateRoutes><ManagerUserRoutes /></PrivateRoutes>} />
         <Route path="/api-documentation/*" element={<PrivateRoutes><ApiDocumentationRoutes /></PrivateRoutes>} />
         <Route path="/reports/*" element={<PrivateRoutes><ReportRoutes /></PrivateRoutes>} />
@@ -62,6 +65,14 @@ function App() {
           }
         />
         <Route
+          path="/loans/:id"
+          element={
+            <Layout>
+              <LoanDetailsView />
+            </Layout>
+          }
+        />
+        <Route
           path="/history/pool-batch/details"
           element={
             <Layout>
@@ -71,7 +82,7 @@ function App() {
         />
 
         <Route
-          path="/history/payment-details"
+          path="/loans/repayment/:id"
           element={
             <Layout>
               <RepaymentSchedule />
