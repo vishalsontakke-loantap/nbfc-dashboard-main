@@ -231,9 +231,9 @@ export const breConfigTabs = [
 ];
 
 export const applicationsTabs = [
-  { name: "1. Pending", value: "pending" },
-  { name: "2. Approved", value: "approved" },
-  { name: "3. Rejected", value: "rejected" },
+  { name: "Pending", value: "pending" },
+  { name: "Approved", value: "approved" },
+  { name: "Rejected", value: "rejected" },
 ];
 
 export const LendingRateConfigTabs = [
