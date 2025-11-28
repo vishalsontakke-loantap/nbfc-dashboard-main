@@ -9,14 +9,11 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
     const [trigger, { data, isSuccess, isError }] = useLazyGetCurrentUserQuery();
     useEffect(() => {
         // call backend to confirm cookie/session and get user
-        console.log('1')
         trigger();
     }, [trigger]);
 
     useEffect(() => {
-        console.log('data',data)
         if (isSuccess && data && data?.success) {
-            console.log('2',isSuccess, data)
             dispatch(setCredentials({
                 user: data?.data || null,
             }));

@@ -23,12 +23,6 @@ export const sidebar: SidebarItem[] = [
     match: ["/nbfc"],
   },
   {
-    to: "/loan-products",
-    label: "Loan Products",
-    icon: withBase("/images/icons/nbfc_sidebar.svg"),
-    match: ["/loan-products"],
-  },
-  {
     to: "/bre",
     label: "BRE",
     icon: withBase("/images/icons/nbfc_sidebar.svg"),

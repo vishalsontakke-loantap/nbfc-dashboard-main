@@ -26,12 +26,10 @@ import MultiSectionForm from "@/components/ui/MultiSectionForm";
 import { formSkeletons } from "@/lib/constants";
 import CardHeader from "../CardHeader";
 import CardHeadline from "../CardHeadline";
-
 import { rbiLisenceTypes} from "@/lib/constants";
 import { formatIndianNumber } from "@/lib/utils";
 import ProgressBar from "../ProgressBar";
 import { fileToBase64 } from "@/lib/Base64Convert";
-import { tr } from "zod/v4/locales";
 
 const fileSchema = z
   .instanceof(File, { message: "File is required" })

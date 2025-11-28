@@ -3,6 +3,8 @@ import LoadingScreen from './LoadingScreen';
 import LoginScreen from './LoginScreen';
 import TwoFactorAuth from './TwoFactorAuth';
 import ForgotCredentials from './ForgotCredentials';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 type Screen = 'loading' | 'login' | '2fa' | 'forgot';
 
@@ -10,15 +12,24 @@ export default function AuthScreens() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('loading');
   const [userId, setUserId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [captcha, setCaptcha] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(true);
+  const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state: any) => state.auth);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setCurrentScreen('login');
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/overview");
+      return;
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLoginSubmit = () => setCurrentScreen('2fa');
   const handleBackToLogin = () => setCurrentScreen('login');

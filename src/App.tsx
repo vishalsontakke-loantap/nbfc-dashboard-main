@@ -42,7 +42,6 @@ function App() {
         <Route path="/reports/*" element={<PrivateRoutes><ReportRoutes /></PrivateRoutes>} />
         <Route path="/help/*" element={<PrivateRoutes><HelpRoutes /></PrivateRoutes>} />
         <Route path="/" element={<LoginPageWrapper />} />
-        <Route path="/loan-products/*" element={<PrivateRoutes><LoanProductRoutes /></PrivateRoutes>} />
         <Route path="/bre" element={<PrivateRoutes><BreRoutes /></PrivateRoutes>} />
         <Route path="/roles-management/*" element={<PrivateRoutes><UserRolesRoutes /></PrivateRoutes>} />
         <Route path="/rlr-config/*" element={<PrivateRoutes><LendingRateRoutes /></PrivateRoutes>} />

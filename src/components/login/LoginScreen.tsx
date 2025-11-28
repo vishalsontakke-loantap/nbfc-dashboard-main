@@ -26,10 +26,9 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId, setUserId, password, setPassword, showPassword, setShowPassword, rememberMe, setRememberMe }: LoginScreenProps) {
   // const [captchaCode] = useState('7K9M3P');
-  const [ captcha, setCaptcha] = useState('');
+  const [captcha, setCaptcha] = useState('');
   const [captchaCode, setCaptchaCode] = useState('');
   const [loginTrigger, loginResult] = useLoginMutation();
-  const dispatch = useDispatch();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -53,32 +52,32 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
   };
 
   // react to the mutation result
-useEffect(() => {
-  if (loginResult.isSuccess) {
-    const response = loginResult.data;
-    if (response?.success) {
-      const otpRef = response?.otp_reference_id ?? '';
-      otpRef && setKey('otp_reference_id', otpRef);
-      onLoginSubmit();
+  useEffect(() => {
+    if (loginResult.isSuccess) {
+      const response = loginResult.data;
+      if (response?.success) {
+        const otpRef = response?.otp_reference_id ?? '';
+        otpRef && setKey('otp_reference_id', otpRef);
+        onLoginSubmit();
+      }
+      // optionally reset success state if you want:
+      // loginResult.reset();
     }
-    // optionally reset success state if you want:
-    // loginResult.reset();
-  }
-}, [loginResult.isSuccess, loginResult.data]);
+  }, [loginResult.isSuccess, loginResult.data]);
 
-useEffect(() => {
-  if (loginResult.isError) {
-    const errMsg =
-      (loginResult.error as any)?.data?.message ||
-      (loginResult.error as any)?.message ||
-      'Login failed';
-    toast.error(errMsg);
-    console.error('loginResult error', loginResult.error);
+  useEffect(() => {
+    if (loginResult.isError) {
+      const errMsg =
+        (loginResult.error as any)?.data?.message ||
+        (loginResult.error as any)?.message ||
+        'Login failed';
+      toast.error(errMsg);
+      console.error('loginResult error', loginResult.error);
 
-    // Clear the error so it doesn't persist across renders
-    loginResult.reset();
-  }
-}, [loginResult.isError, loginResult.error]);
+      // Clear the error so it doesn't persist across renders
+      loginResult.reset();
+    }
+  }, [loginResult.isError, loginResult.error]);
 
   // useEffect(() => {
   //   loadCaptchaEnginge(6);
