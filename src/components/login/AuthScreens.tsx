@@ -16,7 +16,8 @@ export default function AuthScreens() {
   const [rememberMe, setRememberMe] = useState<boolean>(true);
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state: any) => state.auth);
-
+  const userData = useSelector(store=>store.auth.user);
+  console.log('USERDATA', userData);
   useEffect(() => {
     const timer = setTimeout(() => {
       setCurrentScreen('login');
