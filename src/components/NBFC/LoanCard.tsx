@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface LoanProduct {
   number: number;
@@ -18,6 +19,11 @@ interface LoanProduct {
 }
 
 const LoanProductCard: React.FC<{ product: LoanProduct }> = ({ product }) => {
+
+  const navigate = useNavigate();
+  const breNav = () => {
+    navigate(`/nbfc/product-bre/${product.number}`);
+  } 
   return (
     <Card className="rounded-2xl shadow-md w-full max-w-lg py-0">
       <CardContent className="p-4">
@@ -81,7 +87,9 @@ const LoanProductCard: React.FC<{ product: LoanProduct }> = ({ product }) => {
 
         {/* Footer */}
         <div className="flex justify-between items-center mt-4">
-          <p className="text-xs text-gray-500">🔗 BRE Linked</p>
+           <Button variant="blue"  onClick={breNav}>
+              BRE
+            </Button>
           <div className="flex gap-2">
             <Button variant="outline" disabled>
               View
