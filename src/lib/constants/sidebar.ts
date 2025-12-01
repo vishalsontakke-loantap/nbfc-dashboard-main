@@ -23,28 +23,28 @@ export const sidebar: SidebarItem[] = [
     match: ["/nbfc"],
   },
   {
-    to: "/loan-products",
-    label: "Loan Products",
-    icon: withBase("/images/icons/nbfc_sidebar.svg"),
-    match: ["/loan-products"],
-  },
-  {
     to: "/bre",
     label: "BRE",
     icon: withBase("/images/icons/nbfc_sidebar.svg"),
     match: ["/bre"],
   },
-  {
-    to: "/upload-pool-file",
-    label: "Upload Pool File",
-    icon: withBase("/images/icons/upload_pool_file_sidebar.svg"),
-    match: ["/upload-pool-file"],
-  },
+  // {
+  //   to: "/upload-pool-file",
+  //   label: "Upload Pool File",
+  //   icon: withBase("/images/icons/upload_pool_file_sidebar.svg"),
+  //   match: ["/upload-pool-file"],
+  // },
   {
     to: "/applications",
     label: "Applications",
     icon: withBase("/images/icons/history_sidebar.svg"),
     match: ["/applications"],
+  },
+  {
+    to: "/loans",
+    label: "Loans",
+    icon: withBase("/images/icons/history_sidebar.svg"),
+    match: ["/loans"],
   },
   {
     to: "/manage-user",

@@ -10,15 +10,14 @@ import { CircleCheck } from "lucide-react";
 import CardHeader from "../CardHeader";
 
 
-import { breConfigTabs, breConfigTabContent, applicationsTabs } from "@/lib/constants";
+import { accountsTabs } from "@/lib/constants";
 import { useTabStore } from "@/lib/store/useTabStore"; // Zustand store
 import { SkeletonTableShimmer } from "../ui/skeleton-table";
-import PendingApplication from "../Application/PendingApplications";
-import RejectedApplication from "../Application/RejectedApplications";
-import ApprovedApplication from "../Application/ApprovedApplications";
+import ActiveAccount from "./ActiveAccounts";
+import ClosedAccount from "./ClosedAccount";
 
 
-const Application = () => {
+const LoanAccount = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,7 +40,7 @@ const Application = () => {
 
   // Sync active tab with hash
   useEffect(() => {
-    const hash = location.hash.replace("#", "") || "pending";
+    const hash = location.hash.replace("#", "") || "active";
     setActiveTab(hash);
   }, [location.hash]);
 
@@ -56,7 +55,7 @@ const Application = () => {
 
   return (
     <div className="flex flex-col space-y-4 p-5">
-      <CardHeader title="BRE Configuration" />
+      <CardHeader title="Loan Accounts" />
       {loading ? (
         <Card className=" mt-40">
           <CardContent>
@@ -68,7 +67,7 @@ const Application = () => {
           onValueChange={handleTabChange}
         >
           <TabsList>
-            {applicationsTabs.map((tab) => (
+            {accountsTabs.map((tab) => (
               <TabsTrigger
                 className="bre-tabs"
                 value={tab.value}
@@ -83,18 +82,15 @@ const Application = () => {
               </TabsTrigger>
             ))}
           </TabsList>
-            <TabsContent value={'pending'}>
-              <PendingApplication/>
+            <TabsContent value={'active'}>
+              <ActiveAccount/>
             </TabsContent>
-            <TabsContent value={'rejected'}>
-              <RejectedApplication/>
-            </TabsContent>
-            <TabsContent value={'approved'}>
-              <ApprovedApplication/>
+            <TabsContent value={'closed'}>
+              <ClosedAccount/>
             </TabsContent>
         </Tabs>)}
     </div>
   );
 };
 
-export default Application;
+export default LoanAccount;

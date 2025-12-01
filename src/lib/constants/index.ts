@@ -236,6 +236,11 @@ export const applicationsTabs = [
   { name: "Rejected", value: "rejected" },
 ];
 
+export const accountsTabs = [
+  { name: "Active", value: "active" },
+  { name: "Closed", value: "closed" },
+]
+
 export const LendingRateConfigTabs = [
   { name: "1. Marginal Cost of Funds based Lending Rate (MCLR)", value: "mclr" },
   { name: "2. Repo Linked Lending Rate (RLLR)", value: "rllr" },
