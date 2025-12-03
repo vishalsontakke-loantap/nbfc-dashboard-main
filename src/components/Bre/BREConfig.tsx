@@ -32,7 +32,7 @@ const BREConfig = () => {
 
   // ⬇ Read from Redux
   const breData = useSelector((state: RootState) => state.bre.data);
-
+  // console.log("BRE Data from Redux:", breData);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -106,10 +106,12 @@ const BREConfig = () => {
 
         {breConfigTabContent.map((tab) => {
           const paramsArr = mappedParamsByTab[tab.value] || [];
+          console.log(`Params for tab ${tab.value}:`, paramsArr);
           return (
             <TabsContent key={tab.value} value={tab.value}>
               <BRETables
                 title={tab.title}
+                value={tab.value}
                 subtitle={tab.subtitle}
                 navTo={tab.navTo}
                 paramsArr={paramsArr}

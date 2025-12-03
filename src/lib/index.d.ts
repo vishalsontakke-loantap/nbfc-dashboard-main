@@ -19,6 +19,7 @@ declare interface CardHeaderProps {
 
 declare interface BRETablesProps {
   title: string;
+  value: string;
   subtitle: string;
   navTo: string;
   paramsArr: any[];

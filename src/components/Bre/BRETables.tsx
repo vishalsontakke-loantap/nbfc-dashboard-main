@@ -19,10 +19,11 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 import CardHeader from "../CardHeader";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { breConfigTableHeaders } from "@/lib/constants";
 import { clampPercentage, formatIndianNumber } from "@/lib/utils";
+import { useUpdateBreMutation } from "@/redux/features/bre/breApi";
 
 
 const rowSchema = z.object({
@@ -38,6 +39,7 @@ const formSchema = z.object({
 
 const BRETables: React.FC<BRETablesProps> = ({
   title,
+  value,
   subtitle,
   navTo,
   paramsArr,
@@ -45,6 +47,12 @@ const BRETables: React.FC<BRETablesProps> = ({
 }) => {
   const headerRef = useRef<CardHeaderHandle>(null);
   const navigate = useNavigate();
+  const {id} = useParams();
+  const [updateBre, { isLoading, isSuccess, isError }] = useUpdateBreMutation();
+  
+  // console.log("BRE TABLE VALUE", value);
+
+  console.log("BRE TABLE PARAMS ARR", paramsArr);
   // console.log("PARAMS ARR", paramsArr);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,33 +71,37 @@ const BRETables: React.FC<BRETablesProps> = ({
     name: "mappings",
   });
 
-  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = form.getValues();
-    console.log("DATA", data);
-    const inputWeightage = headerRef.current?.getValue() || "0";
-    const weightage = clampPercentage(parseFloat(inputWeightage));
+const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    const enteredTotal = data.mappings
-      .map((m) => m.weightage || 0)
-      .reduce((sum, w) => sum + w, 0);
+  const data = form.getValues();
 
-    const roundedTotal = Math.round(enteredTotal * 10) / 10;
-
-    // if (roundedTotal !== weightage) {
-    //   toast.error(
-    //     `Total weightage must be exactly ${weightage}%. Currently it's ${roundedTotal}%.`
-    //   );
-    //   return;
-    // }
-
-    console.log("Weightage:", weightage);
-    console.log(`BRE Config ${title} Form data submitted:`, data);
-
-    if (onSubmit) onSubmit();
-
-    title !== "Demographic" ? navigate(`#${navTo}`) : navigate("/");
+  const payload = {
+    [value]: data.mappings.map((m) => ({
+      key: m.parameter,
+      value: m.value,
+      is_mandatory: m.mandatory,
+      weightage: m.weightage,
+    })),
   };
+
+    console.log("BRE update response:", payload);
+
+  try {
+    const response = await updateBre({
+      id: Number(id),
+      ...payload,    
+    }).unwrap();
+    toast.success("BRE updated successfully");
+    if (onSubmit) onSubmit();
+    navigate(`#${navTo}`);
+  } catch (err) {
+    toast.error("Failed to update BRE");
+    console.log(err);
+  }
+};
+
+
 
   // inside BRETables component
  useEffect(() => {
@@ -251,8 +263,9 @@ const BRETables: React.FC<BRETablesProps> = ({
               <Button
                 type="submit"
                 className="text-lg p-4 bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={isLoading}
               >
-                Submit
+               {isLoading ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>
