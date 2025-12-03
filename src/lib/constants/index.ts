@@ -223,7 +223,7 @@ export const poolBuyoutConfirmModal = [
 
 export const breConfigTabs = [
   { name: "1. Bureau", value: "bureau" },
-  { name: "2. Bank Statement", value: "bankStatement" },
+  { name: "2. Bank Statement", value: "bank_statement" },
   { name: "3. KYC", value: "kyc" },
   { name: "4. Income", value: "income" },
   { name: "5. Occupation", value: "occupation" },
@@ -505,11 +505,11 @@ export const breConfigTabContent = [
     value: "bureau",
     title: "Bureau Rules",
     subtitle: "Get creditworthiness and repayment history",
-    navTo: "bankStatement",
+    navTo: "bank_statement",
     paramsArr: breConfigBureauParams,
   },
   {
-    value: "bankStatement",
+    value: "bank_statement",
     title: "Bank Statement",
     subtitle: "Get cash flow assessment & repayment ability",
     navTo: "kyc",

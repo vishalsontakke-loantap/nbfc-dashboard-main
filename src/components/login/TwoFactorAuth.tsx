@@ -56,7 +56,6 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
   useEffect(() => {
     if (otpResult.isSuccess) {
       const res = otpResult.data;
-      console.log(otpResult.data.data.user,'asdadsd')
       if (res?.success) {
         // success path if you want to use otpResult rather than unwrap
         dispatch(

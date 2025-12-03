@@ -14,13 +14,13 @@ export const sidebar: SidebarItem[] = [
     to: "/onboarding",
     label: "NBFC Onboarding",
     icon: withBase("/images/icons/nbfc_sidebar.svg"),
-    match: ["/"],
+    match: ["/onboarding"],
   },
   {
     to: "/nbfc-list",
     label: "NBFC List",
     icon: withBase("/images/icons/nbfc_sidebar.svg"),
-    match: ["/nbfc"],
+    match: ["/nbfc","/nbfc-list"],
   },
   {
     to: "/bre",

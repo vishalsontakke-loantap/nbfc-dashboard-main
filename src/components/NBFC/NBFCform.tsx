@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
-import { useNavigate,useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Form,
@@ -26,10 +26,12 @@ import MultiSectionForm from "@/components/ui/MultiSectionForm";
 import { formSkeletons } from "@/lib/constants";
 import CardHeader from "../CardHeader";
 import CardHeadline from "../CardHeadline";
-import { rbiLisenceTypes} from "@/lib/constants";
+import { rbiLisenceTypes } from "@/lib/constants";
 import { formatIndianNumber } from "@/lib/utils";
 import ProgressBar from "../ProgressBar";
 import { fileToBase64 } from "@/lib/Base64Convert";
+import { useCreateNbfcMutation } from "@/redux/features/nbfc/nbfcApi";
+import { toast } from "sonner";
 
 const fileSchema = z
   .instanceof(File, { message: "File is required" })
@@ -127,11 +129,13 @@ const formSchema = z.object({
 const NBFCform = () => {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-   const { id } = useParams();
+  const { id } = useParams();
+
+  const [createNbfc, { isLoading: isCreating }] = useCreateNbfcMutation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(true);
+      setLoading(false);
     }, 200);
     return () => clearTimeout(timer);
   }, []);
@@ -167,58 +171,104 @@ const NBFCform = () => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const authToken = import.meta.env.VITE_API_AUTH_TOKEN;
 
-const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
-  console.log("NBFC Form submitted with data:", data);
-   setIsSubmitting(true);
+  const onSubmit1: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
+    console.log("NBFC Form submitted with data:", data);
+    setIsSubmitting(true);
 
+    try {
+      // Convert all files to Base64 strings
+      const rbiRegCertificate = await fileToBase64(data.rbiRegCertificate);
+      const boardRes = await fileToBase64(data.boardRes);
+      const gstCertificate = await fileToBase64(data.gstCertificate);
+      const panAndTanDocs = await fileToBase64(data.panAndTanDocs);
+      const cancelledCheque = await fileToBase64(data.cancelledCheque);
+      const companyLogo = await fileToBase64(data.companyLogo);
+      const payload = {
+        nbfc_name: data.nbfc_name,
+        registration_number: data.registration_number,
+        rbi_license_type: data.rbi_license_type,
+        date_of_incorporation: toMySqlDate(data.date_of_incorporation),
+        business_limit: data.business_limit,
+        registered_address: data.registered_address,
+        contact_person: data.contact_person,
+        contact_email: data.contact_email,
+        phone_number: data.phone_number,
+        website_url: data.website_url || null,
+        business_unit_id: 1, // static for now
+        partner_id: 1, // static for now
+
+        documents: {
+          rbi_registration_certificate: rbiRegCertificate,
+          board_resolutions: boardRes,
+          gst_certificate: gstCertificate,
+          pan_tan: panAndTanDocs,
+          cancelled_cheque: cancelledCheque,
+          logo: companyLogo,
+        },
+      };
+      const response = await axios.post(
+        `${apiBaseUrl}/create-partner`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      navigate(`/nbfc/product/${id}`);
+
+    } catch (error) {
+      console.error("Error saving data:", error);
+    } finally {
+      setIsSubmitting(false);
+      navigate(`/nbfc/product/${id}`);
+    }
+  };
+
+  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
+    setLoading(true);
   try {
-    // Convert all files to Base64 strings
-    const rbiRegCertificate = await fileToBase64(data.rbiRegCertificate);
-    const boardRes = await fileToBase64(data.boardRes);
-    const gstCertificate = await fileToBase64(data.gstCertificate);
-    const panAndTanDocs = await fileToBase64(data.panAndTanDocs);
-    const cancelledCheque = await fileToBase64(data.cancelledCheque);
-    const companyLogo = await fileToBase64(data.companyLogo);
+    setIsSubmitting(true);
+
+    // convert files to base64 if present
+    const rbiRegCertificate = data.rbiRegCertificate ? await fileToBase64(data.rbiRegCertificate) : null;
+    const boardRes = data.boardRes ? await fileToBase64(data.boardRes) : null;
+    const gstCertificate = data.gstCertificate ? await fileToBase64(data.gstCertificate) : null;
+    const panAndTanDocs = data.panAndTanDocs ? await fileToBase64(data.panAndTanDocs) : null;
+    const cancelledCheque = data.cancelledCheque ? await fileToBase64(data.cancelledCheque) : null;
+    const companyLogo = data.companyLogo ? await fileToBase64(data.companyLogo) : null;
+
     const payload = {
       nbfc_name: data.nbfc_name,
-      registration_number: data.registration_number,
+      registration_number: String(data.registration_number ?? ""),
       rbi_license_type: data.rbi_license_type,
-      date_of_incorporation: toMySqlDate(data.date_of_incorporation),
-      business_limit: data.business_limit,
+      date_of_incorporation: data.date_of_incorporation ? toMySqlDate(new Date(data.date_of_incorporation)) : null,
+      business_limit: Number(data.business_limit ?? 0),
       registered_address: data.registered_address,
       contact_person: data.contact_person,
       contact_email: data.contact_email,
       phone_number: data.phone_number,
-      website_url: data.website_url || null,
-      business_unit_id: 1, // static for now
-      partner_id: 1, // static for now
-
-      documents: {
-        rbi_registration_certificate: rbiRegCertificate,
-        board_resolutions: boardRes,
-        gst_certificate: gstCertificate,
-        pan_tan: panAndTanDocs,
-        cancelled_cheque: cancelledCheque,
-        logo: companyLogo,
-      },
+      website_url: data.website_url,
+      rbiRegCertificate,
+      boardRes,
+      gstCertificate,
+      panAndTanDocs,
+      cancelledCheque,
+      companyLogo,
     };
-    const response = await axios.post(
-      `${apiBaseUrl}/create-partner`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
 
-    navigate(`/nbfc/product/${id}`);
-
-  } catch (error) {
-    console.error("Error saving data:", error);
-  }finally {  
+    const result = await createNbfc(payload).unwrap();
+    toast.success("NBFC created successfully");
+    setLoading(false);
+    navigate("/nbfc-list");
+  } catch (err: any) {
+    console.error(err);
+    setLoading(false);
+    toast.error(err?.data?.message || "Failed to create NBFC");
+  } finally {
+    setLoading(false);
     setIsSubmitting(false);
-    navigate(`/nbfc/product/${id}`);
   }
 };
   return (
@@ -297,7 +347,7 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
                       <FormLabel>RBI License Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        // defaultValue={field.value}
+                      // defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
@@ -335,7 +385,7 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
                             max={new Date().toISOString().split("T")[0]}
                             value={
                               field.value instanceof Date &&
-                              !isNaN(field.value.getTime())
+                                !isNaN(field.value.getTime())
                                 ? field.value.toISOString().split("T")[0]
                                 : ""
                             }
@@ -535,11 +585,10 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
                           {/* Upload Button */}
                           <Button
                             type="button"
-                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${
-                              field.value?.name
+                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${field.value?.name
                                 ? "text-gray-200 bg-gray-500"
                                 : "text-white"
-                            }`}
+                              }`}
                             disabled={!!field.value?.name}
                             onClick={() => fileRef.current?.click()}
                           >
@@ -619,11 +668,10 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
                           {/* Upload Button */}
                           <Button
                             type="button"
-                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${
-                              field.value?.name
+                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${field.value?.name
                                 ? "text-gray-200 bg-gray-500"
                                 : "text-white"
-                            }`}
+                              }`}
                             disabled={!!field.value?.name}
                             onClick={() => fileRef.current?.click()}
                           >
@@ -701,11 +749,10 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
                           {/* Upload Button */}
                           <Button
                             type="button"
-                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${
-                              field.value?.name
+                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${field.value?.name
                                 ? "text-gray-200 bg-gray-500"
                                 : "text-white"
-                            }`}
+                              }`}
                             disabled={!!field.value?.name}
                             onClick={() => fileRef.current?.click()}
                           >
@@ -783,11 +830,10 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
                           {/* Upload Button */}
                           <Button
                             type="button"
-                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${
-                              field.value?.name
+                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${field.value?.name
                                 ? "text-gray-200 bg-gray-500"
                                 : "text-white"
-                            }`}
+                              }`}
                             disabled={!!field.value?.name}
                             onClick={() => fileRef.current?.click()}
                           >
@@ -865,11 +911,10 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
                           {/* Upload Button */}
                           <Button
                             type="button"
-                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${
-                              field.value?.name
+                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${field.value?.name
                                 ? "text-gray-200 bg-gray-500"
                                 : "text-white"
-                            }`}
+                              }`}
                             disabled={!!field.value?.name}
                             onClick={() => fileRef.current?.click()}
                           >
@@ -924,11 +969,10 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
                           {/* Upload Button */}
                           <Button
                             type="button"
-                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${
-                              field.value?.name
+                            className={`rounded-sm bg-blue-500 hover:bg-blue-600 ${field.value?.name
                                 ? "text-gray-200 bg-gray-500"
                                 : "text-white"
-                            }`}
+                              }`}
                             disabled={!!field.value?.name}
                             onClick={() => fileRef.current?.click()}
                           >
@@ -962,7 +1006,7 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
               <Button
                 className="p-5 text-lg rounded-sm bg-blue-500 hover:bg-blue-600 text-white flex"
                 type="submit"
-                disabled={isSubmitting} 
+                disabled={isSubmitting}
               >
                 {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
@@ -970,9 +1014,7 @@ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
           </form>
         </Form>
       )}
-      <div className="p-6">
-        <ProgressBar totalSteps={4} currentStep={3} stepName="NBFC Profile Details" />
-      </div>
+
     </div>
   );
 };

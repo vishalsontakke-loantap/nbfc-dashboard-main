@@ -36,7 +36,7 @@ const NBFCRoutes = () => {
 
         {/* NBFC FORM */}
         <Route
-          path="/nbfc/nbfc-form"
+          path="/onboarding/nbfc-form"
           element={
             <Layout>
               <NBFCform />

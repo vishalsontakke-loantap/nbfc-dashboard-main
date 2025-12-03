@@ -25,7 +25,7 @@ const OnboardingPage = () => {
               className={"w-6"}
             />
           </Button>
-          <Link to="/nbfc/nbfc-form">
+          <Link to="/onboarding/nbfc-form">
             <Button>
               Register New NBFC
               <ChevronRight />

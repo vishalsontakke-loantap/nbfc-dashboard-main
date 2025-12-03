@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -45,12 +45,12 @@ const BRETables: React.FC<BRETablesProps> = ({
 }) => {
   const headerRef = useRef<CardHeaderHandle>(null);
   const navigate = useNavigate();
-
+  console.log("PARAMS ARR", paramsArr);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       mappings: paramsArr.map((param) => ({
-        parameter: param.name,
+        parameter: param.key,
         value: undefined,
         weightage: undefined,
         mandatory: true || false,
@@ -63,7 +63,10 @@ const BRETables: React.FC<BRETablesProps> = ({
     name: "mappings",
   });
 
-  const onSubmitHandler = (data: z.infer<typeof formSchema>) => {
+  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = form.getValues();
+    console.log("DATA", data);
     const inputWeightage = headerRef.current?.getValue() || "0";
     const weightage = clampPercentage(parseFloat(inputWeightage));
 
@@ -73,12 +76,12 @@ const BRETables: React.FC<BRETablesProps> = ({
 
     const roundedTotal = Math.round(enteredTotal * 10) / 10;
 
-    if (roundedTotal !== weightage) {
-      toast.error(
-        `Total weightage must be exactly ${weightage}%. Currently it's ${roundedTotal}%.`
-      );
-      return;
-    }
+    // if (roundedTotal !== weightage) {
+    //   toast.error(
+    //     `Total weightage must be exactly ${weightage}%. Currently it's ${roundedTotal}%.`
+    //   );
+    //   return;
+    // }
 
     console.log("Weightage:", weightage);
     console.log(`BRE Config ${title} Form data submitted:`, data);
@@ -87,6 +90,18 @@ const BRETables: React.FC<BRETablesProps> = ({
 
     title !== "Demographic" ? navigate(`#${navTo}`) : navigate("/");
   };
+
+  // inside BRETables component
+ useEffect(() => {
+  form.reset({
+    mappings: paramsArr.map(param => ({
+      parameter: param.key,
+      value: param.subtitle ,
+      weightage: param.weightage ?? undefined,
+      mandatory: !!param.mandatory,
+    }))
+  });
+}, [form, paramsArr]);
 
   return (
     <div>
@@ -100,7 +115,7 @@ const BRETables: React.FC<BRETablesProps> = ({
 
       <div className="space-y-3 space-x-4 w-full mt-4 min-w-[66rem]">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmitHandler)}>
+          <form onSubmit={onSubmitHandler}>
             <div className="bg-white shadow-sm rounded-lg p-4 ">
               <Table>
                 <TableHeader>
@@ -119,10 +134,8 @@ const BRETables: React.FC<BRETablesProps> = ({
                   {fields.map((field, index) => (
                     <TableRow key={field.id} className="h-12">
                       <TableCell className="w-[30%] flex flex-col">
-                        <p className="font-semibold">{paramsArr[index].name}</p>
-                        <p className="text-xs text-gray-500">
-                          {paramsArr[index].subtitle}
-                        </p>
+                        <p className="font-semibold">{paramsArr[index]?.name}</p>
+                        
                       </TableCell>
                       <TableCell className="w-[30%]">
                         <FormField
@@ -135,14 +148,14 @@ const BRETables: React.FC<BRETablesProps> = ({
                                   ₹
                                 </span>
                                 <Input
-                                  placeholder={paramsArr[index].subtitle}
+                                  placeholder={paramsArr[index]?.subtitle}
                                   inputMode="numeric"
                                   className="pl-7" // make room for ₹ symbol
                                   value={
                                     field.value
                                       ? formatIndianNumber(
-                                          field.value.toString()
-                                        )
+                                        field.value.toString()
+                                      )
                                       : ""
                                   }
                                   onChange={(e) => {
@@ -249,4 +262,4 @@ const BRETables: React.FC<BRETablesProps> = ({
   );
 };
 
-export default BRETables;
+export default React.memo(BRETables);

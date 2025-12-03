@@ -24,7 +24,7 @@ const CardHeader = forwardRef<CardHeaderHandle, CardHeaderProps>(
             {subtitle}
           </p>
         </span>
-        {weightage && (
+        {/* {weightage && (
           <span className="ml-60 flex items-center justify-center text-sm font-semibold text-gray-500 space-x-2">
             Weightage
             <Input
@@ -48,7 +48,7 @@ const CardHeader = forwardRef<CardHeaderHandle, CardHeaderProps>(
             />
             <img src={assetPath("/images/icons/weightage_icon.svg")} alt="edit" />
           </span>
-        )}
+        )} */}
       </span>
     );
   }

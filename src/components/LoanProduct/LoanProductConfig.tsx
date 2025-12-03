@@ -31,6 +31,8 @@ import { rbiLisenceTypes } from "@/lib/constants";
 import { formatIndianNumber } from "@/lib/utils";
 import ProgressBar from "../ProgressBar";
 import { fileToBase64 } from "@/lib/Base64Convert";
+import { useCreateProductMutation } from "@/redux/features/products/productApi";
+import { toast } from "sonner";
 const twoDecimalRegex = /^\d+(\.\d{1,2})?$/;
 const fileSchema = z
   .instanceof(File, { message: "File is required" })
@@ -57,7 +59,7 @@ const fileSchema = z
     }
   )
   .optional();
-  
+
 function ErrorInlineInput({ field, error, ...props }) {
   const displayValue = error ? `${field.value} (${error})` : field.value;
 
@@ -139,7 +141,7 @@ const LoanProductConfig = () => {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { id } = useParams();
-
+  const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -177,37 +179,53 @@ const LoanProductConfig = () => {
       // Convert all files to Base64 strings
       const arrangemet_doc = await fileToBase64(data.colending_arrangement_doc);
       const payload = {
-        product_name: data.product_name,
-        product_type: data.product_type,
-        max_disbursement_cap: data.max_disbursement_cap,
-        processing_fee: data.processing_fee,
-        service_fee: data.service_fee,
-        gst_on_service_fee: data.gst_on_service_fee,
-        nbfc_share: data.nbfc_share,
-        bank_share: data.bank_share,
-        nbfc_roi: data.nbfc_roi,
-        bank_roi: data.bank_roi,
-        blended_roi: data.blended_roi,
-        colending_arrangement_doc: data.colending_arrangement_doc,
-       
-        documents: {
-          arrangement_doc: arrangemet_doc,
-        },
-      };
-      const response = await axios.post(
-        `${apiBaseUrl}/create-product`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+        "partner_id": id,
+        "product_name": data.product_name,
+        "product_type": data.product_type,
+        "loan_category": "Secured",
+
+        "max_disbursement_cap": data.max_disbursement_cap,
+        "interest_rate": 12.5,
+        "processing_fee": data.processing_fee,
+        "service_fee": data.service_fee,
+        "gst_on_service": data.gst_on_service_fee,
+        "repayment_type": "EMI",
+        "emi_frequency": "Monthly",
+        "moratorium_period": 1,
+        "nbfc_share": data.nbfc_share,
+        "bank_share": data.bank_share,
+        "collateral_type_required": "Gold",
+        "collateral_verification": "Pre"
+      }
+      // const payload = {
+      //   product_name: data.product_name,
+      //   product_type: data.product_type,
+      //   max_disbursement_cap: data.max_disbursement_cap,
+      //   processing_fee: data.processing_fee,
+      //   service_fee: data.service_fee,
+      //   gst_on_service_fee: data.gst_on_service_fee,
+      //   nbfc_share: data.nbfc_share,
+      //   bank_share: data.bank_share,
+      //   nbfc_roi: data.nbfc_roi,
+      //   bank_roi: data.bank_roi,
+      //   blended_roi: data.blended_roi,
+      //   colending_arrangement_doc: data.colending_arrangement_doc,
+
+      //   documents: {
+      //     arrangement_doc: arrangemet_doc,
+      //   },
+      // };
+
+      console.log(payload);
+      // return;
+      const result = await createProduct(payload).unwrap();
+      toast.success("Loan Product created successfully!");
 
       navigate("/loan-products");
 
     } catch (error) {
       console.error("Error saving data:", error);
+      toast.error("Failed to create Loan Product. Please try again.");
     } finally {
       setIsSubmitting(false);
       navigate(`/nbfc/details/${id}`);
@@ -288,13 +306,13 @@ const LoanProductConfig = () => {
                     <FormItem className="mb-4">
                       <FormLabel>Max Disbursement Cap</FormLabel>
                       <Input
-                      type="number"
-                          placeholder="Enter the Max Disbursement Cap"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(e.target.value.toUpperCase())
-                          }
-                        />
+                        type="number"
+                        placeholder="Enter the Max Disbursement Cap"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(e.target.value.toUpperCase())
+                        }
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -320,13 +338,13 @@ const LoanProductConfig = () => {
                     <FormItem className="mb-4">
                       <FormLabel>NBFC Share %</FormLabel>
                       <FormControl>
-                        <Input placeholder="NBFC Share" {...field}  type="number"/>
+                        <Input placeholder="NBFC Share" {...field} type="number" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-{/* 
+                {/* 
                 <FormField
                   control={form.control}
                   name="date_of_incorporation"
@@ -430,7 +448,7 @@ const LoanProductConfig = () => {
                     <FormItem className="mb-4">
                       <FormLabel>NBFC Interest %</FormLabel>
                       <FormControl>
-                        <Input placeholder="NBFC Interest" {...field} type="number"/>
+                        <Input placeholder="NBFC Interest" {...field} type="number" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -444,7 +462,7 @@ const LoanProductConfig = () => {
                     <FormItem className="mb-4">
                       <FormLabel>Blended Interest %</FormLabel>
                       <FormControl>
-                        <Input placeholder="Blended Interest" {...field} type="number"/>
+                        <Input placeholder="Blended Interest" {...field} type="number" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -486,7 +504,7 @@ const LoanProductConfig = () => {
                     <FormItem className="mb-4">
                       <FormLabel>GST on Service Fee %</FormLabel>
                       <FormControl>
-                        <Input placeholder="GST on Service Fee %" {...field} type="number"/>
+                        <Input placeholder="GST on Service Fee %" {...field} type="number" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -580,7 +598,7 @@ const LoanProductConfig = () => {
                   }}
                 />
 
-               
+
               </span>
             </div>
 

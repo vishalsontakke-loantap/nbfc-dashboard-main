@@ -4,6 +4,7 @@ import NBFCInfoCard from "../NBFC/NBFCInfoCard";
 import LoanCard from "../NBFC/LoanCard";
 import { NBFCInfoSkeleton, LoanCardSkeleton } from "@/components/ui/SkeletonLoader";
 import { useNavigate, useParams } from "react-router-dom";
+import { useGetProductsByPartnerIdQuery } from "@/redux/features/products/productApi";
 
 interface NBFCData {
   name: string;
@@ -81,7 +82,8 @@ export default function LoanProducts() {
   const [data, setData] = useState<LoanData | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log("NBFC ID from params:", id);
+  const { data: productsData, isLoading, error } = useGetProductsByPartnerIdQuery(id);
+  console.log("NBFC ID from params:", id, data);
 
   const addNewLoanProduct =()=>{
     navigate(`/nbfc/product/${id}`);
