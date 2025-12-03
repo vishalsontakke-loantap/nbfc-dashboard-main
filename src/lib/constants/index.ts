@@ -2751,3 +2751,54 @@ export const tableData: tableDataParams[] = [
     posAmount: 337226,
   },
 ];
+
+
+export const PARAMS = {
+  bureau: [
+    { key: "creditScore", type: "number" },
+    { key: "bureauVintage", type: "number" },
+    { key: "dpd", type: "number" },
+    { key: "numOfEnquiries", type: "number" },
+    { key: "activeLoans", type: "number" },
+    { key: "writeOffSettlement", type: "number" }
+  ],
+  bank_statement: [
+    { key: "avgMonthlyBalance", type: "number" },
+    { key: "monthlyCredits", type: "number" },
+    { key: "foir", type: "number" },
+    { key: "debitBounceCount", type: "number" },
+    { key: "overdraftInstances", type: "number" },
+    { key: "eodBalanceThreshold", type: "number" }
+  ],
+  kyc: [
+    { key: "panVerification", type: "dropdown" },
+    { key: "udyamVerification", type: "dropdown" },
+    { key: "aadharAuth", type: "dropdown" },
+    { key: "videoKyc", type: "dropdown" },
+    { key: "minAge", type: "number" },
+    { key: "maxAge", type: "number" }
+  ],
+  income: [
+    { key: "itrFiling", type: "text" },
+    { key: "gstFiling", type: "text" },
+    { key: "sourceOfIncome", type: "dropdown" },
+    { key: "consistency", type: "text" }
+  ],
+  occupation: [
+    { key: "employerType", type: "dropdown" },
+    { key: "employmentStability", type: "text" },
+    { key: "businessVintage", type: "number" }
+  ],
+  demographic: [
+    { key: "pinCodeRiskMapping", type: "text" }
+  ]
+};
+
+export const DROPDOWN_VALUES: Record<string, string[]> = {
+  panVerification: ["YES", "NO"],
+  udyamVerification: ["YES", "NO"],
+  aadharAuth: ["YES", "NO"],
+  videoKyc: ["YES", "NO"],
+  sourceOfIncome: ["Business", "Salaried", "Self-Employed"],
+  employerType: ["Proprietorship", "Partnership", "Pvt Ltd", "Self Employed"]
+};

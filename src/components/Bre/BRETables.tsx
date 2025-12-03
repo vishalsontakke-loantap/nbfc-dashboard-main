@@ -21,10 +21,11 @@ import { toast } from "sonner";
 import CardHeader from "../CardHeader";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { breConfigTableHeaders } from "@/lib/constants";
+import { breConfigTableHeaders, DROPDOWN_VALUES } from "@/lib/constants";
 import { clampPercentage, formatIndianNumber } from "@/lib/utils";
 import { useUpdateBreMutation } from "@/redux/features/bre/breApi";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
 
 
 const rowSchema = z.object({
@@ -203,25 +204,29 @@ const BRETables: React.FC<BRETablesProps> = ({
 
                             // 🔥 3) dropdown (multi-select)
                             if (param.type === "dropdown") {
+                              const dropdownOptions = DROPDOWN_VALUES[param.key] ?? [];
+
                               return (
                                 <Select
                                   multiple
                                   value={field.value || []}
                                   onValueChange={field.onChange}
                                 >
-                                  <SelectTrigger className="w-full">
+                                  <SelectTrigger className="w-full min-w-[240px]">
                                     <SelectValue placeholder="Select options" />
                                   </SelectTrigger>
-                                  <SelectContent>
-                                    {(param.options ?? []).map((opt: any) => (
-                                      <SelectItem key={opt.value} value={opt.value}>
-                                        {opt.label}
+
+                                  <SelectContent className="w-full">
+                                    {dropdownOptions.map((option: string) => (
+                                      <SelectItem key={option} value={option}>
+                                        {option}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
                                 </Select>
                               );
                             }
+
 
                             // 🔥 4) text
                             if (param.type === "text") {

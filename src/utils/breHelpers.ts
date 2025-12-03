@@ -1,4 +1,8 @@
 // utils/breHelpers.ts
+
+import { PARAMS } from "@/lib/constants";
+
+// import { PARAMS } from "@/constants/breParams";
 export type RawBreItem = {
   key: string;
   is_mandatory?: boolean;
@@ -15,6 +19,9 @@ export type Param = {
   weightage?: number | string;
 };
 
+
+
+
 function titleCaseFromCamel(camel: string) {
   // creditScore -> Credit Score
   return camel
@@ -23,10 +30,19 @@ function titleCaseFromCamel(camel: string) {
     .replace(/\b\w/g, (s) => s.toUpperCase());
 }
 
-export function guessTypeFromKeyOrValue(key: string, value: any): Param["type"] {
-   return "number";
-  return "text";
+export function guessTypeFromKeyOrValue(key: string): string | undefined {
+  for (const category in PARAMS) {
+    const cat = category as keyof typeof PARAMS;  // ✅ fix
+
+    const param = PARAMS[cat].find((item) => item.key === key);
+    if (param) {
+      return param.type;
+    }
+  }
+  return undefined;
 }
+
+
 
 export function mapRawToParam(item: RawBreItem): Param {
   return {
