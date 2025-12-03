@@ -24,7 +24,7 @@ const LoanProductCard: React.FC<{ product: LoanProduct }> = ({ product }) => {
 
   const navigate = useNavigate();
   const breNav = () => {
-    navigate(`/nbfc/product-bre/${product.number}`);
+    navigate(`/nbfc/product-bre/${product.id}`);
   } 
   return (
     <Card className="rounded-2xl shadow-md w-full max-w-lg py-0">

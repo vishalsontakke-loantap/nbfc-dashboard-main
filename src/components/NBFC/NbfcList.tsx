@@ -30,7 +30,7 @@ const NbfcList: React.FC = () => {
   }
 
   // data expected shape: { data: [...items], meta: { total, page, per_page } }
-  const items: any[] = Array.isArray(data?.data) ? data!.data : [];
+  const items: any[] = Array.isArray(data?.data?.items) ? data!.data.items : [];
   const totalItems = Number(
     data?.meta?.total ?? data?.meta?.total_items ?? data?.total ?? items.length
   );
