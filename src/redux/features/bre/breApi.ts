@@ -9,7 +9,7 @@ export const breApi = createApi({
     tagTypes: ["Bre"],
     endpoints: (builder) => ({
         // GET all BRE
-        getBre: builder.query({
+        getBre: builder.query<any[], void>({
             query: () => "/bre-rules",
             providesTags: ["Bre"],
         }),
