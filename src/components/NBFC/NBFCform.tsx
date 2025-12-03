@@ -131,7 +131,7 @@ const NBFCform = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(true);
+      setLoading(false);
     }, 200);
     return () => clearTimeout(timer);
   }, []);
