@@ -24,6 +24,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { breConfigTableHeaders } from "@/lib/constants";
 import { clampPercentage, formatIndianNumber } from "@/lib/utils";
 import { useUpdateBreMutation } from "@/redux/features/bre/breApi";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
 
 
 const rowSchema = z.object({
@@ -47,9 +48,9 @@ const BRETables: React.FC<BRETablesProps> = ({
 }) => {
   const headerRef = useRef<CardHeaderHandle>(null);
   const navigate = useNavigate();
-  const {id} = useParams();
+  const { id } = useParams();
   const [updateBre, { isLoading, isSuccess, isError }] = useUpdateBreMutation();
-  
+
   // console.log("BRE TABLE VALUE", value);
 
   console.log("BRE TABLE PARAMS ARR", paramsArr);
@@ -71,49 +72,49 @@ const BRETables: React.FC<BRETablesProps> = ({
     name: "mappings",
   });
 
-const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  const data = form.getValues();
+    const data = form.getValues();
 
-  const payload = {
-    [value]: data.mappings.map((m) => ({
-      key: m.parameter,
-      value: m.value,
-      is_mandatory: m.mandatory,
-      weightage: m.weightage,
-    })),
-  };
+    const payload = {
+      [value]: data.mappings.map((m) => ({
+        key: m.parameter,
+        value: m.value,
+        is_mandatory: m.mandatory,
+        weightage: m.weightage,
+      })),
+    };
 
     console.log("BRE update response:", payload);
 
-  try {
-    const response = await updateBre({
-      id: Number(id),
-      ...payload,    
-    }).unwrap();
-    toast.success("BRE updated successfully");
-    if (onSubmit) onSubmit();
-    navigate(`#${navTo}`);
-  } catch (err) {
-    toast.error("Failed to update BRE");
-    console.log(err);
-  }
-};
+    try {
+      const response = await updateBre({
+        id: Number(id),
+        ...payload,
+      }).unwrap();
+      toast.success("BRE updated successfully");
+      if (onSubmit) onSubmit();
+      navigate(`#${navTo}`);
+    } catch (err) {
+      toast.error("Failed to update BRE");
+      console.log(err);
+    }
+  };
 
 
 
   // inside BRETables component
- useEffect(() => {
-  form.reset({
-    mappings: paramsArr.map(param => ({
-      parameter: param.key,
-      value: param.subtitle ,
-      weightage: param.weightage ?? undefined,
-      mandatory: !!param.mandatory,
-    }))
-  });
-}, [form, paramsArr]);
+  useEffect(() => {
+    form.reset({
+      mappings: paramsArr.map(param => ({
+        parameter: param.key,
+        value: param.subtitle,
+        weightage: param.weightage ?? undefined,
+        mandatory: !!param.mandatory,
+      }))
+    });
+  }, [form, paramsArr]);
 
   return (
     <div>
@@ -147,68 +148,101 @@ const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
                     <TableRow key={field.id} className="h-12">
                       <TableCell className="w-[30%] flex flex-col">
                         <p className="font-semibold">{paramsArr[index]?.name}</p>
-                        
+
                       </TableCell>
                       <TableCell className="w-[30%]">
                         <FormField
                           control={form.control}
                           name={`mappings.${index}.value`}
-                          render={({ field }) =>
-                            paramsArr[index].type === "money" ? (
-                              <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-                                  ₹
-                                </span>
+                          render={({ field }) => {
+                            const param = paramsArr[index];
+
+                            // 🔥 1) money
+                            if (param.type === "money") {
+                              return (
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                                    ₹
+                                  </span>
+                                  <Input
+                                    placeholder={param.subtitle}
+                                    inputMode="numeric"
+                                    className="pl-7"
+                                    value={field.value ? formatIndianNumber(field.value.toString()) : ""}
+                                    onChange={(e) => {
+                                      const raw = e.target.value.replace(/[^0-9]/g, "");
+                                      field.onChange(raw);
+                                    }}
+                                  />
+                                </div>
+                              );
+                            }
+
+                            // 🔥 2) percent
+                            if (param.type === "percent") {
+                              return (
+                                <div className="relative">
+                                  <Input
+                                    type="number"
+                                    step="any"
+                                    min={0}
+                                    max={100}
+                                    className="pr-7"
+                                    value={field.value ?? ""}
+                                    onChange={(e) => {
+                                      const num = parseFloat(e.target.value);
+                                      field.onChange(clampPercentage(num));
+                                    }}
+                                  />
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">
+                                    %
+                                  </span>
+                                </div>
+                              );
+                            }
+
+                            // 🔥 3) dropdown (multi-select)
+                            if (param.type === "dropdown") {
+                              return (
+                                <Select
+                                  multiple
+                                  value={field.value || []}
+                                  onValueChange={field.onChange}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select options" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {(param.options ?? []).map((opt: any) => (
+                                      <SelectItem key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              );
+                            }
+
+                            // 🔥 4) text
+                            if (param.type === "text") {
+                              return (
                                 <Input
-                                  placeholder={paramsArr[index]?.subtitle}
-                                  inputMode="numeric"
-                                  className="pl-7" // make room for ₹ symbol
-                                  value={
-                                    field.value
-                                      ? formatIndianNumber(
-                                        field.value.toString()
-                                      )
-                                      : ""
-                                  }
-                                  onChange={(e) => {
-                                    const raw = e.target.value.replace(
-                                      /[^0-9]/g,
-                                      ""
-                                    );
-                                    field.onChange(raw);
-                                  }}
+                                  type="text"
+                                  placeholder={param.subtitle}
+                                  {...field}
                                 />
-                              </div>
-                            ) : paramsArr[index].type === "percent" ? (
-                              <div className="relative">
-                                <Input
-                                  type="number"
-                                  step="any"
-                                  min={0}
-                                  max={100}
-                                  placeholder={`${(
-                                    Math.random() * 9 +
-                                    1
-                                  ).toFixed(1)}`}
-                                  className="pr-7"
-                                  value={field.value ?? ""}
-                                  onChange={(e) => {
-                                    const num = parseFloat(e.target.value);
-                                    field.onChange(clampPercentage(num));
-                                  }}
-                                />
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">
-                                  %
-                                </span>
-                              </div>
-                            ) : (
+                              );
+                            }
+
+                            // 🔥 5) default number
+                            return (
                               <Input
                                 type="number"
-                                placeholder={paramsArr[index].subtitle}
+                                placeholder={param.subtitle}
                                 {...field}
                               />
-                            )
-                          }
+                            );
+                          }}
                         />
                       </TableCell>
                       <TableCell className="w-[30%]">
@@ -265,7 +299,7 @@ const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
                 className="text-lg p-4 bg-blue-600 hover:bg-blue-700 text-white"
                 disabled={isLoading}
               >
-               {isLoading ? "Submitting..." : "Submit"}
+                {isLoading ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>
