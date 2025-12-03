@@ -66,7 +66,6 @@ const BRETables: React.FC<BRETablesProps> = ({
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = form.getValues();
-    console.log("DATA", data);
     const inputWeightage = headerRef.current?.getValue() || "0";
     const weightage = clampPercentage(parseFloat(inputWeightage));
 

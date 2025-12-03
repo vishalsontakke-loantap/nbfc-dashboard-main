@@ -175,12 +175,12 @@ const NBFCform: React.FC = () => {
         phone_number: data.phone_number,
         website_url: data.website_url || null,
         documents: {
-          ...(rbiRegCertificate !== null ? { rbiRegCertificate } : {}),
-          ...(boardRes !== null ? { boardRes } : {}),
-          ...(gstCertificate !== null ? { gstCertificate } : {}),
-          ...(panAndTanDocs !== null ? { panAndTanDocs } : {}),
-          ...(cancelledCheque !== null ? { cancelledCheque } : {}),
-          ...(companyLogo !== null ? { companyLogo } : {}),
+          rbi_registration_certificate: rbiRegCertificate !== null ? rbiRegCertificate : undefined,
+          board_resolutions: boardRes !== null ? boardRes : undefined,
+          gst_certificate: gstCertificate !== null ? gstCertificate : undefined,
+          pan_tan: panAndTanDocs !== null ? panAndTanDocs : undefined,
+          cancelled_cheque: cancelledCheque !== null ? cancelledCheque : undefined,
+          logo: companyLogo !== null ? companyLogo : undefined,
         }
         // Files: only include if non-null; for update, backend should ignore nulls or treat them as "no change"
 
