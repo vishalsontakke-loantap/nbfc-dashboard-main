@@ -174,13 +174,16 @@ const NBFCform: React.FC = () => {
         contact_email: data.contact_email,
         phone_number: data.phone_number,
         website_url: data.website_url || null,
+        documents: {
+          rbi_registration_certificate: rbiRegCertificate !== null ? rbiRegCertificate : undefined,
+          board_resolutions: boardRes !== null ? boardRes : undefined,
+          gst_certificate: gstCertificate !== null ? gstCertificate : undefined,
+          pan_tan: panAndTanDocs !== null ? panAndTanDocs : undefined,
+          cancelled_cheque: cancelledCheque !== null ? cancelledCheque : undefined,
+          logo: companyLogo !== null ? companyLogo : undefined,
+        }
         // Files: only include if non-null; for update, backend should ignore nulls or treat them as "no change"
-        ...(rbiRegCertificate !== null ? { rbiRegCertificate } : {}),
-        ...(boardRes !== null ? { boardRes } : {}),
-        ...(gstCertificate !== null ? { gstCertificate } : {}),
-        ...(panAndTanDocs !== null ? { panAndTanDocs } : {}),
-        ...(cancelledCheque !== null ? { cancelledCheque } : {}),
-        ...(companyLogo !== null ? { companyLogo } : {}),
+
       };
 
       if (id) {
@@ -355,8 +358,6 @@ const NBFCform: React.FC = () => {
             <div className="bg-white shadow-sm rounded-lg p-5 space-y-3 space-x-4">
               <CardHeadline title="3. Upload Required Documents" />
               <span className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 space-x-4 space-y-1">
-                {/* Reuse your existing file fields — they remain unchanged; we just allow undefined (no-change) */}
-                {/* Example for RBI Reg Certificate (do same for others) */}
                 <FormField control={form.control} name="rbiRegCertificate" render={({ field }) => {
                   const fileRef = useRef<HTMLInputElement | null>(null);
                   return (
@@ -378,8 +379,231 @@ const NBFCform: React.FC = () => {
                   );
                 }} />
 
-                {/* Repeat the same pattern for boardRes, gstCertificate, panAndTanDocs, cancelledCheque, companyLogo */}
-                {/* For brevity copy & paste your existing file field blocks and optionally add the "Current:" display like above */}
+
+                {/* Board Resolution */}
+                <FormField
+                  control={form.control}
+                  name="boardRes"
+                  render={({ field }) => {
+                    const fileRef = useRef<HTMLInputElement | null>(null);
+                    return (
+                      <FormItem>
+                        <FormLabel>Board Resolution (for partnership)</FormLabel>
+
+                        <input
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.gif,.pdf,.csv,.xls,.xlsx,.xlsm"
+                          ref={(e) => {
+                            fileRef.current = e;
+                            field.ref(e);
+                          }}
+                          onChange={(e) => field.onChange(e.target.files?.[0])}
+                          className="hidden"
+                        />
+
+                        <div className="flex gap-2 items-center">
+                          <Button type="button" variant="outline" className="rounded-sm">Sample</Button>
+
+                          <Button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            className={`rounded-sm ${field.value?.name ? "bg-gray-500 text-gray-200" : "bg-blue-500 text-white"}`}
+                          >
+                            {field.value?.name ? "Uploaded" : (nbfcDetails?.data?.board_resolutions ? "Replace" : "Upload")}
+                          </Button>
+
+                          {nbfcDetails?.data?.board_resolutions && !field.value && (
+                            <div className="text-xs text-gray-600 self-center">
+                              Current: {nbfcDetails.data.board_resolutions_filename ?? "Existing file"}
+                            </div>
+                          )}
+                        </div>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                {/* GST Certificate */}
+                <FormField
+                  control={form.control}
+                  name="gstCertificate"
+                  render={({ field }) => {
+                    const fileRef = useRef<HTMLInputElement | null>(null);
+                    return (
+                      <FormItem>
+                        <FormLabel>GST Certificate</FormLabel>
+
+                        <input
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.gif,.pdf,.csv,.xls,.xlsx,.xlsm"
+                          ref={(e) => {
+                            fileRef.current = e;
+                            field.ref(e);
+                          }}
+                          onChange={(e) => field.onChange(e.target.files?.[0])}
+                          className="hidden"
+                        />
+
+                        <div className="flex gap-2 items-center">
+                          <Button type="button" variant="outline" className="rounded-sm">Sample</Button>
+
+                          <Button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            className={`rounded-sm ${field.value?.name ? "bg-gray-500 text-gray-200" : "bg-blue-500 text-white"}`}
+                          >
+                            {field.value?.name ? "Uploaded" : (nbfcDetails?.data?.gst_certificate ? "Replace" : "Upload")}
+                          </Button>
+
+                          {nbfcDetails?.data?.gst_certificate && !field.value && (
+                            <div className="text-xs text-gray-600 self-center">
+                              Current: {nbfcDetails.data.gst_certificate_filename ?? "Existing file"}
+                            </div>
+                          )}
+                        </div>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                {/* PAN & TAN Documents */}
+                <FormField
+                  control={form.control}
+                  name="panAndTanDocs"
+                  render={({ field }) => {
+                    const fileRef = useRef<HTMLInputElement | null>(null);
+                    return (
+                      <FormItem>
+                        <FormLabel>PAN & TAN Documents</FormLabel>
+
+                        <input
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.gif,.pdf,.csv,.xls,.xlsx,.xlsm"
+                          ref={(e) => {
+                            fileRef.current = e;
+                            field.ref(e);
+                          }}
+                          onChange={(e) => field.onChange(e.target.files?.[0])}
+                          className="hidden"
+                        />
+
+                        <div className="flex gap-2 items-center">
+                          <Button type="button" variant="outline" className="rounded-sm">Sample</Button>
+
+                          <Button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            className={`rounded-sm ${field.value?.name ? "bg-gray-500 text-gray-200" : "bg-blue-500 text-white"}`}
+                          >
+                            {field.value?.name ? "Uploaded" : (nbfcDetails?.data?.pan_tan ? "Replace" : "Upload")}
+                          </Button>
+
+                          {nbfcDetails?.data?.pan_tan && !field.value && (
+                            <div className="text-xs text-gray-600 self-center">
+                              Current: {nbfcDetails.data.pan_tan_filename ?? "Existing file"}
+                            </div>
+                          )}
+                        </div>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                {/* Cancelled Cheque */}
+                <FormField
+                  control={form.control}
+                  name="cancelledCheque"
+                  render={({ field }) => {
+                    const fileRef = useRef<HTMLInputElement | null>(null);
+                    return (
+                      <FormItem>
+                        <FormLabel>Cancelled Cheque</FormLabel>
+
+                        <input
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.gif,.pdf,.csv,.xls,.xlsx,.xlsm"
+                          ref={(e) => {
+                            fileRef.current = e;
+                            field.ref(e);
+                          }}
+                          onChange={(e) => field.onChange(e.target.files?.[0])}
+                          className="hidden"
+                        />
+
+                        <div className="flex gap-2 items-center">
+                          <Button type="button" variant="outline" className="rounded-sm">Sample</Button>
+
+                          <Button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            className={`rounded-sm ${field.value?.name ? "bg-gray-500 text-gray-200" : "bg-blue-500 text-white"}`}
+                          >
+                            {field.value?.name ? "Uploaded" : (nbfcDetails?.data?.cancelled_cheque ? "Replace" : "Upload")}
+                          </Button>
+
+                          {nbfcDetails?.data?.cancelled_cheque && !field.value && (
+                            <div className="text-xs text-gray-600 self-center">
+                              Current: {nbfcDetails.data.cancelled_cheque_filename ?? "Existing file"}
+                            </div>
+                          )}
+                        </div>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                {/* Company Logo */}
+                <FormField
+                  control={form.control}
+                  name="companyLogo"
+                  render={({ field }) => {
+                    const fileRef = useRef<HTMLInputElement | null>(null);
+                    return (
+                      <FormItem>
+                        <FormLabel>Company Logo (for platform use)</FormLabel>
+
+                        <input
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.gif,.pdf,.csv,.xls,.xlsx,.xlsm"
+                          ref={(e) => {
+                            fileRef.current = e;
+                            field.ref(e);
+                          }}
+                          onChange={(e) => field.onChange(e.target.files?.[0])}
+                          className="hidden"
+                        />
+
+                        <div className="flex gap-2 items-center">
+                          <Button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            className={`rounded-sm ${field.value?.name ? "bg-gray-500 text-gray-200" : "bg-blue-500 text-white"}`}
+                          >
+                            {field.value?.name ? "Uploaded" : (nbfcDetails?.data?.logo ? "Replace" : "Upload")}
+                          </Button>
+
+                          {nbfcDetails?.data?.logo && !field.value && (
+                            <div className="text-xs text-gray-600 self-center">
+                              Current: {nbfcDetails.data.logo_filename ?? "Existing file"}
+                            </div>
+                          )}
+                        </div>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+
               </span>
             </div>
 
