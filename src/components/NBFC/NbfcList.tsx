@@ -10,19 +10,24 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGetAllNbfcQuery } from "@/redux/features/nbfc/nbfcApi";
+import { useDispatch } from "react-redux";
+import { setSelectedNbfc } from "@/redux/features/nbfc/nbfcSlice";
 
 const pageSize = 5; // server page size (keep in sync with backend or pass dynamically)
 
 const NbfcList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [uncharted, setUncharted] = useState(false);
-
+  const navigate = useNavigate();
   const { data, isLoading, error, isFetching } = useGetAllNbfcQuery({
     page: currentPage,
     pageSize,
   });
+
+  const handleNavigate = (id:number|string) => {
+    navigate(`/nbfc/details/${id}`) 
+  }
 
   // data expected shape: { data: [...items], meta: { total, page, per_page } }
   const items: any[] = Array.isArray(data?.data) ? data!.data : [];
@@ -140,12 +145,12 @@ const NbfcList: React.FC = () => {
                       </td>
 
                       <td className="py-3 px-4 text-sm">
-                        <Link
-                          to={`/nbfc/details/${nbfc.partner_id ?? nbfc.id}`}
-                          className="text-[#0077c2] hover:underline flex items-center gap-1"
+                        <button 
+                          className="text-[#0077c2] hover:underline flex items-center gap-1 cursor-pointer"
+                          onClick={() => handleNavigate(nbfc.partner_id)}
                         >
                           View details <img src="" alt="" />
-                        </Link>
+                        </button>
                       </td>
                     </tr>
                   ))}

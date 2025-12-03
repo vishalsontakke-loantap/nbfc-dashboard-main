@@ -7,13 +7,14 @@ import productReducer from "./features/products/productSlice";
 import { productApi } from './features/products/productApi';
 import { breApi } from './features/bre/breApi';
 import { nbfcApi } from './features/nbfc/nbfcApi';
-import breReducer from './features/bre/breSlice';
+import nbfcReducer from './features/nbfc/nbfcSlice'import breReducer from './features/bre/breSlice';
 
 export const store = configureStore({
   reducer: {
     // your regular reducers
     auth: authReducer,
     products: productReducer,
+    nbfc: nbfcReducer,
     bre:breReducer,
 
     // RTK Query reducer must be mounted at authApi.reducerPath
