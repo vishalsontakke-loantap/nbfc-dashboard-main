@@ -21,8 +21,11 @@ interface LoanProduct {
 }
 
 const LoanProductCard: React.FC<{ product: LoanProduct }> = ({ product }) => {
-  console.log("Rendering LoanProductCard for product:", product);
+
   const navigate = useNavigate();
+  const breNav = () => {
+    navigate(`/nbfc/product-bre/${product.number}`);
+  } 
   return (
     <Card className="rounded-2xl shadow-md w-full max-w-lg py-0">
       <CardContent className="p-4">
@@ -87,7 +90,9 @@ const LoanProductCard: React.FC<{ product: LoanProduct }> = ({ product }) => {
 
         {/* Footer */}
         <div className="flex justify-between items-center mt-4">
-          <p className="text-xs text-gray-500">🔗 BRE Linked</p>
+           <Button variant="blue"  onClick={breNav}>
+              BRE
+            </Button>
           <div className="flex gap-2">
             <Button variant="outline" disabled>
               View

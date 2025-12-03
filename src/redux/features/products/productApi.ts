@@ -55,7 +55,7 @@ export const productApi = createApi({
     // Update product (PUT or PATCH depending on backend)
     updateProduct: builder.mutation<any, { id: string | number; updates: any }>({
       query: ({ id, updates }) => ({
-        url: `/products/update/${id}`,
+        url: `/products/${id}`,
         method: "PUT",
         body: updates,
       }),

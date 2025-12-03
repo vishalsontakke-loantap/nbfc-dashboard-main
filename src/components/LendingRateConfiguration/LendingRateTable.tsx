@@ -42,10 +42,18 @@ const LendingRateTable: React.FC<LendingRateTableProps> = ({ title, subtitle, pa
     name: "mappings",
   });
 
-  const onSubmitHandler = (data: z.infer<typeof formSchema>) => {
-    console.log(`Lending Rate Config ${title} Form data submitted:`, data);
-    if (onSubmit) onSubmit();
-  };
+const onSubmitHandler = (data: z.infer<typeof formSchema>) => {
+  const formattedData = data.mappings.map((item) => ({
+    tenor: item.parameter,
+    value: item.value,
+    effective_from: item.effectiveFrom,
+  }));
+
+  console.log("Payload to send:", formattedData);
+
+  if (onSubmit) onSubmit();
+};
+
 
   // Determine if this is the RLLR tab by checking for the Final Lending Rate row
   const isRllr = paramsArr.some((param) => param.key === "finalLendingRate");
