@@ -1,11 +1,6 @@
+// redux/features/products/productApi.ts
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const createProductProps = {
-
-};
-const updateProductProps = {
-
-};
 export const productApi = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({
@@ -14,38 +9,69 @@ export const productApi = createApi({
   }),
   tagTypes: ["Product"],
   endpoints: (builder) => ({
-    createProduct: builder.mutation<any,any>({
+    // Create product
+    createProduct: builder.mutation<any, any>({
       query: (payload) => ({
         url: "/products/create-with-rules",
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: [{ type: "Product", id: "LIST" }],
     }),
+
+    // List all products
     getProducts: builder.query<any, void>({
       query: () => "/products",
-      providesTags: ["Product"],
-      keepUnusedDataFor: 60, // keep user data for 60 seconds after last use
+      providesTags: (result) =>
+        result && Array.isArray(result)
+          ? [
+              ...result.map((r: any) => ({ type: "Product" as const, id: r.id })),
+              { type: "Product", id: "LIST" },
+            ]
+          : [{ type: "Product", id: "LIST" }],
+      keepUnusedDataFor: 60,
     }),
+
+    // Products by partner id (used on partner/nbfc pages)
     getProductsByPartnerId: builder.query<any, string>({
-      query: (partnerId: string) => `/products/${partnerId}`,
-      providesTags: ["Product"],
-        keepUnusedDataFor: 60, // keep user data for 60 seconds after last use
+      query: (partnerId: string) => `/products/partner/${partnerId}`,
+      providesTags: (result, error, partnerId) =>
+        result && Array.isArray(result)
+          ? [
+              ...result.map((r: any) => ({ type: "Product" as const, id: r.id })),
+              { type: "Product", id: `PARTNER_${partnerId}` },
+            ]
+          : [{ type: "Product", id: `PARTNER_${partnerId}` }],
+      keepUnusedDataFor: 60,
     }),
+
+    // Product details
     getProductDetails: builder.query<any, string>({
       query: (id: string) => `/products/${id}`,
-      providesTags: ["Product"],
-        keepUnusedDataFor: 60, // keep user data for 60 seconds after last use
+      providesTags: (result, error, id) => [{ type: "Product", id }],
+      keepUnusedDataFor: 60,
     }),
-    updateProduct: builder.mutation<any, { id: string; updates: typeof updateProductProps }>({
+
+    // Update product (PUT or PATCH depending on backend)
+    updateProduct: builder.mutation<any, { id: string | number; updates: any }>({
       query: ({ id, updates }) => ({
         url: `/products/update/${id}`,
         method: "PUT",
         body: updates,
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: (result, error, arg) => [
+        { type: "Product", id: arg.id },
+        { type: "Product", id: "LIST" },
+      ],
     }),
   }),
   keepUnusedDataFor: 60,
 });
 
-export const { useCreateProductMutation, useGetProductsQuery, useGetProductsByPartnerIdQuery, useGetProductDetailsQuery, useUpdateProductMutation,  } = productApi;
+export const {
+  useCreateProductMutation,
+  useGetProductsQuery,
+  useGetProductsByPartnerIdQuery,
+  useGetProductDetailsQuery,
+  useUpdateProductMutation,
+} = productApi;

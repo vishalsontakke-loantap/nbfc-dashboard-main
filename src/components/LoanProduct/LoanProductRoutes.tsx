@@ -18,6 +18,14 @@ const LoanProductRoutes = () => {
             </Layout>
           }
         />
+        <Route
+          path="/:id/edit"
+          element={
+            <Layout>
+              <LoanProductConfig />
+            </Layout>
+          }
+        />
 
 
         {/* 404 PAGE */}

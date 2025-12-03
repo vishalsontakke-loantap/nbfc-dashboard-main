@@ -43,6 +43,14 @@ const NBFCRoutes = () => {
             </Layout>
           }
         />
+        <Route
+          path="/onboarding/nbfc-form/:id"
+          element={
+            <Layout>
+              <NBFCform />
+            </Layout>
+          }
+        />
 
         {/* LOAN PRODUCT CONFIG
         <Route
@@ -71,7 +79,15 @@ const NBFCRoutes = () => {
           }
         />
         <Route
-          path="/nbfc/product/:id"
+          path="/nbfc/:id/product"
+          element={
+            <Layout>  
+            <LoanProductConfig />
+            </Layout>
+          }
+        />
+        <Route
+          path="/nbfc/:id/product/:productId"
           element={
             <Layout>  
             <LoanProductConfig />
