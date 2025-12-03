@@ -14,9 +14,9 @@ export const breApi = createApi({
             providesTags: ["Bre"],
         }),
 
-        // GET single BRE by ID
-        getBreById: builder.query<any, string>({
-            query: (id) => `/bre-rules/${id}`,
+        // 
+        getBreById: builder.query<any, number>({
+            query: (id) => `/bre-rules/product/${id}`,
             providesTags: ["Bre"],
         }),
 
@@ -42,9 +42,9 @@ export const breApi = createApi({
         }),
 
         // UPDATE BRE
-        updateBre: builder.mutation<any, { id: string; title?: string; description?: string }>({
+        updateBre: builder.mutation<any, { id: string; data: any }>({
             query: ({ id, ...body }) => ({
-                url: `/bre-rules/${id}`,
+                url: `/bre-rules/product/${id}`,
                 method: "PUT",
                 body,
             }),

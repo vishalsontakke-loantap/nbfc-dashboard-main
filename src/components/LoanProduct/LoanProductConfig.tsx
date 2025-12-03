@@ -220,15 +220,13 @@ const LoanProductConfig = () => {
       // return;
       const result = await createProduct(payload).unwrap();
       toast.success("Loan Product created successfully!");
-
-      navigate("/loan-products");
-
+      console.log("Product created successfully:", result.data.product.id);
+      navigate(`/nbfc/product-bre/${result.data.product.id}`);  
     } catch (error) {
       console.error("Error saving data:", error);
       toast.error("Failed to create Loan Product. Please try again.");
     } finally {
       setIsSubmitting(false);
-      navigate(`/nbfc/details/${id}`);
     }
   };
   return (

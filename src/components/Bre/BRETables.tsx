@@ -45,7 +45,7 @@ const BRETables: React.FC<BRETablesProps> = ({
 }) => {
   const headerRef = useRef<CardHeaderHandle>(null);
   const navigate = useNavigate();
-  console.log("PARAMS ARR", paramsArr);
+  // console.log("PARAMS ARR", paramsArr);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

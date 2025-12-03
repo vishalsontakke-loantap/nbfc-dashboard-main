@@ -1,38 +1,40 @@
-// authSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface BreState {
-  isAuthenticated: boolean;
-  user: any;
-  accessToken: string;
-  initialized: boolean;
+export interface BreState {
+  data: Record<string, any[]> | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: BreState = {
-  isAuthenticated: false,
-  user: null,
-  accessToken: '',
-  initialized: false,   // <-- add this
+  data: null,
+  loading: false,
+  error: null
 };
 
-const authSlice = createSlice({
-  name: 'auth',
+export const breSlice = createSlice({
+  name: "bre",
   initialState,
   reducers: {
-    setCredentials(state, action: PayloadAction<{ user: any }>) {
-      state.isAuthenticated = true;
-      state.user = action.payload.user;
-      state.initialized = true;   // <-- auth check done
+    setBreData(state, action: PayloadAction<Record<string, any[]>>) {
+      state.data = action.payload;
+      state.loading = false;
+      state.error = null;
     },
-
-    clearCredentials(state) {
-      state.isAuthenticated = false;
-      state.user = null;
-      state.accessToken = '';
-      state.initialized = true;  // <-- check done but no auth
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
+    },
+    setError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
+    resetBre(state) {
+      state.data = null;
+      state.loading = false;
+      state.error = null;
     }
   }
 });
 
-export const { setCredentials, clearCredentials } = authSlice.actions;
-export default authSlice.reducer;
+export const { setBreData, setLoading, setError, resetBre } = breSlice.actions;
+
+export default breSlice.reducer;
