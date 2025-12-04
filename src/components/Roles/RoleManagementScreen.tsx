@@ -18,10 +18,12 @@ import {
   Users,
   Check,
   X,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { RolePermissionEditor } from './RolePermissionEditor';
 import type { Role, RolePermission } from '../../lib/user-mocks';
+import { useGetRolesWithPermissionsQuery } from '../../redux/features/roles/roleApi';
 
 interface RoleManagementScreenProps {
   roles: Role[];
@@ -33,16 +35,20 @@ interface RoleManagementScreenProps {
 }
 
 export function RoleManagementScreen({
-  roles,
+  roles: propRoles,
   onCreateRole,
   onEditRole,
   onDeleteRole,
   onDuplicateRole,
   onSaveRole,
 }: RoleManagementScreenProps) {
-  const [selectedRole, setSelectedRole] = useState<Role | null>(roles[0]);
+  const { data: apiRoles, isLoading, isError, refetch } = useGetRolesWithPermissionsQuery();
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
+
+  // Use API roles if available, otherwise fall back to prop roles
+  const roles = apiRoles || propRoles;
 
   const handleRoleSelect = (role: Role) => {
     setSelectedRole(role);
@@ -63,7 +69,27 @@ export function RoleManagementScreen({
     setEditorOpen(false);
     setEditingRole(null);
     setSelectedRole(role);
+    refetch(); // Refetch roles after saving
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  // Show error state
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen space-y-4">
+        <p className="text-red-600">Failed to load roles</p>
+        <Button onClick={() => refetch()}>Retry</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-6">
@@ -91,7 +117,7 @@ export function RoleManagementScreen({
           <CardHeader className="pb-3">
             <CardDescription>Total Users</CardDescription>
             <CardTitle className="text-3xl">
-              {roles.reduce((sum, role) => sum + role.userCount, 0)}
+              {roles.reduce((sum: number, role: any) => sum + (role.userCount || 0), 0)}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -99,7 +125,7 @@ export function RoleManagementScreen({
           <CardHeader className="pb-3">
             <CardDescription>Custom Roles</CardDescription>
             <CardTitle className="text-3xl">
-              {roles.filter(r => !['Admin', 'Maker', 'Checker', 'Auditor', 'Viewer'].includes(r.name)).length}
+              {roles.filter((r: any) => !['Admin', 'Maker', 'Checker', 'Auditor', 'Viewer'].includes(r.name)).length}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -107,7 +133,7 @@ export function RoleManagementScreen({
           <CardHeader className="pb-3">
             <CardDescription>System Roles</CardDescription>
             <CardTitle className="text-3xl">
-              {roles.filter(r => ['Admin', 'Maker', 'Checker', 'Auditor', 'Viewer'].includes(r.name)).length}
+              {roles.filter((r: any) => ['Admin', 'Maker', 'Checker', 'Auditor', 'Viewer'].includes(r.name)).length}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -115,13 +141,13 @@ export function RoleManagementScreen({
 
       <div className="grid grid-cols-3 gap-6">
         {/* Roles List */}
-        <Card className='px-6'>
+        <Card className='px-6 h-[500px]'>
           <CardHeader>
             <CardTitle>Roles</CardTitle>
             <CardDescription>Select a role to view permissions</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {roles.map((role) => (
+          <CardContent className="space-y-2 overflow-y-auto h-[calc(100%-5rem)]">
+            {roles.map((role: any) => (
               <div
                 key={role.id}
                 onClick={() => handleRoleSelect(role)}
@@ -157,7 +183,7 @@ export function RoleManagementScreen({
                     <Edit className="h-3 w-3 mr-1" />
                     Edit
                   </Button>
-                  <Button 
+                  {/* <Button 
                     variant="ghost" 
                     size="sm" 
                     className="h-8"
@@ -168,7 +194,7 @@ export function RoleManagementScreen({
                   >
                     <Copy className="h-3 w-3 mr-1" />
                     Duplicate
-                  </Button>
+                  </Button> */}
                   {!['Admin', 'Maker', 'Checker', 'Auditor', 'Viewer'].includes(role.name) && (
                     <Button 
                       variant="ghost" 
@@ -189,14 +215,14 @@ export function RoleManagementScreen({
         </Card>
 
         {/* Permissions Matrix */}
-        <Card className="col-span-2 px-6">
+        <Card className="col-span-2 px-6 h-[500px]">
           <CardHeader>
             <CardTitle>Permission Matrix</CardTitle>
             <CardDescription>
               {selectedRole ? `Permissions for ${selectedRole.name}` : 'Select a role to view permissions'}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-y-auto h-[calc(100%-5rem)]">
             {selectedRole ? (
               <div className="space-y-4">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">

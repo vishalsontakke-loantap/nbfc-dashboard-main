@@ -1,17 +1,12 @@
 import React, { useEffect, useRef } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { z } from "zod";
 
 import { Form, FormControl, FormField } from "@/components/ui/form";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead,
+  TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -19,15 +14,24 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 import CardHeader from "../CardHeader";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { breConfigTableHeaders } from "@/lib/constants";
+import { breConfigTableHeaders, DROPDOWN_VALUES } from "@/lib/constants";
 import { clampPercentage, formatIndianNumber } from "@/lib/utils";
+import { useUpdateBreMutation } from "@/redux/features/bre/breApi";
+
+import Select, { MultiValue, SingleValue } from "react-select";   // ⭐️ IMPORT
 
 
+// ---------------------
+// ZOD SCHEMA UPDATE
+// ---------------------
 const rowSchema = z.object({
   parameter: z.string(),
-  value: z.coerce.number().min(0, { message: "This field is required" }),
+  value: z.union([
+    z.coerce.number(),
+    z.array(z.string()),   // ⭐ multi-select support
+  ]),
   weightage: z.coerce.number().min(0).max(100),
   mandatory: z.boolean(),
 });
@@ -36,24 +40,29 @@ const formSchema = z.object({
   mappings: z.array(rowSchema),
 });
 
-const BRETables: React.FC<BRETablesProps> = ({
+
+const BRETables = ({
   title,
+  value,
   subtitle,
   navTo,
   paramsArr,
-  onSubmit, // Receive onSubmit callback
+  onSubmit,
 }) => {
-  const headerRef = useRef<CardHeaderHandle>(null);
+
+  const headerRef = useRef(null);
   const navigate = useNavigate();
-  // console.log("PARAMS ARR", paramsArr);
-  const form = useForm<z.infer<typeof formSchema>>({
+  const { id } = useParams();
+  const [updateBre, { isLoading }] = useUpdateBreMutation();
+
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      mappings: paramsArr.map((param) => ({
-        parameter: param.key,
+      mappings: paramsArr.map((p) => ({
+        parameter: p.key,
         value: undefined,
         weightage: undefined,
-        mandatory: true || false,
+        mandatory: true
       })),
     },
   });
@@ -63,44 +72,49 @@ const BRETables: React.FC<BRETablesProps> = ({
     name: "mappings",
   });
 
-  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+
+  // -------------------------
+  //  SUBMIT HANDLER
+  // -------------------------
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
+
     const data = form.getValues();
-    const inputWeightage = headerRef.current?.getValue() || "0";
-    const weightage = clampPercentage(parseFloat(inputWeightage));
 
-    const enteredTotal = data.mappings
-      .map((m) => m.weightage || 0)
-      .reduce((sum, w) => sum + w, 0);
+    const payload = {
+      [value]: data.mappings.map((m) => ({
+        key: m.parameter,
+        value: m.value,
+        is_mandatory: m.mandatory,
+        weightage: m.weightage,
+      })),
+    };
 
-    const roundedTotal = Math.round(enteredTotal * 10) / 10;
-
-    // if (roundedTotal !== weightage) {
-    //   toast.error(
-    //     `Total weightage must be exactly ${weightage}%. Currently it's ${roundedTotal}%.`
-    //   );
-    //   return;
-    // }
-
-    console.log("Weightage:", weightage);
-    console.log(`BRE Config ${title} Form data submitted:`, data);
-
-    if (onSubmit) onSubmit();
-
-    title !== "Demographic" ? navigate(`#${navTo}`) : navigate("/");
+    try {
+      await updateBre({ id: Number(id), ...payload }).unwrap();
+      toast.success("BRE updated successfully");
+      onSubmit && onSubmit();
+      navigate(`#${navTo}`);
+    } catch (err) {
+      toast.error("Failed to update BRE");
+    }
   };
 
-  // inside BRETables component
- useEffect(() => {
-  form.reset({
-    mappings: paramsArr.map(param => ({
-      parameter: param.key,
-      value: param.subtitle ,
-      weightage: param.weightage ?? undefined,
-      mandatory: !!param.mandatory,
-    }))
-  });
-}, [form, paramsArr]);
+
+  // -------------------------
+  // RESET FORM WHEN PARAMS CHANGE
+  // -------------------------
+  useEffect(() => {
+    form.reset({
+      mappings: paramsArr.map((p) => ({
+        parameter: p.key,
+        value: p.subtitle,
+        weightage: p.weightage ?? undefined,
+        mandatory: !!p.mandatory,
+      })),
+    });
+  }, [paramsArr]);
+
 
   return (
     <div>
@@ -108,15 +122,14 @@ const BRETables: React.FC<BRETablesProps> = ({
         ref={headerRef}
         title={title}
         subtitle={subtitle}
-        pclassName="mt-4"
-        weightage={true}
       />
 
       <div className="space-y-3 space-x-4 w-full mt-4 min-w-[66rem]">
         <Form {...form}>
           <form onSubmit={onSubmitHandler}>
-            <div className="bg-white shadow-sm rounded-lg p-4 ">
+            <div className="bg-white shadow-sm rounded-lg p-4">
               <Table>
+
                 <TableHeader>
                   <TableRow className="h-12">
                     {breConfigTableHeaders.map((header) => (
@@ -129,131 +142,192 @@ const BRETables: React.FC<BRETablesProps> = ({
                     ))}
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
-                  {fields.map((field, index) => (
-                    <TableRow key={field.id} className="h-12">
-                      <TableCell className="w-[30%] flex flex-col">
-                        <p className="font-semibold">{paramsArr[index]?.name}</p>
-                        
-                      </TableCell>
-                      <TableCell className="w-[30%]">
-                        <FormField
-                          control={form.control}
-                          name={`mappings.${index}.value`}
-                          render={({ field }) =>
-                            paramsArr[index].type === "money" ? (
-                              <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-                                  ₹
-                                </span>
+
+                  {fields.map((field, index) => {
+                    const param = paramsArr[index];
+
+                    return (
+                      <TableRow key={field.id} className="h-12">
+
+                        {/* LABEL */}
+                        <TableCell className="w-[30%]">
+                          <p className="font-semibold">
+                            {param?.name}
+                          </p>
+                        </TableCell>
+
+
+                        {/* VALUE FIELD */}
+                        <TableCell className="w-[30%]">
+
+                          <FormField
+                            control={form.control}
+                            name={`mappings.${index}.value`}
+                            render={({ field }) => {
+
+                              // ---------------------------
+                              // 🔥 MONEY
+                              // ---------------------------
+                              if (param.type === "money") {
+                                return (
+                                  <Input
+                                    inputMode="numeric"
+                                    value={
+                                      field.value
+                                        ? formatIndianNumber(field.value.toString())
+                                        : ""
+                                    }
+                                    onChange={(e) => {
+                                      const raw = e.target.value.replace(/[^0-9]/g, "");
+                                      field.onChange(raw);
+                                    }}
+                                  />
+                                );
+                              }
+
+
+                              // ---------------------------
+                              // 🔥 PERCENT
+                              // ---------------------------
+                              if (param.type === "percent") {
+                                return (
+                                  <Input
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    value={field.value ?? ""}
+                                    onChange={(e) =>
+                                      field.onChange(clampPercentage(+e.target.value))
+                                    }
+                                  />
+                                );
+                              }
+
+
+                              // ---------------------------
+                              // 🔥 DROPDOWN WITH REACT-SELECT
+                              // ---------------------------
+                              if (param.type === "dropdown") {
+                                const dropdownOptions = DROPDOWN_VALUES[param.key] ?? [];
+                                const options = dropdownOptions.map((o) => ({
+                                  label: o,
+                                  value: o,
+                                }));
+
+                                return (
+                                  <Controller
+                                    control={form.control}
+                                    name={`mappings.${index}.value`}
+                                    render={({ field }) => {
+                                      const selectedValue = param.multi
+                                        ? options.filter((o) =>
+                                            Array.isArray(field.value) && field.value.includes(o.value)
+                                          )
+                                        : options.find((o) => o.value === field.value) || null;
+
+                                      return (
+                                        <Select
+                                          isMulti={!!param.multi}
+                                          options={options}
+                                          className="min-w-[240px]"
+                                          value={selectedValue}
+                                          onChange={(selected) => {
+                                            if (param.multi) {
+                                              const multi = selected as MultiValue<{ value: string; label: string }>;
+                                              field.onChange(multi ? multi.map((s) => s.value) : []);
+                                            } else {
+                                              const single = selected as SingleValue<{ value: string; label: string }>;
+                                              field.onChange(single?.value ?? "");
+                                            }
+                                          }}
+                                          placeholder="Select option(s)"
+                                        />
+                                      );
+                                    }}
+                                  />
+                                );
+                              }
+
+
+                              // ---------------------------
+                              // 🔥 TEXT
+                              // ---------------------------
+                              if (param.type === "text") {
+                                return (
+                                  <Input type="text" {...field} />
+                                );
+                              }
+                              return (
                                 <Input
-                                  placeholder={paramsArr[index]?.subtitle}
-                                  inputMode="numeric"
-                                  className="pl-7" // make room for ₹ symbol
-                                  value={
-                                    field.value
-                                      ? formatIndianNumber(
-                                        field.value.toString()
-                                      )
-                                      : ""
+                                  type="number"
+                                  {...field}
+                                />
+                              );
+                            }}
+                          />
+
+                        </TableCell>
+
+
+                        {/* WEIGHTAGE */}
+                        <TableCell className="w-[30%]">
+                          <FormField
+                            control={form.control}
+                            name={`mappings.${index}.weightage`}
+                            render={({ field }) => (
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  min={0}
+                                  max={100}
+                                  value={field.value ?? ""}
+                                  onChange={(e) =>
+                                    field.onChange(clampPercentage(+e.target.value))
                                   }
-                                  onChange={(e) => {
-                                    const raw = e.target.value.replace(
-                                      /[^0-9]/g,
-                                      ""
-                                    );
-                                    field.onChange(raw);
-                                  }}
                                 />
-                              </div>
-                            ) : paramsArr[index].type === "percent" ? (
-                              <div className="relative">
-                                <Input
-                                  type="number"
-                                  step="any"
-                                  min={0}
-                                  max={100}
-                                  placeholder={`${(
-                                    Math.random() * 9 +
-                                    1
-                                  ).toFixed(1)}`}
-                                  className="pr-7"
-                                  value={field.value ?? ""}
-                                  onChange={(e) => {
-                                    const num = parseFloat(e.target.value);
-                                    field.onChange(clampPercentage(num));
-                                  }}
-                                />
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">
-                                  %
-                                </span>
-                              </div>
-                            ) : (
-                              <Input
-                                type="number"
-                                placeholder={paramsArr[index].subtitle}
-                                {...field}
+                              </FormControl>
+                            )}
+                          />
+                        </TableCell>
+
+
+                        {/* MANDATORY SWITCH */}
+                        <TableCell>
+                          <FormField
+                            control={form.control}
+                            name={`mappings.${index}.mandatory`}
+                            render={({ field }) => (
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
                               />
-                            )
-                          }
-                        />
-                      </TableCell>
-                      <TableCell className="w-[30%]">
-                        <FormField
-                          control={form.control}
-                          name={`mappings.${index}.weightage`}
-                          render={({ field }) => (
-                            <FormControl>
-                              <div className="relative">
-                                <Input
-                                  type="number"
-                                  step="any"
-                                  min={0}
-                                  max={100}
-                                  placeholder={`${(
-                                    Math.random() * 9 +
-                                    1
-                                  ).toFixed(1)}`}
-                                  className="pr-7"
-                                  value={field.value ?? ""}
-                                  onChange={(e) => {
-                                    const num = parseFloat(e.target.value);
-                                    field.onChange(clampPercentage(num));
-                                  }}
-                                />
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">
-                                  %
-                                </span>
-                              </div>
-                            </FormControl>
-                          )}
-                        />
-                      </TableCell>
-                      <TableCell className="flex justify-center items-center">
-                        <FormField
-                          control={form.control}
-                          name={`mappings.${index}.mandatory`}
-                          render={({ field }) => (
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          )}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                            )}
+                          />
+                        </TableCell>
+
+                      </TableRow>
+                    );
+                  })}
+
                 </TableBody>
+
               </Table>
             </div>
+
+
+            {/* SUBMIT BUTTON */}
             <div className="flex justify-end mt-4 mr-2">
               <Button
                 type="submit"
+                disabled={isLoading}
                 className="text-lg p-4 bg-blue-600 hover:bg-blue-700 text-white"
               >
-                Submit
+                {isLoading ? "Submitting..." : "Submit"}
               </Button>
             </div>
+
           </form>
         </Form>
       </div>

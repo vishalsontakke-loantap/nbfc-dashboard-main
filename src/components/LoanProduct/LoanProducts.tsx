@@ -71,7 +71,7 @@ export default function LoanProducts() {
       </div>
     );
   }
-
+  console.log("Fetched Products Data:", productsData);
   return (
     <div className="p-6 space-y-6">
       {/* NBFC Info Component */}

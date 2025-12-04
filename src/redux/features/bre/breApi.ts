@@ -42,7 +42,7 @@ export const breApi = createApi({
         }),
 
         // UPDATE BRE
-        updateBre: builder.mutation<any, { id: string; data: any }>({
+        updateBre: builder.mutation({
             query: ({ id, ...body }) => ({
                 url: `/bre-rules/product/${id}`,
                 method: "PUT",

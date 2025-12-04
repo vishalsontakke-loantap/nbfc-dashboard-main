@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ import { Separator } from '../ui/separator';
 import { toast } from 'sonner';
 import { Plus, Trash2, Loader2 } from 'lucide-react';
 import type { Role, RolePermission } from '../../lib/user-mocks';
+import { useCreateRoleMutation, useUpdateRoleMutation } from '../../redux/features/roles/roleApi';
 
 interface RolePermissionEditorProps {
   open: boolean;
@@ -36,15 +37,9 @@ interface RolePermissionEditorProps {
 
 const DEFAULT_MODULES = [
   'User Management',
-  'Pool Buyout',
-  'Loans',
-  'Reports',
-  'Audit Trail',
-  'PII Data',
-  'Co-Lending Module',
-  'BRE Configuration',
-  'Document Management',
-  'Settlement',
+  'NBFC',
+  "Lending Module",
+  'Role Management',
 ];
 
 export function RolePermissionEditor({
@@ -53,6 +48,8 @@ export function RolePermissionEditor({
   role,
   onSave,
 }: RolePermissionEditorProps) {
+  const [createRole, { isLoading: isCreating }] = useCreateRoleMutation();
+  const [updateRole, { isLoading: isUpdating }] = useUpdateRoleMutation();
   const [loading, setLoading] = useState(false);
   const [roleName, setRoleName] = useState(role?.name || '');
   const [roleDescription, setRoleDescription] = useState(role?.description || '');
@@ -61,6 +58,20 @@ export function RolePermissionEditor({
   );
   const [newModuleName, setNewModuleName] = useState('');
   const [showAddModule, setShowAddModule] = useState(false);
+
+  // Update state when role prop changes (for edit mode)
+  useEffect(() => {
+    if (role) {
+      setRoleName(role.name || '');
+      setRoleDescription(role.description || '');
+      setPermissions(role.permissions || []);
+    } else {
+      // Reset for create mode
+      setRoleName('');
+      setRoleDescription('');
+      setPermissions([]);
+    }
+  }, [role, open]);
 
   const handlePermissionChange = (
     moduleIndex: number,
@@ -154,22 +165,62 @@ export function RolePermissionEditor({
     
     setLoading(true);
 
-    setTimeout(() => {
+    // Transform permissions to API format
+    const clm_permissions = permissions.map(permission => ({
+      module_name: permission.module.toLowerCase().replace(/\s+/g, '_'),
+      view: permission.actions.view ? 1 : 0,
+      create: permission.actions.create ? 1 : 0,
+      edit: permission.actions.edit ? 1 : 0,
+      delete: permission.actions.delete ? 1 : 0,
+      approve: permission.actions.approve ? 1 : 0,
+    }));
+
+    const payload = {
+      name: roleName,
+      description: roleDescription,
+      clm_permissions: clm_permissions,
+    };
+
+    try {
+      let response;
+      
+      if (role?.id) {
+        // UPDATE existing role - send same payload as create with id
+        const updatePayload = {
+          id: parseInt(role.id),
+          ...payload,
+        };
+        
+        console.log('Update Role Payload:', JSON.stringify(updatePayload, null, 2));
+        response = await updateRole(updatePayload).unwrap();
+        
+        toast.success('Role updated successfully');
+      } else {
+        // CREATE new role
+        console.log('Create Role Payload:', JSON.stringify(payload, null, 2));
+        response = await createRole(payload).unwrap();
+        
+        toast.success('Role created successfully');
+      }
+
       const updatedRole: Role = {
-        id: role?.id || `ROLE-${Date.now()}`,
+        id: response?.id?.toString() || role?.id || `ROLE-${Date.now()}`,
         name: roleName,
         description: roleDescription,
         userCount: role?.userCount || 0,
         permissions: permissions,
-        createdAt: role?.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: response?.created_at || role?.createdAt || new Date().toISOString(),
+        updatedAt: response?.updated_at || new Date().toISOString(),
       };
-console.log(JSON.stringify(updatedRole));
+
       onSave(updatedRole);
       setLoading(false);
       onClose();
-      toast.success(role ? 'Role updated successfully' : 'Role created successfully');
-    }, 1000);
+    } catch (error: any) {
+      console.error('Failed to save role:', error);
+      toast.error(error?.data?.message || `Failed to ${role ? 'update' : 'create'} role`);
+      setLoading(false);
+    }
   };
 
   const availableModules = DEFAULT_MODULES.filter(
@@ -427,11 +478,11 @@ console.log(JSON.stringify(updatedRole));
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={loading || isCreating || isUpdating}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={loading}>
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button onClick={handleSave} disabled={loading || isCreating || isUpdating}>
+            {(loading || isCreating || isUpdating) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {role ? 'Update Role' : 'Create Role'}
           </Button>
         </DialogFooter>

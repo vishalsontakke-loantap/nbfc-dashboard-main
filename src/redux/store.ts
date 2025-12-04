@@ -7,6 +7,7 @@ import productReducer from "./features/products/productSlice";
 import { productApi } from "./features/products/productApi";
 import { breApi } from "./features/bre/breApi";
 import { nbfcApi } from "./features/nbfc/nbfcApi";
+import { roleApi } from './features/roles/roleApi';
 import nbfcReducer from "./features/nbfc/nbfcSlice";
 import breReducer from "./features/bre/breSlice";
 import { userApi } from "./features/user/userApi";
@@ -26,14 +27,20 @@ export const store = configureStore({
     [breApi.reducerPath]: breApi.reducer,
     [nbfcApi.reducerPath]: nbfcApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
+    [roleApi.reducerPath]: roleApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
+      
       .concat(authApi.middleware)
+      
       .concat(productApi.middleware)
+      
       .concat(breApi.middleware)
+      
       .concat(nbfcApi.middleware)
-      .concat(userApi.middleware),
+      .concat(userApi.middleware)
+      .concat(roleApi.middleware),
 });
 
 // optional: helpers for useSelector/useDispatch typings

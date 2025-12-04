@@ -22,12 +22,12 @@ export const sidebar: SidebarItem[] = [
     icon: withBase("/images/icons/nbfc_sidebar.svg"),
     match: ["/nbfc","/nbfc-list"],
   },
-  {
-    to: "/bre",
-    label: "BRE",
-    icon: withBase("/images/icons/nbfc_sidebar.svg"),
-    match: ["/bre"],
-  },
+  // {
+  //   to: "/bre",
+  //   label: "BRE",
+  //   icon: withBase("/images/icons/nbfc_sidebar.svg"),
+  //   match: ["/bre"],
+  // },
   // {
   //   to: "/upload-pool-file",
   //   label: "Upload Pool File",
