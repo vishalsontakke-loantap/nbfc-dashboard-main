@@ -1,31 +1,39 @@
 // store.ts
-import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import authReducer from './features/auth/authSlice'; // adjust path
-import { authApi } from './features/auth/authApi';     
+import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import authReducer from "./features/auth/authSlice"; // adjust path
+import { authApi } from "./features/auth/authApi";
 import productReducer from "./features/products/productSlice";
-import { productApi } from './features/products/productApi';
-import { breApi } from './features/bre/breApi';
-import { nbfcApi } from './features/nbfc/nbfcApi';
-import nbfcReducer from './features/nbfc/nbfcSlice';
-import breReducer from './features/bre/breSlice';
-
+import { productApi } from "./features/products/productApi";
+import { breApi } from "./features/bre/breApi";
+import { nbfcApi } from "./features/nbfc/nbfcApi";
+import nbfcReducer from "./features/nbfc/nbfcSlice";
+import breReducer from "./features/bre/breSlice";
+import { userApi } from "./features/user/userApi";
+import userReducer from "./features/user/userSlice";
 export const store = configureStore({
   reducer: {
     // your regular reducers
     auth: authReducer,
     products: productReducer,
     nbfc: nbfcReducer,
-    bre:breReducer,
+    bre: breReducer,
+    user: userReducer,
 
     // RTK Query reducer must be mounted at authApi.reducerPath
     [authApi.reducerPath]: authApi.reducer,
     [productApi.reducerPath]: productApi.reducer,
     [breApi.reducerPath]: breApi.reducer,
     [nbfcApi.reducerPath]: nbfcApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware).concat(productApi.middleware).concat(breApi.middleware).concat(nbfcApi.middleware),
+    getDefaultMiddleware()
+      .concat(authApi.middleware)
+      .concat(productApi.middleware)
+      .concat(breApi.middleware)
+      .concat(nbfcApi.middleware)
+      .concat(userApi.middleware),
 });
 
 // optional: helpers for useSelector/useDispatch typings

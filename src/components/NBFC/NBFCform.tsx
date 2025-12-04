@@ -216,7 +216,7 @@ const NBFCform: React.FC = () => {
       {loading || (id && isFetchingDetails) ? (
         <div className="flex flex-col space-y-4 p-5">
           <div className="mx-auto">
-            <MultiSectionForm sections={formSkeletons} inputColumns={3} spacing="tight" />
+            <MultiSectionForm sections={formSkeletons} inputColumns={4} spacing="tight" />
           </div>
         </div>
       ) : (

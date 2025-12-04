@@ -80,7 +80,7 @@ export default function LoanProducts() {
       {/* Loan Products */}
       <div className="bg-white mb-6 p-6 shadow">
         <div className="grid md:grid-cols-2 gap-6">
-          {productsData?.data.data.map((product:any) => (
+          {productsData?.data.products.map((product:any) => (
             <div key={product.id} className="h-full">
               <LoanCard product={product} />
             </div>

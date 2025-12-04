@@ -25,12 +25,17 @@ export const userApi = createApi({
     }),
 
     // List all users
-    getUsers: builder.query<any, { page?: number; pageSize?: number; q?: string } | void>({
+    getUsers: builder.query<any, { page?: number; pageSize?: number; q?: string; partner_id?:string; start_date?:string; end_date?:string;} | void>({
       query: (args) => {
         const params: Record<string, any> = {};
         if (args?.page !== undefined) params.page = args.page;
         if (args?.pageSize !== undefined) params.per_page = args.pageSize;
-        if (args?.q) params.q = args.q;
+        if (args?.q) params.search = args.q;
+        if (args?.partner_id) params.partner_id = args.partner_id;
+        if (args?.start_date) params.from = args.start_date;
+        if (args?.end_date) params.to = args.end_date;
+
+        console.log(args,params)
         return { url: "/users", method: "GET", params };
       },
       providesTags: (result) =>
