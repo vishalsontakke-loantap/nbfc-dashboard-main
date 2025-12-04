@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -7,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CardHeader from "../CardHeader";
 import { lendingRateConfigTableHeaders } from "@/lib/constants";
+import { useGetMclrRatesQuery, useGetRllrRatesQuery, useUpdateMclrRatesMutation, useUpdateRllrRatesMutation } from "@/redux/features/lendingRate/lendingRateApi";
+import { toast } from "sonner";
 
 const rowSchema = z.object({
   parameter: z.string(),
@@ -26,6 +29,17 @@ interface LendingRateTableProps {
 }
 
 const LendingRateTable: React.FC<LendingRateTableProps> = ({ title, subtitle, paramsArr, onSubmit }) => {
+  // Determine if this is the RLLR tab
+  const isRllr = paramsArr.some((param) => param.key === "finalLendingRate");
+  
+  // Fetch rates based on type
+  const { data: mclrRates, isLoading: isMclrLoading } = useGetMclrRatesQuery(undefined, { skip: isRllr });
+  const { data: rllrRates, isLoading: isRllrLoading } = useGetRllrRatesQuery(undefined, { skip: !isRllr });
+  
+  // Update mutations
+  const [updateMclr, { isLoading: isUpdatingMclr }] = useUpdateMclrRatesMutation();
+  const [updateRllr, { isLoading: isUpdatingRllr }] = useUpdateRllrRatesMutation();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,21 +56,59 @@ const LendingRateTable: React.FC<LendingRateTableProps> = ({ title, subtitle, pa
     name: "mappings",
   });
 
-const onSubmitHandler = (data: z.infer<typeof formSchema>) => {
+  // Populate form with fetched data
+  useEffect(() => {
+    const rates = isRllr ? rllrRates : mclrRates;
+    if (rates && rates.length > 0) {
+      const mappings = paramsArr.map((param) => {
+        const matchedRate = rates.find((rate) => rate.tenor === param.name);
+        return {
+          parameter: param.name,
+          value: matchedRate?.value ? Number(matchedRate.value) : undefined,
+          effectiveFrom: matchedRate?.effective_from ? matchedRate.effective_from.split('T')[0] : undefined,
+        };
+      });
+      form.reset({ mappings });
+    }
+  }, [mclrRates, rllrRates, isRllr, paramsArr, form]);
+
+  // Watch the first 3 values for RLLR calculation
+  const watchedValues = form.watch(["mappings.0.value", "mappings.1.value", "mappings.2.value"]);
+
+  // Auto-calculate Final Lending Rate for RLLR
+  useEffect(() => {
+    if (!isRllr) return;
+    
+    const repoRate = Number(watchedValues[0]) || 0;
+    const bankSpread = Number(watchedValues[1]) || 0;
+    const creditRisk = Number(watchedValues[2]) || 0;
+    
+    const finalRate = repoRate + bankSpread + creditRisk;
+    
+    // Set the final lending rate (4th row)
+    form.setValue("mappings.3.value", finalRate);
+  }, [watchedValues, isRllr, form]);
+
+const onSubmitHandler = async (data: z.infer<typeof formSchema>) => {
   const formattedData = data.mappings.map((item) => ({
     tenor: item.parameter,
     value: item.value,
-    effective_from: item.effectiveFrom,
+    effective_from: item.effectiveFrom || "",
   }));
 
-  console.log("Payload to send:", formattedData);
-
-  if (onSubmit) onSubmit();
+  try {
+    if (isRllr) {
+      await updateRllr(formattedData).unwrap();
+      toast.success("RLLR rates updated successfully");
+    } else {
+      await updateMclr(formattedData).unwrap();
+      toast.success("MCLR rates updated successfully");
+    }
+    if (onSubmit) onSubmit();
+  } catch (error) {
+    toast.error("Failed to update rates");
+  }
 };
-
-
-  // Determine if this is the RLLR tab by checking for the Final Lending Rate row
-  const isRllr = paramsArr.some((param) => param.key === "finalLendingRate");
 
   return (
     <div>
@@ -119,8 +171,12 @@ const onSubmitHandler = (data: z.infer<typeof formSchema>) => {
                 </TableBody>
               </Table>
               <div className="flex justify-end mt-4 mr-2">
-                <Button type="submit" className="text-lg p-4 bg-blue-600 hover:bg-blue-700 text-white">
-                  Submit
+                <Button 
+                  type="submit" 
+                  className="text-lg p-4 bg-blue-600 hover:bg-blue-700 text-white"
+                  disabled={isUpdatingMclr || isUpdatingRllr || isMclrLoading || isRllrLoading}
+                >
+                  {(isUpdatingMclr || isUpdatingRllr) ? "Updating..." : "Submit"}
                 </Button>
               </div>
             </CardContent>

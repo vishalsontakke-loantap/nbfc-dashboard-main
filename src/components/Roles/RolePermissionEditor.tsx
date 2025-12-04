@@ -191,13 +191,13 @@ export function RolePermissionEditor({
           ...payload,
         };
         
-        console.log('Update Role Payload:', JSON.stringify(updatePayload, null, 2));
+        // console.log('Update Role Payload:', JSON.stringify(updatePayload, null, 2));
         response = await updateRole(updatePayload).unwrap();
         
         toast.success('Role updated successfully');
       } else {
         // CREATE new role
-        console.log('Create Role Payload:', JSON.stringify(payload, null, 2));
+        // console.log('Create Role Payload:', JSON.stringify(payload, null, 2));
         response = await createRole(payload).unwrap();
         
         toast.success('Role created successfully');
