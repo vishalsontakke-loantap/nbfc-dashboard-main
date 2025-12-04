@@ -183,7 +183,7 @@ export function RoleManagementScreen({
                     <Edit className="h-3 w-3 mr-1" />
                     Edit
                   </Button>
-                  <Button 
+                  {/* <Button 
                     variant="ghost" 
                     size="sm" 
                     className="h-8"
@@ -194,7 +194,7 @@ export function RoleManagementScreen({
                   >
                     <Copy className="h-3 w-3 mr-1" />
                     Duplicate
-                  </Button>
+                  </Button> */}
                   {!['Admin', 'Maker', 'Checker', 'Auditor', 'Viewer'].includes(role.name) && (
                     <Button 
                       variant="ghost" 

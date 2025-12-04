@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -26,7 +26,7 @@ import { Separator } from '../ui/separator';
 import { toast } from 'sonner';
 import { Plus, Trash2, Loader2 } from 'lucide-react';
 import type { Role, RolePermission } from '../../lib/user-mocks';
-import { useCreateRoleMutation } from '../../redux/features/roles/roleApi';
+import { useCreateRoleMutation, useUpdateRoleMutation } from '../../redux/features/roles/roleApi';
 
 interface RolePermissionEditorProps {
   open: boolean;
@@ -37,7 +37,7 @@ interface RolePermissionEditorProps {
 
 const DEFAULT_MODULES = [
   'User Management',
-  'NDFC',
+  'NBFC',
   "Lending Module",
   'Role Management',
 ];
@@ -49,6 +49,7 @@ export function RolePermissionEditor({
   onSave,
 }: RolePermissionEditorProps) {
   const [createRole, { isLoading: isCreating }] = useCreateRoleMutation();
+  const [updateRole, { isLoading: isUpdating }] = useUpdateRoleMutation();
   const [loading, setLoading] = useState(false);
   const [roleName, setRoleName] = useState(role?.name || '');
   const [roleDescription, setRoleDescription] = useState(role?.description || '');
@@ -57,6 +58,20 @@ export function RolePermissionEditor({
   );
   const [newModuleName, setNewModuleName] = useState('');
   const [showAddModule, setShowAddModule] = useState(false);
+
+  // Update state when role prop changes (for edit mode)
+  useEffect(() => {
+    if (role) {
+      setRoleName(role.name || '');
+      setRoleDescription(role.description || '');
+      setPermissions(role.permissions || []);
+    } else {
+      // Reset for create mode
+      setRoleName('');
+      setRoleDescription('');
+      setPermissions([]);
+    }
+  }, [role, open]);
 
   const handlePermissionChange = (
     moduleIndex: number,
@@ -166,29 +181,44 @@ export function RolePermissionEditor({
       clm_permissions: clm_permissions,
     };
 
-    console.log('Payload:', JSON.stringify(payload, null, 2));
-
     try {
-      const response = await createRole(payload).unwrap();
-      console.log('Role created:', response);
+      let response;
+      
+      if (role?.id) {
+        // UPDATE existing role - send same payload as create with id
+        const updatePayload = {
+          id: parseInt(role.id),
+          ...payload,
+        };
+        
+        console.log('Update Role Payload:', JSON.stringify(updatePayload, null, 2));
+        response = await updateRole(updatePayload).unwrap();
+        
+        toast.success('Role updated successfully');
+      } else {
+        // CREATE new role
+        console.log('Create Role Payload:', JSON.stringify(payload, null, 2));
+        response = await createRole(payload).unwrap();
+        
+        toast.success('Role created successfully');
+      }
 
       const updatedRole: Role = {
-        id: response.id || `ROLE-${Date.now()}`,
+        id: response?.id?.toString() || role?.id || `ROLE-${Date.now()}`,
         name: roleName,
         description: roleDescription,
         userCount: role?.userCount || 0,
         permissions: permissions,
-        createdAt: response.created_at || new Date().toISOString(),
-        updatedAt: response.updated_at || new Date().toISOString(),
+        createdAt: response?.created_at || role?.createdAt || new Date().toISOString(),
+        updatedAt: response?.updated_at || new Date().toISOString(),
       };
 
       onSave(updatedRole);
       setLoading(false);
       onClose();
-      toast.success(role ? 'Role updated successfully' : 'Role created successfully');
     } catch (error: any) {
-      console.error('Failed to create role:', error);
-      toast.error(error?.data?.message || 'Failed to create role');
+      console.error('Failed to save role:', error);
+      toast.error(error?.data?.message || `Failed to ${role ? 'update' : 'create'} role`);
       setLoading(false);
     }
   };
@@ -448,11 +478,11 @@ export function RolePermissionEditor({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={loading || isCreating}>
+          <Button variant="outline" onClick={onClose} disabled={loading || isCreating || isUpdating}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={loading || isCreating}>
-            {(loading || isCreating) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button onClick={handleSave} disabled={loading || isCreating || isUpdating}>
+            {(loading || isCreating || isUpdating) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {role ? 'Update Role' : 'Create Role'}
           </Button>
         </DialogFooter>
