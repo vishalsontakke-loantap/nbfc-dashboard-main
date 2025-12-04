@@ -7,16 +7,19 @@ export type RawBreItem = {
   key: string;
   is_mandatory?: boolean;
   weightage?: string | number;
+  type?: string;
   value?: string | number | Array<number> | any;
+  isMulti?: string;
 };
 
 export type Param = {
   key: string;
   name: string;       // human readable
   subtitle?: string;  // small hint / existing value
-  type?: "money" | "percent" | "number" | "text" | "array";
+  type?: string;
   mandatory?: boolean;
   weightage?: number | string;
+  isMulti?: string;
 };
 
 
@@ -39,7 +42,7 @@ export function guessTypeFromKeyOrValue(key: string): string | undefined {
       return param.type;
     }
   }
-  return undefined;
+  return "number";  // default type
 }
 
 
@@ -54,10 +57,11 @@ export function mapRawToParam(item: RawBreItem): Param {
         : item.value !== undefined && item.value !== null
         ? String(item.value)
         : "",
-    type: guessTypeFromKeyOrValue(item.key, item.value),
+    type: guessTypeFromKeyOrValue(item.key),  
+    isMulti:"false",
     mandatory: !!item.is_mandatory,
     weightage: item.weightage ?? "",
-  };
+  };      
 }
 
 // map array helper

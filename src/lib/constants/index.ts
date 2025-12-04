@@ -2760,38 +2760,43 @@ export const PARAMS = {
     { key: "dpd", type: "number" },
     { key: "numOfEnquiries", type: "number" },
     { key: "activeLoans", type: "number" },
-    { key: "writeOffSettlement", type: "number" }
+    { key: "writeOffSettlement", type: "number" },
   ],
+
   bank_statement: [
     { key: "avgMonthlyBalance", type: "number" },
     { key: "monthlyCredits", type: "number" },
     { key: "foir", type: "number" },
     { key: "debitBounceCount", type: "number" },
     { key: "overdraftInstances", type: "number" },
-    { key: "eodBalanceThreshold", type: "number" }
+    { key: "eodBalanceThreshold", type: "number" },
   ],
+
   kyc: [
-    { key: "panVerification", type: "dropdown" },
-    { key: "udyamVerification", type: "dropdown" },
-    { key: "aadharAuth", type: "dropdown" },
-    { key: "videoKyc", type: "dropdown" },
+    { key: "panVerification", type: "dropdown", multi: false },
+    { key: "udyamVerification", type: "dropdown", multi: false },
+    { key: "aadharAuth", type: "dropdown", multi: false },
+    { key: "videoKyc", type: "dropdown", multi: false },
     { key: "minAge", type: "number" },
-    { key: "maxAge", type: "number" }
+    { key: "maxAge", type: "number" },
   ],
+
   income: [
     { key: "itrFiling", type: "text" },
     { key: "gstFiling", type: "text" },
-    { key: "sourceOfIncome", type: "dropdown" },
-    { key: "consistency", type: "text" }
+    { key: "sourceOfIncome", type: "dropdown", multi: true },
+    { key: "consistency", type: "text" },
   ],
+
   occupation: [
-    { key: "employerType", type: "dropdown" },
+    { key: "employerType", type: "dropdown", multi: false },
     { key: "employmentStability", type: "text" },
-    { key: "businessVintage", type: "number" }
+    { key: "businessVintage", type: "number" },
   ],
+
   demographic: [
-    { key: "pinCodeRiskMapping", type: "text" }
-  ]
+    { key: "pinCodeRiskMapping", type: "text" },
+  ],
 };
 
 export const DROPDOWN_VALUES: Record<string, string[]> = {
