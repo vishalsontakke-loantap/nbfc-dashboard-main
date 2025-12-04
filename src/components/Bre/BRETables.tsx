@@ -20,7 +20,7 @@ import { breConfigTableHeaders, DROPDOWN_VALUES } from "@/lib/constants";
 import { clampPercentage, formatIndianNumber } from "@/lib/utils";
 import { useUpdateBreMutation } from "@/redux/features/bre/breApi";
 
-import Select from "react-select";   // ⭐️ IMPORT
+import Select, { MultiValue, SingleValue } from "react-select";   // ⭐️ IMPORT
 
 
 // ---------------------
@@ -215,28 +215,37 @@ const BRETables = ({
                                   label: o,
                                   value: o,
                                 }));
-                                console.log("Dropdown Options:",param );
+
                                 return (
                                   <Controller
                                     control={form.control}
-                                    
                                     name={`mappings.${index}.value`}
-                                    render={({ field }) => (
-                                      <Select
-                                        isMulti={param.isMulti == "true"}   // ⭐ multi-select support
-                                        options={options}
-                                        className="min-w-[240px]"
-                                        value={options.filter((o) =>
-                                          (field.value ?? []).includes(o.value)
-                                        )}
-                                        onChange={(selected) => {
-                                          // if(param.isMulti == "true"){}
-                                          field.onChange(
-                                            selected.map((s) => s.value)
-                                          );
-                                        }}
-                                      />
-                                    )}
+                                    render={({ field }) => {
+                                      const selectedValue = param.multi
+                                        ? options.filter((o) =>
+                                            Array.isArray(field.value) && field.value.includes(o.value)
+                                          )
+                                        : options.find((o) => o.value === field.value) || null;
+
+                                      return (
+                                        <Select
+                                          isMulti={!!param.multi}
+                                          options={options}
+                                          className="min-w-[240px]"
+                                          value={selectedValue}
+                                          onChange={(selected) => {
+                                            if (param.multi) {
+                                              const multi = selected as MultiValue<{ value: string; label: string }>;
+                                              field.onChange(multi ? multi.map((s) => s.value) : []);
+                                            } else {
+                                              const single = selected as SingleValue<{ value: string; label: string }>;
+                                              field.onChange(single?.value ?? "");
+                                            }
+                                          }}
+                                          placeholder="Select option(s)"
+                                        />
+                                      );
+                                    }}
                                   />
                                 );
                               }

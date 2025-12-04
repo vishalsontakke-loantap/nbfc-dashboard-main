@@ -15,11 +15,11 @@ export type RawBreItem = {
 export type Param = {
   key: string;
   name: string;       // human readable
-  subtitle?: string;  // small hint / existing value
+  subtitle?: string | string[];  // small hint / existing value or array for multi-select
   type?: string;
   mandatory?: boolean;
   weightage?: number | string;
-  isMulti?: string;
+  multi?: boolean;    // renamed from isMulti and changed to boolean
 };
 
 
@@ -45,20 +45,31 @@ export function guessTypeFromKeyOrValue(key: string): string | undefined {
   return "number";  // default type
 }
 
+export function getMultiFromKey(key: string): boolean {
+  for (const category in PARAMS) {
+    const cat = category as keyof typeof PARAMS;
 
+    const param = PARAMS[cat].find((item) => item.key === key);
+    if (param && 'multi' in param) {
+      return !!param.multi;
+    }
+  }
+  return false;  // default to single select
+}
 
 export function mapRawToParam(item: RawBreItem): Param {
+  const isMulti = getMultiFromKey(item.key);
+  
   return {
     key: item.key,
     name: titleCaseFromCamel(item.key),
-    subtitle:
-      Array.isArray(item.value)
-        ? `Values: ${item.value.join(", ")}`
-        : item.value !== undefined && item.value !== null
-        ? String(item.value)
-        : "",
+    subtitle: Array.isArray(item.value)
+      ? (isMulti ? item.value : item.value.join(", "))
+      : item.value !== undefined && item.value !== null
+      ? String(item.value)
+      : "",
     type: guessTypeFromKeyOrValue(item.key),  
-    isMulti:"false",
+    multi: isMulti,
     mandatory: !!item.is_mandatory,
     weightage: item.weightage ?? "",
   };      

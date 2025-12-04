@@ -227,7 +227,11 @@ export const breConfigTabs = [
   { name: "3. KYC", value: "kyc" },
   { name: "4. Income", value: "income" },
   { name: "5. Occupation", value: "occupation" },
-  { name: "6. Demographic", value: "demographic" },
+  { name: "6. Collateral", value: "collateral" },
+  { name: "7. NTC Details", value: "ntc_details" },
+  { name: "8. ETC Details", value: "etc_details" },
+  { name: "9. Demographic", value: "demographic" },
+
 ];
 
 export const applicationsTabs = [
@@ -535,6 +539,25 @@ export const breConfigTabContent = [
     subtitle: "Understand stability and risk based on employment",
     navTo: "demographic",
     paramsArr: breConfigOccupationParams,
+  },
+  {
+    value:"collateral",
+    title: "Collateral",
+    subtitle: "Assess collateral value and risk",
+    navTo: "ntc_details",
+    paramsArr: breConfigOccupationParams,
+  },
+  {
+    value: "ntc_details",
+    title: "NTC Details",
+    subtitle: "Review non-traceable cash transactions",
+    navTo: "etc_details",
+  },
+  {
+    value: "etc_details",
+    title: "ETC Details",
+    subtitle: "Evaluate extra-territorial connections",
+    navTo: "demographic",
   },
   {
     value: "demographic",
@@ -2774,6 +2797,7 @@ export const PARAMS = {
 
   kyc: [
     { key: "panVerification", type: "dropdown", multi: false },
+    { key: "ckyc", type: "dropdown", multi: false },
     { key: "udyamVerification", type: "dropdown", multi: false },
     { key: "aadharAuth", type: "dropdown", multi: false },
     { key: "videoKyc", type: "dropdown", multi: false },
@@ -2789,13 +2813,35 @@ export const PARAMS = {
   ],
 
   occupation: [
-    { key: "employerType", type: "dropdown", multi: false },
-    { key: "employmentStability", type: "text" },
+    { key: "employerType", type: "dropdown", multi: true },
+    { key: "employmentStability", type: "number" },
     { key: "businessVintage", type: "number" },
   ],
 
   demographic: [
     { key: "pinCodeRiskMapping", type: "text" },
+  ],
+
+  collateral: [
+    { key: "type", type: "text" },
+    { key: "ltv", type: "number" },
+    { key: "moveable", type: "dropdown", multi: false },
+  ],
+
+  ntc_details: [
+    { key: "min_tenure", type: "number" },
+    { key: "max_tenure", type: "number" },
+    { key: "min_loan_amount", type: "number" },
+    { key: "max_loan_amount", type: "number" },
+    { key: "max_loan_cap", type: "number" },
+  ],
+
+  etc_details: [
+    { key: "min_tenure", type: "number" },
+    { key: "max_tenure", type: "number" },
+    { key: "min_loan_amount", type: "money" },
+    { key: "max_loan_amount", type: "money" },
+    { key: "max_loan_cap", type: "money" },
   ],
 };
 
@@ -2804,6 +2850,8 @@ export const DROPDOWN_VALUES: Record<string, string[]> = {
   udyamVerification: ["YES", "NO"],
   aadharAuth: ["YES", "NO"],
   videoKyc: ["YES", "NO"],
+  ckyc: ["YES", "NO"],
   sourceOfIncome: ["Business", "Salaried", "Self-Employed"],
-  employerType: ["Proprietorship", "Partnership", "Pvt Ltd", "Self Employed"]
+  employerType: ["Proprietorship", "Partnership", "Pvt Ltd", "Self Employed"],
+  moveable: ["YES", "NO"],
 };

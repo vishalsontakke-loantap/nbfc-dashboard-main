@@ -65,6 +65,9 @@ const BREConfig = () => {
       kyc: mapRawArrayToParams(breData?.kyc ?? []),
       income: mapRawArrayToParams(breData?.income ?? []),
       occupation: mapRawArrayToParams(breData?.occupation ?? []),
+      collateral: mapRawArrayToParams(breData?.collateral ?? []),
+      ntc_details: mapRawArrayToParams(breData?.ntc_details ?? []),
+      etc_details: mapRawArrayToParams(breData?.etc_details ?? []),
       demographic: mapRawArrayToParams(breData?.demographic ?? []),
     };
   }, [breData]);

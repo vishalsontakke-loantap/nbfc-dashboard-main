@@ -11,7 +11,11 @@ const BreConfiguration: React.FC = () => {
     { id: 3, label: "KYC" },
     { id: 4, label: "Income" },
     { id: 5, label: "Occupation" },
-    { id: 6, label: "Demographic" },
+
+    { id: 6, label: "Collateral" }, 
+    { id: 7, label: "NTC Details" },
+    { id: 8, label: "ETC Details" },
+    { id: 9, label: "Demographic" },
   ];
 
   const bureauParams = [
