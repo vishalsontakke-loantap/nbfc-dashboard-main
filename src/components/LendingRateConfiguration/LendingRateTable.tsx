@@ -90,11 +90,24 @@ const LendingRateTable: React.FC<LendingRateTableProps> = ({ title, subtitle, pa
   }, [watchedValues, isRllr, form]);
 
 const onSubmitHandler = async (data: z.infer<typeof formSchema>) => {
-  const formattedData = data.mappings.map((item) => ({
-    tenor: item.parameter,
-    value: item.value,
-    effective_from: item.effectiveFrom || "",
-  }));
+  let formattedData;
+  
+  if (isRllr) {
+    // For RLLR, use the effective_from from the last item (Final Lending Rate) for all items
+    const finalLendingRateDate = data.mappings[data.mappings.length - 1]?.effectiveFrom || "";
+    formattedData = data.mappings.map((item) => ({
+      tenor: item.parameter,
+      value: item.value,
+      effective_from: finalLendingRateDate,
+    }));
+  } else {
+    // For MCLR, use individual effective_from for each item
+    formattedData = data.mappings.map((item) => ({
+      tenor: item.parameter,
+      value: item.value,
+      effective_from: item.effectiveFrom || "",
+    }));
+  }
 
   try {
     if (isRllr) {
