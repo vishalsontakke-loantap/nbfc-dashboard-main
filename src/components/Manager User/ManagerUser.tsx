@@ -19,7 +19,6 @@ import {
   MoreHorizontal,
   Edit,
   Trash2,
-  Lock,
   Unlock,
   Mail,
   Eye,
@@ -40,7 +39,6 @@ import {
 } from "../ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { toast } from "sonner";
-import { UserProfileView } from "./UserProfileView";
 import UserRegistrationDialog from "./UserRegistrationDialog";
 import type { User } from "../../lib/user-mocks";
 
@@ -53,30 +51,15 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { useGetUsersQuery } from "@/redux/features/user/userApi";
+import { useGetUsersQuery, useUpdateUserStatusMutation } from "@/redux/features/user/userApi";
 import useDebounce from "../../hooks/UseDebounce";
 import { useGetAllNbfcQuery } from "@/redux/features/nbfc/nbfcApi";
 import { useGetAllRolesQuery } from "@/redux/features/roles/roleApi";
 import { SkeletonTableShimmer } from "../ui/skeleton-table";
+import { extractApiErrors } from "@/utils/errorHelpers";
 // NOTE: import your NBFC RTK Query hook. Adjust the path/name if different.
 
-interface UserListingScreenProps {
-  onEditUser: (userId: string) => void;
-  onDeleteUser: (userId: string) => void;
-  onSuspendUser: (userId: string) => void;
-  onActivateUser: (userId: string) => void;
-  onAddUser: (userData: Partial<User>) => void;
-  onUpdateUser: (userId: string, userData: Partial<User>) => void;
-}
-
-export function UserListingScreen({
-  onEditUser,
-  onDeleteUser,
-  onSuspendUser,
-  onActivateUser,
-  onAddUser,
-  onUpdateUser,
-}: UserListingScreenProps) {
+export function UserListingScreen() {
   // UI state
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery.trim(), 300); // debounced version used for API
@@ -88,8 +71,6 @@ export function UserListingScreen({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [profileViewOpen, setProfileViewOpen] = useState(false);
   const [registrationDialogOpen, setRegistrationDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
@@ -102,7 +83,7 @@ export function UserListingScreen({
     error: nbfcError,
     refetch: refetchNbfc,
   } = useGetAllNbfcQuery(undefined, { refetchOnMountOrArgChange: true });
-
+  const [updateUser, updateResult] = useUpdateUserStatusMutation();
   // Roles query - fixed isFetching alias name
   const {
     data: rolesData,
@@ -142,7 +123,6 @@ export function UserListingScreen({
     const value = r.value ?? r.role ?? r.code ?? id;
     return { id: id ?? JSON.stringify(r), name: String(label), value: String(value) };
   });
-console.log('aaaaaaaaaaaa',rolesArray);
 
   // RTK Query - include date filters and nbfc filter (if your backend supports them)
   const { data, isLoading, isFetching, error, refetch } = useGetUsersQuery(
@@ -243,44 +223,38 @@ console.log('aaaaaaaaaaaa',rolesArray);
     // implement CSV export if desired
   };
 
-  const handleViewProfile = (user: User) => {
-    setSelectedUser(user);
-    setProfileViewOpen(true);
-  };
-
-  const handleEditFromProfile = (userId: string) => {
-    const user = usersArray.find((u) => String(u.id) === String(userId));
-    if (user) {
-      setEditingUser(user);
-      setProfileViewOpen(false);
-      setRegistrationDialogOpen(true);
-    }
-  };
-
-  const handleInactivateUser = (userId: string) => {
-    const user = usersArray.find((u) => String(u.id) === String(userId));
-    if (user) {
-      onUpdateUser(String(userId), { is_active: "0" });
-      toast.info(`User ${user.first_name} ${user.last_name} has been marked inactive`);
-      // refetch to reflect change
-      refetch();
-    }
+  const handleUserStatus = async(user:any) => {
+        // Prepare payload. Note: adjust `role` shape here if your backend expects an object/array.
+        console.log("USER",user);
+        const current_status = Number(user.is_active);
+        const payload = {
+          "is_active": current_status == 1 ? 0 : 1,
+        };
+        console.log('status', current_status, payload);
+    
+        try {
+            // update
+            await updateUser({ id: user.id, updates:payload }).unwrap();
+            toast.success('User updated successfully');
+        } catch (err: any) {
+          console.error('Save user error', err);
+          const { errors, message } = extractApiErrors(err);
+    
+          if (errors && typeof errors === 'object') {
+            Object.entries(errors).forEach(([field, msgs]) => {
+              const text = Array.isArray(msgs) ? msgs.join(', ') : String(msgs);
+              toast.error(`${field}: ${text}`);
+            });
+          } else {
+            if (message) toast.error(message);
+            else toast.error('Failed to save user');
+          }
+        }
   };
 
   const handleInviteUser = () => {
     setEditingUser(null);
     setRegistrationDialogOpen(true);
-  };
-
-  const handleSubmitUser = (userData: Partial<User>) => {
-    if (editingUser) {
-      onUpdateUser(String(editingUser.id), userData);
-    } else {
-      onAddUser(userData);
-    }
-    setEditingUser(null);
-    setRegistrationDialogOpen(false);
-    refetch();
   };
 
   const handlePageChange = (page: number) => {
@@ -473,37 +447,19 @@ console.log('aaaaaaaaaaaa',rolesArray);
                                     <Edit className="h-4 w-4 mr-2" /> Edit User
                                   </DropdownMenuItem>
 
-                                  <DropdownMenuItem
-                                    onClick={() => {
-                                      setMenuOpenFor(null);
-                                      handleViewProfile(user);
-                                    }}
-                                  >
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    View Profile
-                                  </DropdownMenuItem>
-
-                                  <DropdownMenuItem onClick={() => toast.info(`Send email to ${user.email}`)}>
-                                    <Mail className="h-4 w-4 mr-2" />
-                                    Send Email
-                                  </DropdownMenuItem>
 
                                   <DropdownMenuSeparator />
 
                                   {user.is_active ? (
                                     <>
-                                      <DropdownMenuItem onClick={() => onSuspendUser(String(user.id))} className="text-orange-600">
-                                        <Lock className="h-4 w-4 mr-2" />
-                                        Suspend User
-                                      </DropdownMenuItem>
-
-                                      <DropdownMenuItem onClick={() => handleInactivateUser(String(user.id))} className="text-gray-600">
+                                     
+                                      <DropdownMenuItem onClick={() => handleUserStatus(user)} className="text-gray-600">
                                         <Unlock className="h-4 w-4 mr-2" />
                                         Mark Inactive
                                       </DropdownMenuItem>
                                     </>
                                   ) : (
-                                    <DropdownMenuItem onClick={() => onActivateUser(String(user.id))} className="text-green-600">
+                                    <DropdownMenuItem onClick={() => handleUserStatus(user)} className="text-green-600">
                                       <Unlock className="h-4 w-4 mr-2" />
                                       Activate User
                                     </DropdownMenuItem>
@@ -597,28 +553,6 @@ console.log('aaaaaaaaaaaa',rolesArray);
               </div>
             </CardContent>
           </Card>
-
-          {/* User Profile View */}
-          <UserProfileView
-            user={selectedUser}
-            open={profileViewOpen}
-            onClose={() => {
-              setProfileViewOpen(false);
-              setSelectedUser(null);
-            }}
-            onActivate={(id) => {
-              onActivateUser(String(id));
-              refetch();
-            }}
-            onSuspend={(id) => {
-              onSuspendUser(String(id));
-              refetch();
-            }}
-            onInactivate={(id) => {
-              handleInactivateUser(String(id));
-            }}
-            onEdit={handleEditFromProfile}
-          />
 
           {/* User Registration Dialog */}
           <UserRegistrationDialog

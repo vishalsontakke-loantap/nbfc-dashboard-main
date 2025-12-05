@@ -205,7 +205,7 @@ export default function UserRegistrationDialog({
     try {
       if (existingUserId && fetchedUser?.id) {
         // update
-        await updateUser({ id: fetchedUser.id, ...payload }).unwrap();
+        await updateUser({ id: fetchedUser.id, updates:payload }).unwrap();
         toast.success('User updated successfully');
       } else {
         // create
