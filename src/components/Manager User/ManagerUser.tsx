@@ -56,7 +56,8 @@ import {
 import { useGetUsersQuery } from "@/redux/features/user/userApi";
 import useDebounce from "../../hooks/UseDebounce";
 import { useGetAllNbfcQuery } from "@/redux/features/nbfc/nbfcApi";
-
+import { useGetAllRolesQuery } from "@/redux/features/roles/roleApi";
+import { SkeletonTableShimmer } from "../ui/skeleton-table";
 // NOTE: import your NBFC RTK Query hook. Adjust the path/name if different.
 
 interface UserListingScreenProps {
@@ -84,10 +85,6 @@ export function UserListingScreen({
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [nbfcFilter, setNbfcFilter] = useState<string>("all");
 
-  // date range filter (string in yyyy-mm-dd for input type=date)
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);
 
@@ -103,12 +100,49 @@ export function UserListingScreen({
     isLoading: nbfcLoading,
     isFetching: nbfcFetching,
     error: nbfcError,
+    refetch: refetchNbfc,
   } = useGetAllNbfcQuery(undefined, { refetchOnMountOrArgChange: true });
 
-  // Extract NBFC options (adapt to your API shape)
-  const nbfcArray: { id: string | number; name: string }[] = Array.isArray(nbfcData?.data?.items)
-    ? nbfcData!.data.items
-    : [];
+  // Roles query - fixed isFetching alias name
+  const {
+    data: rolesData,
+    isLoading: rolesLoading,
+    isFetching: rolesFetching,
+    error: rolesError,
+    refetch: refetchRoles,
+  } = useGetAllRolesQuery();
+
+  // Robust NBFC extraction
+  const nbfcArray: { partner_id?: string | number; nbfc_name?: string; id?: string | number; name?: string }[] =
+    Array.isArray(nbfcData?.data?.items)
+      ? nbfcData.data.items
+      : Array.isArray(nbfcData?.data)
+        ? nbfcData.data
+        : Array.isArray(nbfcData)
+          ? nbfcData
+          : [];
+  // Robust Roles extraction — handle a few common API shapes
+  // rolesData could be: { data: { items: [...] } } or { data: [...] } or just [...]
+  const rolesArrayRaw: any[] =
+    Array.isArray(rolesData?.data?.items)
+      ? rolesData.data.items
+      : Array.isArray(rolesData?.data)
+        ? rolesData.data
+        : Array.isArray(rolesData)
+          ? rolesData
+          : [];
+
+  // Normalize to array of { id?: string|number, name: string, value: string }
+  const rolesArray = rolesArrayRaw.map((r) => {
+    if (!r && typeof r !== "object") return { id: String(r), name: String(r), value: String(r) };
+    if (typeof r === "string") return { id: r, name: r, value: r };
+    // handle object shapes: { id, name }, { id, role }, { code, name }, { role, label } etc.
+    const id = r.id ?? r.role_id ?? r.code ?? r.key ?? r.value ?? r.role ?? r.name;
+    const label = r.name ?? r.label ?? r.role ?? r.key ?? String(id);
+    const value = r.value ?? r.role ?? r.code ?? id;
+    return { id: id ?? JSON.stringify(r), name: String(label), value: String(value) };
+  });
+console.log('aaaaaaaaaaaa',rolesArray);
 
   // RTK Query - include date filters and nbfc filter (if your backend supports them)
   const { data, isLoading, isFetching, error, refetch } = useGetUsersQuery(
@@ -116,11 +150,12 @@ export function UserListingScreen({
       page: currentPage,
       pageSize,
       q: debouncedSearchQuery ? debouncedSearchQuery : undefined,
-      // pass these along if your API supports filtering by them
       partner_id: nbfcFilter && nbfcFilter !== "all" ? nbfcFilter : undefined,
+      role_id: roleFilter && roleFilter !== "all" ? roleFilter : undefined,
     },
     { refetchOnMountOrArgChange: true }
   );
+
   // ====== Adapt to your API shape: { success, data: { users: [...], pagination: {...} } } ======
   const usersArray: User[] = Array.isArray(data?.data?.users)
     ? data!.data.users
@@ -147,10 +182,31 @@ export function UserListingScreen({
   useEffect(() => {
     setCurrentPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchQuery, roleFilter, statusFilter, nbfcFilter, pageSize, startDate, endDate]);
+  }, [debouncedSearchQuery, roleFilter, statusFilter, nbfcFilter, pageSize]);
 
-  // derive roles from current page items
-  const roles = useMemo(() => Array.from(new Set(usersArray.map((u) => u.role).filter(Boolean))), [usersArray]);
+  // Aggregate loading & errors across APIs
+  const anyLoading = Boolean(isLoading || isFetching || nbfcLoading || nbfcFetching || rolesLoading || rolesFetching);
+
+  const extractErrorMessage = (err: any) => {
+    if (!err) return null;
+    if (typeof err === "string") return err;
+    if (err?.data?.message) return err.data.message;
+    if (err?.error) return err.error;
+    if (err?.message) return err.message;
+    try {
+      return JSON.stringify(err);
+    } catch (e) {
+      return String(err);
+    }
+  };
+
+  const errorMessages = [
+    extractErrorMessage(error),
+    extractErrorMessage(nbfcError),
+    extractErrorMessage(rolesError),
+  ].filter(Boolean) as string[];
+
+  const anyError = errorMessages.length > 0;
 
   // client-side extra filtering on top of server page results
   // We use immediate `searchQuery` here so the table filters locally while user types,
@@ -182,6 +238,7 @@ export function UserListingScreen({
   };
 
   const handleExport = () => {
+    if (anyLoading) return;
     toast.success("Exporting user list...");
     // implement CSV export if desired
   };
@@ -241,333 +298,342 @@ export function UserListingScreen({
           <p className="text-gray-600 mt-1">Manage users, roles, and permissions</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleExport} disabled={isLoading || isFetching}>
+          <Button variant="outline" onClick={handleExport} disabled={isLoading || isFetching || anyLoading}>
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button onClick={handleInviteUser}>
+          <Button onClick={handleInviteUser} disabled={anyLoading}>
             <UserPlus className="h-4 w-4 mr-2" />
             Add User
           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardDescription>Total Users</CardDescription>
-            <CardTitle className="text-3xl">{totalItems}</CardTitle>
-          </CardHeader>
+      {/* Global Loading / Error Banner */}
+      {anyLoading ? (
+        <Card className=" mt-40">
+          <CardContent>
+            <SkeletonTableShimmer rows={4} columns={3} />
+          </CardContent>
         </Card>
+      ) :
+        <>
+          <div className="grid grid-cols-3 gap-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Total Users</CardDescription>
+                <CardTitle className="text-3xl">{totalItems}</CardTitle>
+              </CardHeader>
+            </Card>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardDescription>Active Users</CardDescription>
-            <CardTitle className="text-3xl">
-              {usersArray.filter((u) => u.is_active).length}
-            </CardTitle>
-          </CardHeader>
-        </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Active Users</CardDescription>
+                <CardTitle className="text-3xl">
+                  {usersArray.filter((u) => u.is_active).length}
+                </CardTitle>
+              </CardHeader>
+            </Card>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardDescription>Inactive</CardDescription>
-            <CardTitle className="text-3xl">
-              {usersArray.filter((u) => !u.is_active).length}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="p-2">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex-1 relative min-w-[220px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search by name, email, or ID..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value); // do not set page here, debounced effect will reset
-                }}
-                className="pl-10"
-              />
-            </div>
-
-            <Select value={roleFilter} onValueChange={(v) => { setRoleFilter(v); }}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                {roles.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); }}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* NBFC select */}
-            <Select value={nbfcFilter} onValueChange={(v) => { setNbfcFilter(v); }}>
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="NBFC" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All NBFCs</SelectItem>
-                {nbfcArray.map((nbfc) => (
-                  <SelectItem key={nbfc.partner_id} value={String(nbfc.partner_id)}>
-                    {nbfc.nbfc_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-           
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Inactive</CardDescription>
+                <CardTitle className="text-3xl">
+                  {usersArray.filter((u) => !u.is_active).length}
+                </CardTitle>
+              </CardHeader>
+            </Card>
           </div>
 
-          <div className="mt-4 text-sm text-gray-600">
-            Showing {filteredUsers.length} of {totalItems} users (page {currentPage} of {totalPages}){" "}
-            {isFetching && <span className="ml-2 text-xs text-gray-500">Updating...</span>}
-          </div>
-        </CardContent>
-      </Card>
+          {/* Filters */}
+          <Card>
+            <CardContent className="p-2">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex-1 relative min-w-[220px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search by name, email, or ID..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value); // do not set page here, debounced effect will reset
+                    }}
+                    className="pl-10"
+                    disabled={anyLoading}
+                  />
+                </div>
 
-      {/* Users Table */}
-      <Card>
-        <CardContent className="p-2">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>NBFC</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                      {isLoading ? "Loading users..." : "No users found"}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredUsers.map((user) => {
-                    // display NBFC name if available
-                    const nbfcName = (user as any).nbfc?.name ?? (user as any).nbfc_name ?? "-";
-                    return (
-                      <TableRow key={user.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{user.first_name} {user.last_name}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
-                            <div className="text-xs text-gray-400">ID: {user.id}</div>
-                          </div>
-                        </TableCell>
+                <Select value={roleFilter} onValueChange={(v) => { setRoleFilter(v); }}>
+                  <SelectTrigger className="w-[180px]" disabled={anyLoading}>
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Filter by role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    {rolesArray.map((r) => (
+                      <SelectItem key={r.id ?? r.value} value={r.value}>
+                        {r.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                        <TableCell>
-                          <Badge variant="outline">{user.role}</Badge>
-                        </TableCell>
+                <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); }}>
+                  <SelectTrigger className="w-[180px]" disabled={anyLoading}>
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
 
-                        <TableCell>{nbfcName}</TableCell>
-                        <TableCell>{(user as any).location ?? "-"}</TableCell>
-                        <TableCell>{getStatusBadge(user.is_active)}</TableCell>
-                        <TableCell>{formatDate(user.created_at)}</TableCell>
+                {/* NBFC select */}
+                <Select value={nbfcFilter} onValueChange={(v) => { setNbfcFilter(v); }}>
+                  <SelectTrigger className="w-[220px]" disabled={anyLoading}>
+                    <SelectValue placeholder="NBFC" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All NBFCs</SelectItem>
+                    {nbfcArray.map((nbfc) => (
+                      <SelectItem key={nbfc.partner_id ?? nbfc.id} value={String(nbfc.partner_id ?? nbfc.id)}>
+                        {nbfc.nbfc_name ?? nbfc.name ?? "-"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                        <TableCell className="text-right">
-                          <DropdownMenu open={menuOpenFor === String(user.id)} onOpenChange={(open) => setMenuOpenFor(open ? String(user.id) : null)}>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" aria-label={`More for ${user.id}`}>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
+              </div>
 
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setMenuOpenFor(null);
-                                  setEditingUser(user);
-                                  setRegistrationDialogOpen(true);
-                                }}
-                              >
-                                <Edit className="h-4 w-4 mr-2" /> Edit User
-                              </DropdownMenuItem>
+              <div className="mt-4 text-sm text-gray-600">
+                Showing {filteredUsers.length} of {totalItems} users (page {currentPage} of {totalPages}){" "}
+                {isFetching && <span className="ml-2 text-xs text-gray-500">Updating...</span>}
+              </div>
+            </CardContent>
+          </Card>
 
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setMenuOpenFor(null);
-                                  handleViewProfile(user);
-                                }}
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                View Profile
-                              </DropdownMenuItem>
-
-                              <DropdownMenuItem onClick={() => toast.info(`Send email to ${user.email}`)}>
-                                <Mail className="h-4 w-4 mr-2" />
-                                Send Email
-                              </DropdownMenuItem>
-
-                              <DropdownMenuSeparator />
-
-                              {user.is_active ? (
-                                <>
-                                  <DropdownMenuItem onClick={() => onSuspendUser(String(user.id))} className="text-orange-600">
-                                    <Lock className="h-4 w-4 mr-2" />
-                                    Suspend User
-                                  </DropdownMenuItem>
-
-                                  <DropdownMenuItem onClick={() => handleInactivateUser(String(user.id))} className="text-gray-600">
-                                    <Unlock className="h-4 w-4 mr-2" />
-                                    Mark Inactive
-                                  </DropdownMenuItem>
-                                </>
-                              ) : (
-                                <DropdownMenuItem onClick={() => onActivateUser(String(user.id))} className="text-green-600">
-                                  <Unlock className="h-4 w-4 mr-2" />
-                                  Activate User
-                                </DropdownMenuItem>
-                              )}
-
-                              <DropdownMenuSeparator />
-
-                              <DropdownMenuItem onClick={() => onDeleteUser(String(user.id))} className="text-red-600">
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete User
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+          {/* Users Table */}
+          <Card>
+            <CardContent className="p-2">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Created At</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUsers.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                          {anyLoading ? "Loading users..." : "No users found"}
                         </TableCell>
                       </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                    ) : (
+                      filteredUsers.map((user) => {
+                        // display NBFC name if available
+                        const nbfcName = (user as any).nbfc?.name ?? (user as any).nbfc_name ?? "-";
+                        return (
+                          <TableRow key={user.id}>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{user.first_name} {user.last_name}</div>
+                                <div className="text-sm text-gray-500">{user.email}</div>
+                                <div className="text-xs text-gray-400">ID: {user.id}</div>
+                              </div>
+                            </TableCell>
 
-          {/* Pagination */}
-          <div className="flex justify-end mt-4 mr-2 items-center gap-3">
-            <div className="text-xs text-gray-500">{isFetching ? "Updating..." : `Page ${currentPage} of ${totalPages}`}</div>
+                            <TableCell>
+                              <Badge variant="outline">{user?.role[0]?.role_name|| "user"}</Badge>
+                            </TableCell>
 
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} className={currentPage === 1 ? "opacity-50 pointer-events-none" : ""} />
-                </PaginationItem>
+                            <TableCell>{getStatusBadge(user.is_active)}</TableCell>
+                            <TableCell>{formatDate(user.created_at)}</TableCell>
 
-                {totalPages <= 7 ? (
-                  [...Array(totalPages)].map((_, i) => (
-                    <PaginationItem key={i}>
-                      <PaginationLink
-                        href="#"
-                        isActive={currentPage === i + 1}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handlePageChange(i + 1);
-                        }}
-                      >
-                        {i + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))
-                ) : (
-                  <>
-                    <PaginationItem>
-                      <PaginationLink href="#" isActive={currentPage === 1} onClick={(e) => { e.preventDefault(); handlePageChange(1); }}>
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
+                            <TableCell className="text-right">
+                              <DropdownMenu open={menuOpenFor === String(user.id)} onOpenChange={(open) => setMenuOpenFor(open ? String(user.id) : null)}>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" aria-label={`More for ${user.id}`}>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
 
-                    {currentPage > 3 && (
-                      <PaginationItem>
-                        <PaginationEllipsis />
-                      </PaginationItem>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setMenuOpenFor(null);
+                                      setEditingUser(user);
+                                      setRegistrationDialogOpen(true);
+                                    }}
+                                  >
+                                    <Edit className="h-4 w-4 mr-2" /> Edit User
+                                  </DropdownMenuItem>
+
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setMenuOpenFor(null);
+                                      handleViewProfile(user);
+                                    }}
+                                  >
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    View Profile
+                                  </DropdownMenuItem>
+
+                                  <DropdownMenuItem onClick={() => toast.info(`Send email to ${user.email}`)}>
+                                    <Mail className="h-4 w-4 mr-2" />
+                                    Send Email
+                                  </DropdownMenuItem>
+
+                                  <DropdownMenuSeparator />
+
+                                  {user.is_active ? (
+                                    <>
+                                      <DropdownMenuItem onClick={() => onSuspendUser(String(user.id))} className="text-orange-600">
+                                        <Lock className="h-4 w-4 mr-2" />
+                                        Suspend User
+                                      </DropdownMenuItem>
+
+                                      <DropdownMenuItem onClick={() => handleInactivateUser(String(user.id))} className="text-gray-600">
+                                        <Unlock className="h-4 w-4 mr-2" />
+                                        Mark Inactive
+                                      </DropdownMenuItem>
+                                    </>
+                                  ) : (
+                                    <DropdownMenuItem onClick={() => onActivateUser(String(user.id))} className="text-green-600">
+                                      <Unlock className="h-4 w-4 mr-2" />
+                                      Activate User
+                                    </DropdownMenuItem>
+                                  )}
+
+                                  <DropdownMenuSeparator />
+
+                                  <DropdownMenuItem onClick={() => onDeleteUser(String(user.id))} className="text-red-600">
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete User
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
                     )}
+                  </TableBody>
+                </Table>
+              </div>
 
-                    {[currentPage - 1, currentPage, currentPage + 1]
-                      .filter((p) => p > 1 && p < totalPages)
-                      .map((p) => (
-                        <PaginationItem key={p}>
-                          <PaginationLink href="#" isActive={currentPage === p} onClick={(e) => { e.preventDefault(); handlePageChange(p); }}>
-                            {p}
+              {/* Pagination */}
+              <div className="flex justify-end mt-4 mr-2 items-center gap-3">
+                <div className="text-xs text-gray-500">{isFetching ? "Updating..." : `Page ${currentPage} of ${totalPages}`}</div>
+
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} className={currentPage === 1 ? "opacity-50 pointer-events-none" : ""} />
+                    </PaginationItem>
+
+                    {totalPages <= 7 ? (
+                      [...Array(totalPages)].map((_, i) => (
+                        <PaginationItem key={i}>
+                          <PaginationLink
+                            href="#"
+                            isActive={currentPage === i + 1}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handlePageChange(i + 1);
+                            }}
+                          >
+                            {i + 1}
                           </PaginationLink>
                         </PaginationItem>
-                      ))}
+                      ))
+                    ) : (
+                      <>
+                        <PaginationItem>
+                          <PaginationLink href="#" isActive={currentPage === 1} onClick={(e) => { e.preventDefault(); handlePageChange(1); }}>
+                            1
+                          </PaginationLink>
+                        </PaginationItem>
 
-                    {currentPage < totalPages - 2 && (
-                      <PaginationItem>
-                        <PaginationEllipsis />
-                      </PaginationItem>
+                        {currentPage > 3 && (
+                          <PaginationItem>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                        )}
+
+                        {[currentPage - 1, currentPage, currentPage + 1]
+                          .filter((p) => p > 1 && p < totalPages)
+                          .map((p) => (
+                            <PaginationItem key={p}>
+                              <PaginationLink href="#" isActive={currentPage === p} onClick={(e) => { e.preventDefault(); handlePageChange(p); }}>
+                                {p}
+                              </PaginationLink>
+                            </PaginationItem>
+                          ))}
+
+                        {currentPage < totalPages - 2 && (
+                          <PaginationItem>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                        )}
+
+                        <PaginationItem>
+                          <PaginationLink href="#" isActive={currentPage === totalPages} onClick={(e) => { e.preventDefault(); handlePageChange(totalPages); }}>
+                            {totalPages}
+                          </PaginationLink>
+                        </PaginationItem>
+                      </>
                     )}
 
                     <PaginationItem>
-                      <PaginationLink href="#" isActive={currentPage === totalPages} onClick={(e) => { e.preventDefault(); handlePageChange(totalPages); }}>
-                        {totalPages}
-                      </PaginationLink>
+                      <PaginationNext onClick={() => handlePageChange(currentPage + 1)} className={currentPage === totalPages ? "opacity-50 pointer-events-none" : ""} />
                     </PaginationItem>
-                  </>
-                )}
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            </CardContent>
+          </Card>
 
-                <PaginationItem>
-                  <PaginationNext onClick={() => handlePageChange(currentPage + 1)} className={currentPage === totalPages ? "opacity-50 pointer-events-none" : ""} />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        </CardContent>
-      </Card>
+          {/* User Profile View */}
+          <UserProfileView
+            user={selectedUser}
+            open={profileViewOpen}
+            onClose={() => {
+              setProfileViewOpen(false);
+              setSelectedUser(null);
+            }}
+            onActivate={(id) => {
+              onActivateUser(String(id));
+              refetch();
+            }}
+            onSuspend={(id) => {
+              onSuspendUser(String(id));
+              refetch();
+            }}
+            onInactivate={(id) => {
+              handleInactivateUser(String(id));
+            }}
+            onEdit={handleEditFromProfile}
+          />
 
-      {/* User Profile View */}
-      <UserProfileView
-        user={selectedUser}
-        open={profileViewOpen}
-        onClose={() => {
-          setProfileViewOpen(false);
-          setSelectedUser(null);
-        }}
-        onActivate={(id) => {
-          onActivateUser(String(id));
-          refetch();
-        }}
-        onSuspend={(id) => {
-          onSuspendUser(String(id));
-          refetch();
-        }}
-        onInactivate={(id) => {
-          handleInactivateUser(String(id));
-        }}
-        onEdit={handleEditFromProfile}
-      />
+          {/* User Registration Dialog */}
+          <UserRegistrationDialog
+            open={registrationDialogOpen}
+            onClose={() => {
+              setRegistrationDialogOpen(false);
+              setEditingUser(null);
+            }}
+            existingUserId={editingUser?.id}
+            roles={rolesArray}
+            nbfcs={nbfcArray}
+          />
+        </>
+      }
 
-      {/* User Registration Dialog */}
-      <UserRegistrationDialog
-        open={registrationDialogOpen}
-        onClose={() => {
-          setRegistrationDialogOpen(false);
-          setEditingUser(null);
-        }}
-        existingUser={editingUser}
-      />
     </div>
   );
 }

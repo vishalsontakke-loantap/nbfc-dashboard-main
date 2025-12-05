@@ -19,21 +19,23 @@ export const userApi = createApi({
       invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
     getUserDetails: builder.query<any, string>({
-      query: (id: string) => `/get-user/${id}`,
+      query: (id: string) => `/user/${id}`,
       providesTags: (result, error, id) => [{ type: "User", id }],
       keepUnusedDataFor: 60,
     }),
 
     // List all users
-    getUsers: builder.query<any, { page?: number; pageSize?: number; q?: string; partner_id?:string; start_date?:string; end_date?:string;} | void>({
+    getUsers: builder.query<any, { page?: number; pageSize?: number; q?: string; partner_id?:string; role_id?:string;} | void>({
       query: (args) => {
         const params: Record<string, any> = {};
         if (args?.page !== undefined) params.page = args.page;
         if (args?.pageSize !== undefined) params.per_page = args.pageSize;
         if (args?.q) params.search = args.q;
         if (args?.partner_id) params.partner_id = args.partner_id;
-        if (args?.start_date) params.from = args.start_date;
-        if (args?.end_date) params.to = args.end_date;
+        if (args?.role_id) params.role_id = args.role_id;
+        
+        // if (args?.start_date) params.from = args.start_date;
+        // if (args?.end_date) params.to = args.end_date;
 
         console.log(args,params)
         return { url: "/users", method: "GET", params };

@@ -25,67 +25,118 @@ import { Loader2 } from 'lucide-react';
 import type { User } from '../../lib/user-mocks';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import { useCreateUserMutation, useUpdateUserMutation } from '@/redux/features/user/userApi';
+import { useCreateUserMutation, useUpdateUserMutation, useGetUserDetailsQuery } from '@/redux/features/user/userApi';
 import { extractApiErrors } from '@/utils/errorHelpers';
 
 interface UserRegistrationDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit?: (userData: Partial<User>) => void; // optional callback to parent
-  existingUser?: User | null;
+  existingUserId?: string | null;
+  roles?: Array<any>;
+  nbfcs?: Array<any>;
 }
 
 export default function UserRegistrationDialog({
   open,
   onClose,
-  existingUser = null,
-  onSubmit,
+  existingUserId = null,
+  roles,
+  nbfcs,
 }: UserRegistrationDialogProps) {
-  // Partner options - could come from props or from api in future
+  // Partner options - convert partner ids to string to match react-select value comparison
   interface PartnerOptions {
     readonly value: string;
     readonly label: string;
   }
-
-  const partnerOptions: readonly PartnerOptions[] = [
-    { value: '1', label: 'Partner 1' },
-    { value: '2', label: 'Partner 2' },
-    { value: '3', label: 'Partner 3' },
-    { value: '4', label: 'Partner 4' },
-    { value: '5', label: 'Partner 5' },
-  ];
+  const partnerOptions: readonly PartnerOptions[] =
+    nbfcs?.map((nbfc) => {
+      return { value: String(nbfc.partner_id), label: nbfc.nbfc_name ?? nbfc.name ?? String(nbfc.partner_id) };
+    }) || [];
 
   const animatedComponents = makeAnimated();
-  console.log('ex', existingUser)
-  const initData = useMemo(() => ({
-    first_name: existingUser?.first_name || '',
-    last_name: existingUser?.last_name || '',
-    email: existingUser?.email || '',
-    mobile: existingUser?.mobile || '',
-    dob: existingUser?.dob || '',
-    gender: existingUser?.gender || '',
-    role: existingUser?.role || '',
-    department: existingUser?.department || '',
-    designation: existingUser?.designation || '',
-    status: existingUser?.status || 'active',
-    pf_no: existingUser?.pf_no || '',
-    user_type: existingUser?.user_type || '',
-    // keep partner_id as string[] internally
-    partner_id: Array.isArray(existingUser?.partner_id)
-      ? (existingUser!.partner_id as string[])
-      : existingUser?.partner_id
-        ? [String(existingUser.partner_id)]
-        : [],
-  }), [existingUser]);
+
+  // ---------------------------------------------------------------------------
+  // Fetch user details when existingUserId is provided
+  // ---------------------------------------------------------------------------
+  const {
+    data: userDetailsRaw,
+    isLoading: userDetailsLoading,
+    isFetching: userDetailsFetching,
+    error: userDetailsError,
+    refetch: refetchUserDetails,
+  } = useGetUserDetailsQuery(existingUserId ?? '', {
+    skip: !existingUserId,
+  });
+
+  // Normalize possible wrapper shapes
+  const fetchedUser: any = userDetailsRaw?.data ?? userDetailsRaw ?? null;
+
+  // helper to map various user.role shapes to a single role value (string/id)
+  const mapExistingRoleToValue = (u?: any) => {
+    const r = u?.roles;
+    if (!r) return '';
+    if (Array.isArray(r) && r.length) {
+      const first = r[0];
+      return String(first.role_id ?? first.id ?? first.value ?? first.role ?? first.role_name ?? first.name ?? first);
+    }
+    if (typeof r === 'object') {
+      return String(r.role_id ?? r.id ?? r.value ?? r.role ?? r.role_name ?? r.name ?? r);
+    }
+    return String(r);
+  };
+
+  // builder that creates initial form data from a user object (or defaults)
+  const buildInitData = (u?: any) => ({
+    first_name: u?.first_name ?? '',
+    last_name: u?.last_name ?? '',
+    email: u?.email ?? '',
+    mobile: u?.mobile ?? '',
+    dob: u?.dob ?? '',
+    gender: u?.gender ?? '',
+    // normalize role to string id/value
+    role: mapExistingRoleToValue(u) || '',
+    department: u?.department ?? '',
+    designation: u?.designation ?? '',
+    status: u?.status ?? 'active',
+    pf_no: u?.pf_no ?? '',
+    user_type: u?.user_type ?? '',
+    // partner_id as array of strings — handle multiple shapes:
+    partner_id: (() => {
+      // 1) If API returned `partners` array with partner objects (common)
+      if (Array.isArray(u?.partners) && u.partners.length) {
+        return u.partners
+          .map((p: any) => {
+            // prefer explicit partner_id, else try pivot.partner_id, else id
+            return String(p.partner_id ?? p.pivot?.partner_id ?? p.id ?? p.partnerId ?? '');
+          })
+          .filter(Boolean);
+      }
+
+      // 2) If API returned `partner` single object
+      if (u?.partner && (u.partner.partner_id || u.partner.id)) {
+        return [String(u.partner.partner_id ?? u.partner.id)];
+      }
+
+      // 3) If API returned partner_id as array or scalar on user
+      if (Array.isArray(u?.partner_id) && u.partner_id.length) {
+        return u.partner_id.map((p: any) => String(p)).filter(Boolean);
+      }
+      if (u?.partner_id) {
+        return [String(u.partner_id)];
+      }
+
+      // fallback empty
+      return [];
+    })(),
+  });
+
+  const initData = useMemo(() => buildInitData(fetchedUser), [fetchedUser]);
 
   const [formData, setFormData] = useState(initData);
   const [step, setStep] = useState(1);
 
-  // RTK Query mutations - note hooks return tuples
-  const [createUser, createResult] = useCreateUserMutation();
-  const [updateUser, updateResult] = useUpdateUserMutation();
-
-  // keep formData in sync when existingUser changes (e.g., opening dialog to edit a different user)
+  // keep formData in sync when fetchedUser or initData changes (populate when API returns)
   useEffect(() => {
     setFormData(initData);
     setStep(1);
@@ -98,13 +149,16 @@ export default function UserRegistrationDialog({
   // helper to get react-select value objects from stored partner ids
   const selectedPartnerOptions = useMemo(() => {
     return partnerOptions.filter((p) => (formData.partner_id || []).includes(p.value));
-  }, [formData.partner_id]);
+  }, [formData.partner_id, partnerOptions]);
+
+  // RTK Query mutations
+  const [createUser, createResult] = useCreateUserMutation();
+  const [updateUser, updateResult] = useUpdateUserMutation();
 
   const totalSteps = 2;
 
   const handleSubmit = async () => {
-    // local loading handled from mutation states
-    // Validation
+    // validation
     if (
       !formData.first_name ||
       !formData.last_name ||
@@ -131,8 +185,8 @@ export default function UserRegistrationDialog({
       return;
     }
 
+    // Prepare payload. Note: adjust `role` shape here if your backend expects an object/array.
     const payload: Partial<User> = {
-      id: existingUser?.id || undefined,
       first_name: formData.first_name,
       last_name: formData.last_name,
       email: formData.email,
@@ -140,6 +194,7 @@ export default function UserRegistrationDialog({
       gender: formData.gender,
       dob: formData.dob,
       pf_no: formData.pf_no,
+      // role is sent as the selected id/value (string). Adjust if API expects numeric or object.
       role: formData.role,
       department: formData.department,
       user_type: formData.user_type,
@@ -148,50 +203,44 @@ export default function UserRegistrationDialog({
     };
 
     try {
-      if (existingUser && existingUser.id) {
+      if (existingUserId && fetchedUser?.id) {
         // update
-        await updateUser({ id: existingUser.id, ...payload }).unwrap();
+        await updateUser({ id: fetchedUser.id, ...payload }).unwrap();
         toast.success('User updated successfully');
-        if (onSubmit) onSubmit(payload);
       } else {
         // create
         await createUser(payload).unwrap();
         toast.success('User created successfully');
-        if (onSubmit) onSubmit(payload);
         // reset only when creating
-        setFormData(initData);
+        setFormData(buildInitData(undefined));
       }
       onClose();
     } catch (err: any) {
       console.error('Save user error', err);
       const { errors, message } = extractApiErrors(err);
 
-
-      // if validation errors object exists, iterate and show them
       if (errors && typeof errors === 'object') {
-        // Example: { email: ['Email already exists'], role: ['invalid role'] }
         Object.entries(errors).forEach(([field, msgs]) => {
-          // msgs could be an array or string
           const text = Array.isArray(msgs) ? msgs.join(', ') : String(msgs);
           toast.error(`${field}: ${text}`);
         });
-      }
-      else {
+      } else {
         if (message) toast.error(message);
+        else toast.error('Failed to save user');
       }
     }
   };
 
-  // derive loading state from either mutation
-  const loading = createResult.isLoading || updateResult.isLoading;
+  // derive loading state from create/update + user fetch
+  const loading = createResult.isLoading || updateResult.isLoading || userDetailsLoading || userDetailsFetching;
 
   return (
     <Dialog open={open} onOpenChange={(openState) => !openState && onClose()}>
       <DialogContent className="w-[60vw] max-w-6xl sm:max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{existingUser ? 'Edit User' : 'Register New User'}</DialogTitle>
+          <DialogTitle>{fetchedUser ? 'Edit User' : 'Register New User'}</DialogTitle>
           <DialogDescription>
-            {existingUser ? 'Update user information and permissions' : 'Fill in the details to create a new user account'}
+            {fetchedUser ? 'Update user information and permissions' : 'Fill in the details to create a new user account'}
           </DialogDescription>
         </DialogHeader>
 
@@ -267,13 +316,14 @@ export default function UserRegistrationDialog({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="pf_no">Employee ID</Label>
-                    <Input id="pf_no" value={formData.pf_no} onChange={(e) => handleInputChange('pf_no', e.target.value)} placeholder="EMP-Code" disabled={!!existingUser} />
+                    <Input id="pf_no" value={formData.pf_no} onChange={(e) => handleInputChange('pf_no', e.target.value)} placeholder="EMP-Code" disabled={!!fetchedUser} />
                   </div>
 
                   <div>
                     <Label htmlFor="designation">Designation</Label>
                     <Input id="designation" value={formData.designation} onChange={(e) => handleInputChange('designation', e.target.value)} placeholder="Enter designation" />
                   </div>
+
                   <div>
                     <Label htmlFor="department">Department *</Label>
                     <UiSelect value={formData.department} onValueChange={(value) => handleInputChange('department', value)}>
@@ -292,21 +342,23 @@ export default function UserRegistrationDialog({
                       </SelectContent>
                     </UiSelect>
                   </div>
+
                   <div>
                     <Label htmlFor="role">Role *</Label>
-                    <UiSelect value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
+                    <UiSelect value={String(formData.role)} onValueChange={(value) => handleInputChange('role', value)}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1">Admin</SelectItem>
-                        <SelectItem value="2">Maker</SelectItem>
-                        <SelectItem value="3">Checker</SelectItem>
-                        <SelectItem value="4">Auditor</SelectItem>
-                        <SelectItem value="5">Viewer</SelectItem>
+                        {roles?.map((role) => (
+                          <SelectItem key={String(role.id)} value={String(role.id)}>
+                            {role.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </UiSelect>
                   </div>
+
                   <div>
                     <Label htmlFor="user_type">User Type</Label>
                     <UiSelect value={formData.user_type} onValueChange={(value) => handleInputChange('user_type', value)}>
@@ -318,8 +370,8 @@ export default function UserRegistrationDialog({
                         <SelectItem value="bank">Bank</SelectItem>
                       </SelectContent>
                     </UiSelect>
-
                   </div>
+
                   <div>
                     <Label htmlFor="partner_id"> Select Partner</Label>
                     <Select
@@ -328,19 +380,17 @@ export default function UserRegistrationDialog({
                       value={selectedPartnerOptions}
                       isMulti
                       onChange={(options: any) => {
-                        const values = options?.map((o: any) => o.value) || [];
+                        const values = options?.map((o: any) => String(o.value)) || [];
                         handleInputChange('partner_id', values);
                       }}
                       options={partnerOptions}
+                      isDisabled={partnerOptions.length === 0}
                     />
                   </div>
-
-
                 </div>
               </CardContent>
             </Card>
           )}
-
         </div>
 
         <DialogFooter className="flex items-center justify-between">
@@ -362,7 +412,7 @@ export default function UserRegistrationDialog({
             ) : (
               <Button onClick={handleSubmit} disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {existingUser ? 'Update User' : 'Register User'}
+                {fetchedUser ? 'Update User' : 'Register User'}
               </Button>
             )}
           </div>
