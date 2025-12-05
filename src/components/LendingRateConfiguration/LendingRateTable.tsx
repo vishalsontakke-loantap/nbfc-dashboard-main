@@ -90,31 +90,25 @@ const LendingRateTable: React.FC<LendingRateTableProps> = ({ title, subtitle, pa
   }, [watchedValues, isRllr, form]);
 
 const onSubmitHandler = async (data: z.infer<typeof formSchema>) => {
-  let formattedData;
-  
-  if (isRllr) {
-    // For RLLR, use the effective_from from the last item (Final Lending Rate) for all items
-    const finalLendingRateDate = data.mappings[data.mappings.length - 1]?.effectiveFrom || "";
-    formattedData = data.mappings.map((item) => ({
-      tenor: item.parameter,
-      value: item.value,
-      effective_from: finalLendingRateDate,
-    }));
-  } else {
-    // For MCLR, use individual effective_from for each item
-    formattedData = data.mappings.map((item) => ({
-      tenor: item.parameter,
-      value: item.value,
-      effective_from: item.effectiveFrom || "",
-    }));
-  }
-
   try {
     if (isRllr) {
-      await updateRllr(formattedData).unwrap();
+      // For RLLR, send as array format with same effective_from for all
+      const effectiveFrom = data.mappings[3]?.effectiveFrom || "";
+      const rllrPayload = data.mappings.map((item) => ({
+        tenor: item.parameter,
+        value: item.value,
+        effective_from: effectiveFrom,
+      }));
+      await updateRllr(rllrPayload).unwrap();
       toast.success("RLLR rates updated successfully");
     } else {
-      await updateMclr(formattedData).unwrap();
+      // For MCLR, send as array with individual effective_from
+      const mclrPayload = data.mappings.map((item) => ({
+        tenor: item.parameter,
+        value: item.value,
+        effective_from: item.effectiveFrom || "",
+      }));
+      await updateMclr(mclrPayload).unwrap();
       toast.success("MCLR rates updated successfully");
     }
     if (onSubmit) onSubmit();
