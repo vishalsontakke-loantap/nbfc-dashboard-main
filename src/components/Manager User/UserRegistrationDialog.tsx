@@ -74,7 +74,7 @@ export default function UserRegistrationDialog({
 
   // helper to map various user.role shapes to a single role value (string/id)
   const mapExistingRoleToValue = (u?: any) => {
-    const r = u?.roles;
+    const r = u?.role;
     if (!r) return '';
     if (Array.isArray(r) && r.length) {
       const first = r[0];
