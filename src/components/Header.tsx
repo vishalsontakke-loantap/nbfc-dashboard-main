@@ -2,15 +2,18 @@ import React, { useState, useRef, useEffect } from "react";
 import { assetPath } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import { useLogoutMutation } from "@/redux/features/auth/authApi";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [logoutTrigger] = useLogoutMutation();
-
+  const navigate = useNavigate();
   const handleLogout = async () => {
     try {
       await logoutTrigger();
+      navigate("/")
+
     }
     catch (err) {
       console.error("Logout failed", err);

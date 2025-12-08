@@ -14,6 +14,7 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
 
     useEffect(() => {
         if (isSuccess && data && data?.success) {
+            console.log("DATA",data)
             dispatch(setCredentials({
                 user: data?.data || null,
             }));

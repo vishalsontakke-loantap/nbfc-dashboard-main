@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,182 +11,244 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import {
-  Select,
+  Select as UiSelect,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { Textarea } from '../ui/textarea';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
 import { toast } from 'sonner';
-import { Loader2, Upload, X } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import type { User } from '../../lib/user-mocks';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { useCreateUserMutation, useUpdateUserMutation, useGetUserDetailsQuery } from '@/redux/features/user/userApi';
+import { extractApiErrors } from '@/utils/errorHelpers';
 
 interface UserRegistrationDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (userData: Partial<User>) => void;
-  existingUser?: User | null;
+  onSubmit?: (userData: Partial<User>) => void; // optional callback to parent
+  existingUserId?: string | null;
+  roles?: Array<any>;
+  nbfcs?: Array<any>;
 }
 
-export function UserRegistrationDialog({
+export default function UserRegistrationDialog({
   open,
   onClose,
-  onSubmit,
-  existingUser,
+  existingUserId = null,
+  roles,
+  nbfcs,
 }: UserRegistrationDialogProps) {
-  const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  // Partner options - convert partner ids to string to match react-select value comparison
+  interface PartnerOptions {
+    readonly value: string;
+    readonly label: string;
+  }
+  const partnerOptions: readonly PartnerOptions[] =
+    nbfcs?.map((nbfc) => {
+      return { value: String(nbfc.partner_id), label: nbfc.nbfc_name ?? nbfc.name ?? String(nbfc.partner_id) };
+    }) || [];
 
-  const [formData, setFormData] = useState({
-    // Personal Information
-    firstName: existingUser?.name.split(' ')[0] || '',
-    lastName: existingUser?.name.split(' ').slice(1).join(' ') || '',
-    email: existingUser?.email || '',
-    phone: existingUser?.phone || '',
-    alternatePhone: '',
-    dateOfBirth: '',
-    gender: '',
-    
-    // Official Information
-    employeeId: existingUser?.id || '',
-    role: existingUser?.role || '',
-    department: existingUser?.department || '',
-    designation: '',
-    reportingTo: existingUser?.reportingTo || '',
-    joiningDate: '',
-    
-    // Location & Address
-    location: existingUser?.location || '',
-    officeAddress: '',
-    city: '',
-    state: '',
-    pincode: '',
-    country: 'India',
-    
-    // Additional Information
-    panNumber: '',
-    aadhaarNumber: '',
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    emergencyContactRelation: '',
-    
-    // System Access
-    status: existingUser?.status || 'active',
-    permissions: existingUser?.permissions || [],
-    notes: '',
+  const animatedComponents = makeAnimated();
+
+  // ---------------------------------------------------------------------------
+  // Fetch user details when existingUserId is provided
+  // ---------------------------------------------------------------------------
+  const {
+    data: userDetailsRaw,
+    isLoading: userDetailsLoading,
+    isFetching: userDetailsFetching,
+    error: userDetailsError,
+    refetch: refetchUserDetails,
+  } = useGetUserDetailsQuery(existingUserId ?? '', {
+    skip: !existingUserId,
   });
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  // Normalize possible wrapper shapes
+  const fetchedUser: any = userDetailsRaw?.data ?? userDetailsRaw ?? null;
+
+  // helper to map various user.role shapes to a single role value (string/id)
+  const mapExistingRoleToValue = (u?: any) => {
+    const r = u?.role;
+    if (!r) return '';
+    if (Array.isArray(r) && r.length) {
+      const first = r[0];
+      return String(first.role_id ?? first.id ?? first.value ?? first.role ?? first.role_name ?? first.name ?? first);
+    }
+    if (typeof r === 'object') {
+      return String(r.role_id ?? r.id ?? r.value ?? r.role ?? r.role_name ?? r.name ?? r);
+    }
+    return String(r);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size should be less than 5MB');
-        return;
+  // builder that creates initial form data from a user object (or defaults)
+  const buildInitData = (u?: any) => ({
+    first_name: u?.first_name ?? '',
+    last_name: u?.last_name ?? '',
+    email: u?.email ?? '',
+    mobile: u?.mobile ?? '',
+    dob: u?.dob ?? '',
+    gender: u?.gender ?? '',
+    // normalize role to string id/value
+    role: mapExistingRoleToValue(u) || '',
+    department: u?.department ?? '',
+    designation: u?.designation ?? '',
+    status: u?.status ?? 'active',
+    pf_no: u?.pf_no ?? '',
+    user_type: u?.user_type ?? '',
+    // partner_id as array of strings — handle multiple shapes:
+    partner_id: (() => {
+      // 1) If API returned `partners` array with partner objects (common)
+      if (Array.isArray(u?.partners) && u.partners.length) {
+        return u.partners
+          .map((p: any) => {
+            // prefer explicit partner_id, else try pivot.partner_id, else id
+            return String(p.partner_id ?? p.pivot?.partner_id ?? p.id ?? p.partnerId ?? '');
+          })
+          .filter(Boolean);
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+
+      // 2) If API returned `partner` single object
+      if (u?.partner && (u.partner.partner_id || u.partner.id)) {
+        return [String(u.partner.partner_id ?? u.partner.id)];
+      }
+
+      // 3) If API returned partner_id as array or scalar on user
+      if (Array.isArray(u?.partner_id) && u.partner_id.length) {
+        return u.partner_id.map((p: any) => String(p)).filter(Boolean);
+      }
+      if (u?.partner_id) {
+        return [String(u.partner_id)];
+      }
+
+      // fallback empty
+      return [];
+    })(),
+  });
+
+  const initData = useMemo(() => buildInitData(fetchedUser), [fetchedUser]);
+
+  const [formData, setFormData] = useState(initData);
+  const [step, setStep] = useState(1);
+
+  // keep formData in sync when fetchedUser or initData changes (populate when API returns)
+  useEffect(() => {
+    setFormData(initData);
+    setStep(1);
+  }, [initData]);
+
+  const handleInputChange = (field: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  // helper to get react-select value objects from stored partner ids
+  const selectedPartnerOptions = useMemo(() => {
+    return partnerOptions.filter((p) => (formData.partner_id || []).includes(p.value));
+  }, [formData.partner_id, partnerOptions]);
+
+  // RTK Query mutations
+  const [createUser, createResult] = useCreateUserMutation();
+  const [updateUser, updateResult] = useUpdateUserMutation();
+
+  const totalSteps = 2;
 
   const handleSubmit = async () => {
-    setLoading(true);
-    
-    // Validation
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
+    // validation
+    if (
+      !formData.first_name ||
+      !formData.last_name ||
+      !formData.email ||
+      !formData.mobile ||
+      !formData.pf_no ||
+      !formData.user_type ||
+      !formData.role ||
+      (Array.isArray(formData.partner_id) && formData.partner_id.length === 0)
+    ) {
       toast.error('Please fill all required fields');
-      setLoading(false);
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast.error('Please enter a valid email address');
-      setLoading(false);
       return;
     }
 
-    // Phone validation (Indian format)
-    const phoneRegex = /^[+]?91[-\s]?[6-9]\d{9}$/;
-    if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(String(formData.mobile).replace(/\s/g, ''))) {
       toast.error('Please enter a valid phone number');
-      setLoading(false);
       return;
     }
 
-    setTimeout(() => {
-      const userData: Partial<User> = {
-        id: existingUser?.id || `USR-${Date.now()}`,
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        phone: formData.phone,
-        role: formData.role,
-        department: formData.department,
-        status: formData.status as 'active' | 'inactive' | 'suspended',
-        location: formData.location,
-        reportingTo: formData.reportingTo || undefined,
-        permissions: formData.permissions,
-        createdAt: existingUser?.createdAt || new Date().toISOString(),
-        lastLogin: existingUser?.lastLogin || new Date().toISOString(),
-      };
+    // Prepare payload. Note: adjust `role` shape here if your backend expects an object/array.
+    const payload: Partial<User> = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      mobile: formData.mobile,
+      gender: formData.gender,
+      dob: formData.dob,
+      pf_no: formData.pf_no,
+      // role is sent as the selected id/value (string). Adjust if API expects numeric or object.
+      role: formData.role,
+      department: formData.department,
+      user_type: formData.user_type,
+      designation: formData.designation,
+      partner_id: formData.partner_id,
+    };
 
-      onSubmit(userData);
-      setLoading(false);
+    try {
+      if (existingUserId && fetchedUser?.id) {
+        // update
+        await updateUser({ id: fetchedUser.id, updates:payload }).unwrap();
+        toast.success('User updated successfully');
+      } else {
+        // create
+        await createUser(payload).unwrap();
+        toast.success('User created successfully');
+        // reset only when creating
+        setFormData(buildInitData(undefined));
+      }
       onClose();
-      toast.success(existingUser ? 'User updated successfully' : 'User registered successfully');
-      
-      // Reset form
-      setStep(1);
-      setProfileImage(null);
-      setFormData({
-        firstName: '', lastName: '', email: '', phone: '', alternatePhone: '',
-        dateOfBirth: '', gender: '', employeeId: '', role: '', department: '',
-        designation: '', reportingTo: '', joiningDate: '', location: '',
-        officeAddress: '', city: '', state: '', pincode: '', country: 'India',
-        panNumber: '', aadhaarNumber: '', emergencyContactName: '',
-        emergencyContactPhone: '', emergencyContactRelation: '', status: 'active',
-        permissions: [], notes: '',
-      });
-    }, 1500);
+    } catch (err: any) {
+      console.error('Save user error', err);
+      const { errors, message } = extractApiErrors(err);
+
+      if (errors && typeof errors === 'object') {
+        Object.entries(errors).forEach(([field, msgs]) => {
+          const text = Array.isArray(msgs) ? msgs.join(', ') : String(msgs);
+          toast.error(`${field}: ${text}`);
+        });
+      } else {
+        if (message) toast.error(message);
+        else toast.error('Failed to save user');
+      }
+    }
   };
 
-  const totalSteps = 4;
+  // derive loading state from create/update + user fetch
+  const loading = createResult.isLoading || updateResult.isLoading || userDetailsLoading || userDetailsFetching;
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={(openState) => !openState && onClose()}>
+      <DialogContent className="w-[60vw] max-w-6xl sm:max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {existingUser ? 'Edit User' : 'Register New User'}
-          </DialogTitle>
+          <DialogTitle>{fetchedUser ? 'Edit User' : 'Register New User'}</DialogTitle>
           <DialogDescription>
-            {existingUser 
-              ? 'Update user information and permissions' 
-              : 'Fill in the details to create a new user account'}
+            {fetchedUser ? 'Update user information and permissions' : 'Fill in the details to create a new user account'}
           </DialogDescription>
         </DialogHeader>
 
         {/* Progress Indicator */}
         <div className="flex items-center justify-between mb-6">
-          {[1, 2, 3, 4].map((s) => (
+          {[1, 2].map((s) => (
             <div key={s} className="flex items-center flex-1">
-              <div
-                className={`h-2 flex-1 rounded-full transition-colors ${
-                  s <= step ? 'bg-blue-600' : 'bg-gray-200'
-                }`}
-              />
+              <div className={`h-2 flex-1 rounded-full transition-colors ${s <= step ? 'bg-blue-600' : 'bg-gray-200'}`} />
               {s < totalSteps && <div className="w-2" />}
             </div>
           ))}
@@ -201,108 +263,41 @@ export function UserRegistrationDialog({
                   <h3 className="font-medium">Personal Information</h3>
                   <Badge variant="outline">Step 1 of {totalSteps}</Badge>
                 </div>
-
-                {/* Profile Photo */}
-                <div className="flex items-center gap-4">
-                  <div className="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                    {profileImage ? (
-                      <img src={profileImage} alt="Profile" className="h-full w-full object-cover" />
-                    ) : (
-                      <Upload className="h-8 w-8 text-gray-400" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor="profile-photo">Profile Photo</Label>
-                    <Input
-                      id="profile-photo"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="mt-1"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Max 5MB, JPG/PNG format</p>
-                  </div>
-                  {profileImage && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setProfileImage(null)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-
                 <Separator />
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="firstName">First Name *</Label>
-                    <Input
-                      id="firstName"
-                      value={formData.firstName}
-                      onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      placeholder="Enter first name"
-                    />
+                    <Label htmlFor="first_name">First Name *</Label>
+                    <Input id="first_name" value={formData.first_name} onChange={(e) => handleInputChange('first_name', e.target.value)} placeholder="Enter first name" />
                   </div>
                   <div>
-                    <Label htmlFor="lastName">Last Name *</Label>
-                    <Input
-                      id="lastName"
-                      value={formData.lastName}
-                      onChange={(e) => handleInputChange('lastName', e.target.value)}
-                      placeholder="Enter last name"
-                    />
+                    <Label htmlFor="last_name">Last Name *</Label>
+                    <Input id="last_name" value={formData.last_name} onChange={(e) => handleInputChange('last_name', e.target.value)} placeholder="Enter last name" />
                   </div>
                   <div>
                     <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="user@example.com"
-                    />
+                    <Input id="email" type="email" value={formData.email} onChange={(e) => handleInputChange('email', e.target.value)} placeholder="user@example.com" />
                   </div>
                   <div>
-                    <Label htmlFor="phone">Phone Number *</Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="+91-XXXXX-XXXXX"
-                    />
+                    <Label htmlFor="mobile">Phone Number *</Label>
+                    <Input id="mobile" value={formData.mobile} onChange={(e) => handleInputChange('mobile', e.target.value)} placeholder="Mobile Number" />
                   </div>
+
                   <div>
-                    <Label htmlFor="alternatePhone">Alternate Phone</Label>
-                    <Input
-                      id="alternatePhone"
-                      value={formData.alternatePhone}
-                      onChange={(e) => handleInputChange('alternatePhone', e.target.value)}
-                      placeholder="+91-XXXXX-XXXXX"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                    <Input
-                      id="dateOfBirth"
-                      type="date"
-                      value={formData.dateOfBirth}
-                      onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                    />
+                    <Label htmlFor="dob">Date of Birth</Label>
+                    <Input id="dob" type="date" value={formData.dob} onChange={(e) => handleInputChange('dob', e.target.value)} />
                   </div>
                   <div>
                     <Label htmlFor="gender">Gender</Label>
-                    <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
-                      <SelectTrigger>
+                    <UiSelect value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
-                    </Select>
+                    </UiSelect>
                   </div>
                 </div>
               </CardContent>
@@ -320,28 +315,19 @@ export function UserRegistrationDialog({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="employeeId">Employee ID</Label>
-                    <Input
-                      id="employeeId"
-                      value={formData.employeeId}
-                      onChange={(e) => handleInputChange('employeeId', e.target.value)}
-                      placeholder="EMP-XXXXX"
-                      disabled={!!existingUser}
-                    />
+                    <Label htmlFor="pf_no">Employee ID</Label>
+                    <Input id="pf_no" value={formData.pf_no} onChange={(e) => handleInputChange('pf_no', e.target.value)} placeholder="EMP-Code" disabled={!!fetchedUser} />
                   </div>
+
                   <div>
                     <Label htmlFor="designation">Designation</Label>
-                    <Input
-                      id="designation"
-                      value={formData.designation}
-                      onChange={(e) => handleInputChange('designation', e.target.value)}
-                      placeholder="Enter designation"
-                    />
+                    <Input id="designation" value={formData.designation} onChange={(e) => handleInputChange('designation', e.target.value)} placeholder="Enter designation" />
                   </div>
+
                   <div>
                     <Label htmlFor="department">Department *</Label>
-                    <Select value={formData.department} onValueChange={(value) => handleInputChange('department', value)}>
-                      <SelectTrigger>
+                    <UiSelect value={formData.department} onValueChange={(value) => handleInputChange('department', value)}>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent>
@@ -354,224 +340,51 @@ export function UserRegistrationDialog({
                         <SelectItem value="Legal">Legal</SelectItem>
                         <SelectItem value="HR">Human Resources</SelectItem>
                       </SelectContent>
-                    </Select>
+                    </UiSelect>
                   </div>
+
                   <div>
                     <Label htmlFor="role">Role *</Label>
-                    <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
-                      <SelectTrigger>
+                    <UiSelect value={String(formData.role)} onValueChange={(value) => handleInputChange('role', value)}>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Admin">Admin</SelectItem>
-                        <SelectItem value="Maker">Maker</SelectItem>
-                        <SelectItem value="Checker">Checker</SelectItem>
-                        <SelectItem value="Auditor">Auditor</SelectItem>
-                        <SelectItem value="Viewer">Viewer</SelectItem>
+                        {roles?.map((role) => (
+                          <SelectItem key={String(role.id)} value={String(role.id)}>
+                            {role.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="reportingTo">Reporting To</Label>
-                    <Input
-                      id="reportingTo"
-                      value={formData.reportingTo}
-                      onChange={(e) => handleInputChange('reportingTo', e.target.value)}
-                      placeholder="Manager User ID"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="joiningDate">Joining Date</Label>
-                    <Input
-                      id="joiningDate"
-                      type="date"
-                      value={formData.joiningDate}
-                      onChange={(e) => handleInputChange('joiningDate', e.target.value)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 3: Location & Identity */}
-          {step === 3 && (
-            <Card>
-              <CardContent className="p-2 space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium">Location & Identity</h3>
-                  <Badge variant="outline">Step 3 of {totalSteps}</Badge>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="location">Work Location *</Label>
-                      <Select value={formData.location} onValueChange={(value) => handleInputChange('location', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Mumbai">Mumbai</SelectItem>
-                          <SelectItem value="Delhi">Delhi</SelectItem>
-                          <SelectItem value="Bangalore">Bangalore</SelectItem>
-                          <SelectItem value="Hyderabad">Hyderabad</SelectItem>
-                          <SelectItem value="Pune">Pune</SelectItem>
-                          <SelectItem value="Chennai">Chennai</SelectItem>
-                          <SelectItem value="Kolkata">Kolkata</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="city">City</Label>
-                      <Input
-                        id="city"
-                        value={formData.city}
-                        onChange={(e) => handleInputChange('city', e.target.value)}
-                        placeholder="Enter city"
-                      />
-                    </div>
+                    </UiSelect>
                   </div>
 
                   <div>
-                    <Label htmlFor="officeAddress">Office Address</Label>
-                    <Textarea
-                      id="officeAddress"
-                      value={formData.officeAddress}
-                      onChange={(e) => handleInputChange('officeAddress', e.target.value)}
-                      placeholder="Enter complete office address"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="state">State</Label>
-                      <Input
-                        id="state"
-                        value={formData.state}
-                        onChange={(e) => handleInputChange('state', e.target.value)}
-                        placeholder="Enter state"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="pincode">Pincode</Label>
-                      <Input
-                        id="pincode"
-                        value={formData.pincode}
-                        onChange={(e) => handleInputChange('pincode', e.target.value)}
-                        placeholder="Enter pincode"
-                        maxLength={6}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="country">Country</Label>
-                      <Input
-                        id="country"
-                        value={formData.country}
-                        onChange={(e) => handleInputChange('country', e.target.value)}
-                        disabled
-                      />
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="panNumber">PAN Number</Label>
-                      <Input
-                        id="panNumber"
-                        value={formData.panNumber}
-                        onChange={(e) => handleInputChange('panNumber', e.target.value.toUpperCase())}
-                        placeholder="ABCDE1234F"
-                        maxLength={10}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="aadhaarNumber">Aadhaar Number</Label>
-                      <Input
-                        id="aadhaarNumber"
-                        value={formData.aadhaarNumber}
-                        onChange={(e) => handleInputChange('aadhaarNumber', e.target.value)}
-                        placeholder="XXXX-XXXX-1234"
-                        maxLength={14}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 4: Emergency Contact & System Access */}
-          {step === 4 && (
-            <Card>
-              <CardContent className="p-2 space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium">Emergency Contact & System Access</h3>
-                  <Badge variant="outline">Step 4 of {totalSteps}</Badge>
-                </div>
-
-                <div className="space-y-4">
-                  <h4 className="text-sm font-medium">Emergency Contact</h4>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="emergencyContactName">Contact Name</Label>
-                      <Input
-                        id="emergencyContactName"
-                        value={formData.emergencyContactName}
-                        onChange={(e) => handleInputChange('emergencyContactName', e.target.value)}
-                        placeholder="Enter name"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="emergencyContactPhone">Contact Phone</Label>
-                      <Input
-                        id="emergencyContactPhone"
-                        value={formData.emergencyContactPhone}
-                        onChange={(e) => handleInputChange('emergencyContactPhone', e.target.value)}
-                        placeholder="+91-XXXXX-XXXXX"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="emergencyContactRelation">Relation</Label>
-                      <Input
-                        id="emergencyContactRelation"
-                        value={formData.emergencyContactRelation}
-                        onChange={(e) => handleInputChange('emergencyContactRelation', e.target.value)}
-                        placeholder="e.g., Spouse, Parent"
-                      />
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <h4 className="text-sm font-medium">System Access</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="status">Account Status</Label>
-                      <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="active">Active</SelectItem>
-                          <SelectItem value="inactive">Inactive</SelectItem>
-                          <SelectItem value="suspended">Suspended</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <Label htmlFor="user_type">User Type</Label>
+                    <UiSelect value={formData.user_type} onValueChange={(value) => handleInputChange('user_type', value)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select User Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="nbfc">Partner</SelectItem>
+                        <SelectItem value="bank">Bank</SelectItem>
+                      </SelectContent>
+                    </UiSelect>
                   </div>
 
                   <div>
-                    <Label htmlFor="notes">Additional Notes</Label>
-                    <Textarea
-                      id="notes"
-                      value={formData.notes}
-                      onChange={(e) => handleInputChange('notes', e.target.value)}
-                      placeholder="Any additional information about the user..."
-                      rows={4}
+                    <Label htmlFor="partner_id"> Select Partner</Label>
+                    <Select
+                      closeMenuOnSelect={false}
+                      components={animatedComponents}
+                      value={selectedPartnerOptions}
+                      isMulti
+                      onChange={(options: any) => {
+                        const values = options?.map((o: any) => String(o.value)) || [];
+                        handleInputChange('partner_id', values);
+                      }}
+                      options={partnerOptions}
+                      isDisabled={partnerOptions.length === 0}
                     />
                   </div>
                 </div>
@@ -599,7 +412,7 @@ export function UserRegistrationDialog({
             ) : (
               <Button onClick={handleSubmit} disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {existingUser ? 'Update User' : 'Register User'}
+                {fetchedUser ? 'Update User' : 'Register User'}
               </Button>
             )}
           </div>

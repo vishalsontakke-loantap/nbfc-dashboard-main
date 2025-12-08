@@ -16,7 +16,13 @@ export const productApi = createApi({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: [{ type: "Product", id: "LIST" }],
+      invalidatesTags: (result, error, arg) =>
+        [
+          { type: "Product", id: "LIST" },
+          arg?.partner_id
+            ? { type: "Product", id: `PARTNER_${arg.partner_id}` }
+            : null,
+        ].filter(Boolean) as any,
     }),
 
     // List all products
@@ -25,7 +31,10 @@ export const productApi = createApi({
       providesTags: (result) =>
         result && Array.isArray(result)
           ? [
-              ...result.map((r: any) => ({ type: "Product" as const, id: r.id })),
+              ...result.map((r: any) => ({
+                type: "Product" as const,
+                id: r.id,
+              })),
               { type: "Product", id: "LIST" },
             ]
           : [{ type: "Product", id: "LIST" }],
@@ -34,11 +43,14 @@ export const productApi = createApi({
 
     // Products by partner id (used on partner/nbfc pages)
     getProductsByPartnerId: builder.query<any, string>({
-      query: (partnerId: string) => `/products/partner/${partnerId}`,
+      query: (partnerId: any) => `/products/partner/${partnerId}`,
       providesTags: (result, error, partnerId) =>
         result && Array.isArray(result)
           ? [
-              ...result.map((r: any) => ({ type: "Product" as const, id: r.id })),
+              ...result.map((r: any) => ({
+                type: "Product" as const,
+                id: r.id,
+              })),
               { type: "Product", id: `PARTNER_${partnerId}` },
             ]
           : [{ type: "Product", id: `PARTNER_${partnerId}` }],
@@ -53,17 +65,31 @@ export const productApi = createApi({
     }),
 
     // Update product (PUT or PATCH depending on backend)
-    updateProduct: builder.mutation<any, { id: string | number; updates: any }>({
-      query: ({ id, updates }) => ({
-        url: `/products/${id}`,
-        method: "PUT",
-        body: updates,
-      }),
-      invalidatesTags: (result, error, arg) => [
-        { type: "Product", id: arg.id },
-        { type: "Product", id: "LIST" },
-      ],
-    }),
+    updateProduct: builder.mutation<any, { id: string | number; updates: any }>(
+      {
+        query: ({ id, updates }) => ({
+          url: `/products/${id}`,
+          method: "PUT",
+          body: updates,
+        }),
+
+        invalidatesTags: (result, error, arg) => {
+          const partnerId =
+            result?.data?.partner_id ?? arg?.updates?.partner_id ?? null;
+
+          const tags: Array<{ type: "Product"; id: string | number }> = [
+            { type: "Product" as const, id: arg.id },
+            { type: "Product" as const, id: "LIST" },
+          ];
+
+          if (partnerId) {
+            tags.push({ type: "Product" as const, id: `PARTNER_${partnerId}` });
+          }
+
+          return tags;
+        },
+      }
+    ),
   }),
   keepUnusedDataFor: 60,
 });

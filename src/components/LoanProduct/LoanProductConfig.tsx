@@ -23,6 +23,7 @@ import {
   useGetProductDetailsQuery,
   useUpdateProductMutation,
 } from "@/redux/features/products/productApi";
+import { formSkeletons } from "@/lib/constants";
 
 const twoDecimalRegex = /^\d+(\.\d{1,2})?$/;
 
@@ -159,7 +160,7 @@ const LoanProductConfig: React.FC = () => {
     return Number.isNaN(n) ? null : n;
   };
 
-  const onSubmit: SubmitHandler<FormType> = async (data) => {
+  const onSubmit = async (data:any) => {
     setIsSubmitting(true);
     setLoading(true);
 
@@ -254,8 +255,10 @@ const LoanProductConfig: React.FC = () => {
       />
 
       {loading || (productId && isFetchingDetails) ? (
-        <div className="container py-10 mx-auto">
-          <MultiSectionForm sections={[]} inputColumns={3} spacing="tight" />
+         <div className="flex flex-col space-y-4 p-5">
+          <div className="mx-auto">
+            <MultiSectionForm sections={formSkeletons} inputColumns={3} spacing="tight" />
+          </div>
         </div>
       ) : (
         <Form {...form}>

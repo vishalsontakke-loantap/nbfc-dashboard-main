@@ -100,6 +100,14 @@ export const roleApi = createApi({
       }),
       invalidatesTags: ["Role"],
     }),
+
+    // role List
+    getAllRoles: builder.query<any, void>({
+      query: (id) => ({
+        url: '/roles/list',
+        method: 'GET'
+      }),
+    })
   }),
   keepUnusedDataFor: 60,
 });
@@ -113,4 +121,5 @@ export const {
   useAssignPermissionsMutation,
   useUpdateRoleMutation,
   useDeleteRoleMutation,
+  useGetAllRolesQuery
 } = roleApi;
