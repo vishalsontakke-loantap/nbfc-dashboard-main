@@ -1,13 +1,11 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import { SkeletonTableShimmer } from "../ui/skeleton-table";
 
 const PrivateRoutes = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, initialized } = useSelector((state: any) => state.auth);
   // Don't redirect until we know if user is authenticated
-console.log("Private Route Auth:", isAuthenticated, "Initialized:", initialized);
-
-  if (!initialized) return null; // or a loader
-console.log("Private Route Auth:", isAuthenticated, "Initialized:", initialized);
+  if (!initialized) return <SkeletonTableShimmer rows={4} columns={3} /> // or a loader
 
   return isAuthenticated ? children : <Navigate to="/" replace />;
 };

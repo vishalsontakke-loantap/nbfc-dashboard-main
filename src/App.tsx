@@ -44,11 +44,10 @@ function App() {
         <Route path="/api-documentation/*" element={<PrivateRoutes><ApiDocumentationRoutes /></PrivateRoutes>} />
         <Route path="/reports/*" element={<PrivateRoutes><ReportRoutes /></PrivateRoutes>} />
         <Route path="/help/*" element={<PrivateRoutes><HelpRoutes /></PrivateRoutes>} />
-        <Route path="/" element={<LoginPageWrapper />} />
         <Route path="/bre" element={<PrivateRoutes><BreRoutes /></PrivateRoutes>} />
         <Route path="/roles-management/*" element={<PrivateRoutes><UserRolesRoutes /></PrivateRoutes>} />
         <Route path="/rlr-config/*" element={<PrivateRoutes><LendingRateRoutes /></PrivateRoutes>} />
-        <Route
+        {/* <Route
           path="/history/loan-applications/:batchId"
           element={
             <Layout>
@@ -56,22 +55,8 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/applications/:id"
-          element={
-            <Layout>
-              <DetailsView />
-            </Layout>
-          }
-        />
-        <Route
-          path="/loans/:id"
-          element={
-            <Layout>
-              <LoanDetailsView />
-            </Layout>
-          }
-        />
+       
+        
         <Route
           path="/history/pool-batch/details"
           element={
@@ -79,16 +64,9 @@ function App() {
               <PoolBatchView />
             </Layout>
           }
-        />
+        /> */}
 
-        <Route
-          path="/loans/repayment/:id"
-          element={
-            <Layout>
-              <RepaymentSchedule />
-            </Layout>
-          }
-        />
+        
         {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
       </Routes>
     </>
