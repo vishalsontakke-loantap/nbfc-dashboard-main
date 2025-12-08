@@ -59,6 +59,12 @@ export const sidebar: SidebarItem[] = [
     match: ["/roles-management"],
   },
   {
+    to: "/activity",
+    label: "Activity",
+    icon: withBase("/images/icons/reports_sidebar.svg"),
+    match: ["/activity"],
+  },
+  {
     to: "/reports",
     label: "Reports & Analytics",
     icon: withBase("/images/icons/reports_sidebar.svg"),

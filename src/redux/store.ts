@@ -9,6 +9,7 @@ import { breApi } from "./features/bre/breApi";
 import { nbfcApi } from "./features/nbfc/nbfcApi";
 import { roleApi } from './features/roles/roleApi';
 import { lendingRateApi } from './features/lendingRate/lendingRateApi';
+import { activityApi } from './features/activity/activityApi';
 import nbfcReducer from "./features/nbfc/nbfcSlice";
 import breReducer from "./features/bre/breSlice";
 import { userApi } from "./features/user/userApi";
@@ -30,6 +31,7 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [roleApi.reducerPath]: roleApi.reducer,
     [lendingRateApi.reducerPath]: lendingRateApi.reducer,
+    [activityApi.reducerPath]: activityApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -43,7 +45,8 @@ export const store = configureStore({
       .concat(nbfcApi.middleware)
       .concat(userApi.middleware)
       .concat(roleApi.middleware)
-      .concat(lendingRateApi.middleware),
+      .concat(lendingRateApi.middleware)
+      .concat(activityApi.middleware),
 });
 
 // optional: helpers for useSelector/useDispatch typings

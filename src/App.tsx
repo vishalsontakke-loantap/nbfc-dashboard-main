@@ -23,6 +23,7 @@ import UserRolesRoutes from "./components/Roles/UserRolesRoutes";
 import PrivateRoutes from "./components/HOC/PrivateRoutes";
 import LoanAccountRoutes from "./components/LoanAccount/LoanAccountRoutes";
 import LoanDetailsView from "./components/LoanDetailsView";
+import ActivitiesRoutes from "./components/Activity/ActivityRoutes";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -48,6 +49,7 @@ function App() {
         <Route path="/bre" element={<PrivateRoutes><BreRoutes /></PrivateRoutes>} />
         <Route path="/roles-management/*" element={<PrivateRoutes><UserRolesRoutes /></PrivateRoutes>} />
         <Route path="/rlr-config/*" element={<PrivateRoutes><LendingRateRoutes /></PrivateRoutes>} />
+        <Route path="/activity/*" element={<PrivateRoutes><ActivitiesRoutes/></PrivateRoutes>} />
         <Route
           path="/history/loan-applications/:batchId"
           element={
