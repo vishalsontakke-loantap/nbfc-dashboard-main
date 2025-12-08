@@ -26,8 +26,8 @@ export const nbfcApi = createApi({
           : [{ type: "Nbfc", id: "LIST" }],
     }),
 
-    getNbfcDetails: builder.query<any, string>({
-      query: (id: string) => ({ url: `/get-nbfc/${id}`, method: "GET" }),
+    getNbfcDetails: builder.query<any, any>({
+      query: (id: any) => ({ url: `/get-nbfc/${id}`, method: "GET" }),
       providesTags: (result, error, id) => [{ type: "Nbfc", id }],
     }),
 

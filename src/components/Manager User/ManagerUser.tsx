@@ -191,7 +191,6 @@ export function UserListingScreen() {
   // client-side extra filtering on top of server page results
   // We use immediate `searchQuery` here so the table filters locally while user types,
   // but the server query uses debouncedSearchQuery.
-  const filteredUsers = usersArray;
 
   const getStatusBadge = (isActive: number | boolean) => {
     const status = isActive ? "active" : "inactive";
@@ -380,7 +379,7 @@ export function UserListingScreen() {
               </div>
 
               <div className="mt-4 text-sm text-gray-600">
-                Showing {filteredUsers.length} of {totalItems} users (page {currentPage} of {totalPages}){" "}
+                Showing {usersArray.length} of {totalItems} users (page {currentPage} of {totalPages}){" "}
                 {isFetching && <span className="ml-2 text-xs text-gray-500">Updating...</span>}
               </div>
             </CardContent>
@@ -394,6 +393,7 @@ export function UserListingScreen() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>User</TableHead>
+                      <TableHead>User Type</TableHead>
                       <TableHead>Role</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Created At</TableHead>
@@ -401,14 +401,14 @@ export function UserListingScreen() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredUsers.length === 0 ? (
+                    {usersArray.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                           {anyLoading ? "Loading users..." : "No users found"}
                         </TableCell>
                       </TableRow>
                     ) : (
-                      filteredUsers.map((user) => {
+                      usersArray.map((user) => {
                         // display NBFC name if available
                         const nbfcName = (user as any).nbfc?.name ?? (user as any).nbfc_name ?? "-";
                         return (
@@ -420,12 +420,15 @@ export function UserListingScreen() {
                                 <div className="text-xs text-gray-400">ID: {user.id}</div>
                               </div>
                             </TableCell>
+                            <TableCell>
+                              <div className="font-medium">{user.user_type}</div>
+                            </TableCell>
 
                             <TableCell>
                               <Badge variant="outline">{user?.role[0]?.role_name|| "user"}</Badge>
                             </TableCell>
 
-                            <TableCell>{getStatusBadge(user.is_active)}</TableCell>
+                            <TableCell>{getStatusBadge(user?.is_active)}</TableCell>
                             <TableCell>{formatDate(user.created_at)}</TableCell>
 
                             <TableCell className="text-right">
@@ -467,7 +470,7 @@ export function UserListingScreen() {
 
                                   <DropdownMenuSeparator />
 
-                                  <DropdownMenuItem onClick={() => onDeleteUser(String(user.id))} className="text-red-600">
+                                  <DropdownMenuItem onClick={() => {}} className="text-red-600">
                                     <Trash2 className="h-4 w-4 mr-2" />
                                     Delete User
                                   </DropdownMenuItem>

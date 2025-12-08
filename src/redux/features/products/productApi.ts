@@ -43,7 +43,7 @@ export const productApi = createApi({
 
     // Products by partner id (used on partner/nbfc pages)
     getProductsByPartnerId: builder.query<any, string>({
-      query: (partnerId: string) => `/products/partner/${partnerId}`,
+      query: (partnerId: any) => `/products/partner/${partnerId}`,
       providesTags: (result, error, partnerId) =>
         result && Array.isArray(result)
           ? [

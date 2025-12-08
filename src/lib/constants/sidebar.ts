@@ -48,7 +48,7 @@ export const sidebar: SidebarItem[] = [
   },
   {
     to: "/manage-user",
-    label: "User Managaement",
+    label: "User Management",
     icon: withBase("/images/icons/manager_user_sidebar.svg"),
     match: ["/manage-user"],
   },

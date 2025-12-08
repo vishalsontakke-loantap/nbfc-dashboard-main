@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '@/redux/features/auth/authApi';
 import { setKey } from '@/utils/localStorage';
 import { toast } from 'sonner';
+import { setCredentials } from '@/redux/features/auth/authSlice';
 
 interface LoginScreenProps {
   onLoginSubmit: () => void;
@@ -29,6 +30,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
   const [captcha, setCaptcha] = useState('');
   const [captchaCode, setCaptchaCode] = useState('');
   const [loginTrigger, loginResult] = useLoginMutation();
+  const dispatch = useDispatch();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -43,6 +45,9 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
     try {
       // call trigger (don't try to inspect loginResult here)
       await loginTrigger({ pf_no: userId, password, login_with: pf_no }).unwrap();
+      dispatch(setCredentials({
+        user: data?.data?.user || null,
+      }));
       // the hook will update loginResult and cause a rerender -> useEffect will run
     } catch (err: any) {
       console.error('login error', err.data.message);
@@ -243,13 +248,17 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
               <Button
                 type="submit"
                 className="w-full h-12 rounded-xl text-white hover:bg-[#1B4E9B] bg-[#00ADEF]"
+                disabled={loginResult?.isLoading}
               // style={{ 
               //   background: 'linear-gradient(135deg, #1B4E9B 0%, #00ADEF 100%)'
               // }}
               >
-                <Lock className="w-5 h-5 mr-2" />
-                Login Securely
+
+                {loginResult?.isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Loging in...</> : <><Lock className="w-5 h-5 mr-2" />
+                  Login Securely</>}
               </Button>
+
 
               {/* Security Notice */}
               <div className="flex items-start gap-2 p-4 bg-blue-50 rounded-xl border border-blue-100">

@@ -7,7 +7,7 @@ export interface User {
   email: string;
   mobile: string;
   pf_no: string;
-  role: string;
+  role: any;
   department?: string;
   user_type: string;
   designation?: string;
@@ -15,7 +15,8 @@ export interface User {
   dob?:string;
   gender?:string;
   status?:string;
-  is_active?:string;
+  is_active?:any;
+  created_at?:string;
 }
 
 export interface Role {
