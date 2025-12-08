@@ -8,13 +8,6 @@ import ManagerUserRoutes from "./components/Manager User/ManagerUserRoutes";
 import ReportRoutes from "./components/Reports/ReportRoutes";
 import HelpRoutes from "./components/Help/HelpRoutes";
 import UploadPoolFileRoutes from "./components/Upload Pool File/UploadPoolFileRoutes";
-import { Login } from "./components/Login";
-import LoanApplicationsPage from "./components/LoanApplicationsPage";
-import Layout from "./components/Layout";
-import DetailsView from "./components/DeatilsView";
-import PoolBatchView from "./components/PoolBatchView";
-import { RepaymentSchedule } from "./components/RepaymentSchedule";
-import LoanProductRoutes from "./components/LoanProduct/LoanProductRoutes";
 import BreRoutes from "./components/Bre/BreRoutes";
 import LendingRateRoutes from "./components/LendingRateConfiguration/LendingRateRoute";
 import AuthScreens from "./components/login/AuthScreens";
@@ -22,13 +15,7 @@ import ApiDocumentationRoutes from "./components/API-Documentation/ApiDocumentat
 import UserRolesRoutes from "./components/Roles/UserRolesRoutes";
 import PrivateRoutes from "./components/HOC/PrivateRoutes";
 import LoanAccountRoutes from "./components/LoanAccount/LoanAccountRoutes";
-import LoanDetailsView from "./components/LoanDetailsView";
-// import NbfcList from "./components/NBFC/NbfcList";
 
-function LoginPageWrapper() {
-  const navigate = useNavigate();
-  return <Login onLogin={() => navigate("/overview")} />;
-}
 
 function App() {
   return (
