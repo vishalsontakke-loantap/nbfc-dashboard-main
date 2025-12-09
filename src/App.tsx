@@ -15,7 +15,6 @@ import ApiDocumentationRoutes from "./components/API-Documentation/ApiDocumentat
 import UserRolesRoutes from "./components/Roles/UserRolesRoutes";
 import PrivateRoutes from "./components/HOC/PrivateRoutes";
 import LoanAccountRoutes from "./components/LoanAccount/LoanAccountRoutes";
-import LoanDetailsView from "./components/LoanDetailsView";
 import ActivitiesRoutes from "./components/Activity/ActivityRoutes";
 // import NbfcList from "./components/NBFC/NbfcList";
 
