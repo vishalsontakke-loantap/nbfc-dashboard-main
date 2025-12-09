@@ -9,9 +9,17 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowUpDown, Funnel } from "lucide-react";
+import { ArrowLeft, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableHeader,
@@ -20,12 +28,6 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
 import PaginationComponent from "@/components/PaginationComponent";
 
 // Dummy Loan Data (replace later with API)
@@ -146,12 +148,12 @@ export const columns: ColumnDef<typeof loanApplications[number]>[] = [
     },
   },
 
-   {
+  {
     id: "actions",
     header: () => <p className="text-center">Actions</p>,
     cell: ({ row }) => {
       const navigate = useNavigate();
-      const handleViewMore = (id:string) => {
+      const handleViewMore = (id: string) => {
         // optionally pass an ID if needed, e.g. /details/:id
         navigate(`/loans/${id}`);
       };
@@ -175,13 +177,35 @@ export const columns: ColumnDef<typeof loanApplications[number]>[] = [
 export default function ActiveAccount() {
   const { batchId } = useParams();
   const navigate = useNavigate();
-  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [nbfcFilter, setNbfcFilter] = React.useState("all");
+
+  // Get unique NBFC names from data
+  const nbfcArray = Array.from(
+    new Map(loanApplications.map((item) => [item.name, item])).values()
+  );
+
+  // Filter data based on search and filters
+  const filteredData = React.useMemo(() => {
+    return loanApplications.filter((item) => {
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch =
+        !searchQuery ||
+        item.nbfcId.toLowerCase().includes(searchLower) ||
+        item.appId.toLowerCase().includes(searchLower) ||
+        item.name.toLowerCase().includes(searchLower);
+
+      const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+      const matchesNbfc = nbfcFilter === "all" || item.name === nbfcFilter;
+
+      return matchesSearch && matchesStatus && matchesNbfc;
+    });
+  }, [searchQuery, statusFilter, nbfcFilter]);
 
   const table = useReactTable({
-    data: loanApplications,
+    data: filteredData,
     columns,
-    state: { globalFilter },
-    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -189,7 +213,50 @@ export default function ActiveAccount() {
   });
 
   return (
-    <div className="w-full px-6 py-4"> {/* ✅ added left & right padding */}
+    <div className="w-full px-6 py-4">
+      <Card className="mb-4 p-4">           
+        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex-1 relative min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Search by NBFC ID, App ID, or Name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="Approved">Approved</SelectItem>
+            <SelectItem value="Rejected">Rejected</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={nbfcFilter} onValueChange={setNbfcFilter}>
+          <SelectTrigger className="w-[220px]">
+            <Filter className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Filter by NBFC" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All NBFCs</SelectItem>
+            {nbfcArray.map((nbfc) => (
+              <SelectItem key={nbfc.name} value={nbfc.name}>
+                {nbfc.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+        <div className="mt-4 text-sm text-gray-600">
+          Showing {filteredData.length} of {loanApplications.length} accounts{" "}
+        </div>
+      </Card>
       <div className="bg-white shadow-sm rounded-lg mb-6 border border-[#D1E9FF]">
         <div className="flex items-center justify-between p-4 border-b-2 border-[#C3EEFF]">
           <div className="flex items-center gap-3">
@@ -197,55 +264,15 @@ export default function ActiveAccount() {
               variant="ghost"
               size="icon"
               className="text-[#0A4DA2]"
+              onClick={() => navigate(-1)}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h2 className="text-lg font-bold text-[#0A4DA2]">
-              Active Accounts List 
+              Active Accounts List
             </h2>
           </div>
-
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Search…"
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              className="bg-[#C3EEFF] border border-[#BBDFFF] text-sm w-[240px] focus-visible:ring-0 focus-visible:ring-offset-0"
-            />
-            <Button
-              variant="outline"
-              className="text-[#0A4DA2] border-none p-0 hover:text-[#0A4DA2]/80 hover:bg-white"
-            >
-              <ArrowUpDown />
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="text-[#0A4DA2] border-none p-0 hover:text-[#0A4DA2]/80 hover:bg-white"
-                >
-                  <Funnel />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {table
-                  .getAllColumns()
-                  .filter((col) => col.getCanHide())
-                  .map((column) => (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(val) => column.toggleVisibility(!!val)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-
+        </div>       
         <div className="overflow-x-auto">
           <Table className="min-w-full">
             <TableHeader>

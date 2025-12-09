@@ -50,6 +50,7 @@ function App() {
         <Route path="/roles-management/*" element={<PrivateRoutes><UserRolesRoutes /></PrivateRoutes>} />
         <Route path="/rlr-config/*" element={<PrivateRoutes><LendingRateRoutes /></PrivateRoutes>} />
         <Route path="/activity/*" element={<PrivateRoutes><ActivitiesRoutes/></PrivateRoutes>} />
+        <Route path="/uploads/*" element={<PrivateRoutes><UploadPoolFileRoutes /></PrivateRoutes>} />
         <Route
           path="/history/loan-applications/:batchId"
           element={
