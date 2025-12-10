@@ -17,6 +17,7 @@ import PrivateRoutes from "./components/HOC/PrivateRoutes";
 import LoanAccountRoutes from "./components/LoanAccount/LoanAccountRoutes";
 import ActivitiesRoutes from "./components/Activity/ActivityRoutes";
 import CollectionFileRoutes from "./components/Collection/CollectionFileRoutes";
+import LoanStatement from "./components/LoanStatement";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 
