@@ -24,6 +24,7 @@ import PrivateRoutes from "./components/HOC/PrivateRoutes";
 import LoanAccountRoutes from "./components/LoanAccount/LoanAccountRoutes";
 import LoanDetailsView from "./components/LoanDetailsView";
 import ActivitiesRoutes from "./components/Activity/ActivityRoutes";
+import LoanStatement from "./components/LoanStatement";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 function LoginPageWrapper() {
@@ -72,6 +73,14 @@ function App() {
           element={
             <Layout>
               <LoanDetailsView />
+            </Layout>
+          }
+        />
+        <Route
+        path="/loans/statement/:loan_id"
+          element={
+            <Layout>
+              <LoanStatement /> 
             </Layout>
           }
         />
