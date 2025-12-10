@@ -13,7 +13,7 @@ const PrivateRoutes = ({ children }: { children: React.ReactNode }) => {
       </CardContent>
     </Card>
   </div> // or a loader
-
+ return children;
   return isAuthenticated ? children : <Navigate to="/" replace />;
 };
 
