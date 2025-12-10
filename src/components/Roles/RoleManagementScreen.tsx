@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '../ui/table';
 import {
   Plus,
@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { RolePermissionEditor } from './RolePermissionEditor';
 import type { Role, RolePermission } from '../../lib/user-mocks';
 import { useGetRolesWithPermissionsQuery } from '../../redux/features/roles/roleApi';
+import { SkeletonTableShimmer } from '../ui/skeleton-table';
 
 interface RoleManagementScreenProps {
   roles: Role[];
@@ -75,8 +76,12 @@ export function RoleManagementScreen({
   // Show loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="flex flex-col space-y-4 p-5">
+        <Card className=" mt-40">
+          <CardContent>
+            <SkeletonTableShimmer rows={4} columns={3} />
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -151,11 +156,10 @@ export function RoleManagementScreen({
               <div
                 key={role.id}
                 onClick={() => handleRoleSelect(role)}
-                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                  selectedRole?.id === role.id 
-                    ? 'border-blue-500 bg-blue-50' 
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
+                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${selectedRole?.id === role.id
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-gray-200 hover:border-gray-300'
+                  }`}
               >
                 <div className="flex items-start justify-between mb-2">
                   <div>
@@ -171,9 +175,9 @@ export function RoleManagementScreen({
                   <span className="text-sm text-gray-600">{role.userCount} users</span>
                 </div>
                 <div className="flex gap-2 mt-3">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="h-8"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -196,9 +200,9 @@ export function RoleManagementScreen({
                     Duplicate
                   </Button> */}
                   {!['Admin', 'Maker', 'Checker', 'Auditor', 'Viewer'].includes(role.name) && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className="h-8 text-red-600 hover:text-red-700"
                       onClick={(e) => {
                         e.stopPropagation();

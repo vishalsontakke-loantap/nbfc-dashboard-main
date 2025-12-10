@@ -28,7 +28,7 @@ const Sidebar: React.FC = () => {
       </div>
 
       <nav className="flex-1">
-        <ul className="space-y-2">
+        <ul className="space-y-1">
           {sidebar.map(({ to, label, icon, match }) => {
             const isActive = isActivePath(to, match);
             return (

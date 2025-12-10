@@ -12,7 +12,6 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logoutTrigger();
-      navigate("/")
 
     }
     catch (err) {

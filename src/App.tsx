@@ -8,13 +8,6 @@ import ManagerUserRoutes from "./components/Manager User/ManagerUserRoutes";
 import ReportRoutes from "./components/Reports/ReportRoutes";
 import HelpRoutes from "./components/Help/HelpRoutes";
 import UploadPoolFileRoutes from "./components/Upload Pool File/UploadPoolFileRoutes";
-import { Login } from "./components/Login";
-import LoanApplicationsPage from "./components/LoanApplicationsPage";
-import Layout from "./components/Layout";
-import DetailsView from "./components/DeatilsView";
-import PoolBatchView from "./components/PoolBatchView";
-import { RepaymentSchedule } from "./components/RepaymentSchedule";
-import LoanProductRoutes from "./components/LoanProduct/LoanProductRoutes";
 import BreRoutes from "./components/Bre/BreRoutes";
 import LendingRateRoutes from "./components/LendingRateConfiguration/LendingRateRoute";
 import AuthScreens from "./components/login/AuthScreens";
@@ -22,14 +15,10 @@ import ApiDocumentationRoutes from "./components/API-Documentation/ApiDocumentat
 import UserRolesRoutes from "./components/Roles/UserRolesRoutes";
 import PrivateRoutes from "./components/HOC/PrivateRoutes";
 import LoanAccountRoutes from "./components/LoanAccount/LoanAccountRoutes";
-import LoanDetailsView from "./components/LoanDetailsView";
 import ActivitiesRoutes from "./components/Activity/ActivityRoutes";
+import CollectionFileRoutes from "./components/Collection/CollectionFileRoutes";
 // import NbfcList from "./components/NBFC/NbfcList";
 
-function LoginPageWrapper() {
-  const navigate = useNavigate();
-  return <Login onLogin={() => navigate("/overview")} />;
-}
 
 function App() {
   return (
@@ -45,13 +34,13 @@ function App() {
         <Route path="/api-documentation/*" element={<PrivateRoutes><ApiDocumentationRoutes /></PrivateRoutes>} />
         <Route path="/reports/*" element={<PrivateRoutes><ReportRoutes /></PrivateRoutes>} />
         <Route path="/help/*" element={<PrivateRoutes><HelpRoutes /></PrivateRoutes>} />
-        <Route path="/" element={<LoginPageWrapper />} />
         <Route path="/bre" element={<PrivateRoutes><BreRoutes /></PrivateRoutes>} />
         <Route path="/roles-management/*" element={<PrivateRoutes><UserRolesRoutes /></PrivateRoutes>} />
         <Route path="/rlr-config/*" element={<PrivateRoutes><LendingRateRoutes /></PrivateRoutes>} />
         <Route path="/activity/*" element={<PrivateRoutes><ActivitiesRoutes/></PrivateRoutes>} />
         <Route path="/uploads/*" element={<PrivateRoutes><UploadPoolFileRoutes /></PrivateRoutes>} />
-        <Route
+        <Route path = "/collection/*" element={<PrivateRoutes><CollectionFileRoutes/></PrivateRoutes>}/>
+        {/* <Route
           path="/history/loan-applications/:batchId"
           element={
             <Layout>
@@ -59,22 +48,8 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/applications/:id"
-          element={
-            <Layout>
-              <DetailsView />
-            </Layout>
-          }
-        />
-        <Route
-          path="/loans/:id"
-          element={
-            <Layout>
-              <LoanDetailsView />
-            </Layout>
-          }
-        />
+       
+        
         <Route
           path="/history/pool-batch/details"
           element={
@@ -82,16 +57,9 @@ function App() {
               <PoolBatchView />
             </Layout>
           }
-        />
+        /> */}
 
-        <Route
-          path="/loans/repayment/:id"
-          element={
-            <Layout>
-              <RepaymentSchedule />
-            </Layout>
-          }
-        />
+        
         {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
       </Routes>
     </>

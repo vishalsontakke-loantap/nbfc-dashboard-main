@@ -58,40 +58,26 @@ export const columns: ColumnDef<tableDataParams>[] = [
     ),
   },
   {
-    accessorKey: "status",
-    header: () => <p className="text-center">Status</p>,
+    accessorKey: "principal",
+    header: () => <p className="text-center">Principal Amt</p>,
     cell: ({ row }) => (
-      <div className="text-center capitalize">{row.getValue("status")}</div>
+      <div className="text-center capitalize">{row.getValue("principal")}</div>
     ),
   },
   {
-    accessorKey: "name",
-    header: () => <p className="text-center">Name</p>,
+    accessorKey: "interest",
+    header: () => <p className="text-center">Interest</p>,
     cell: ({ row }) => (
-      <div className="text-center capitalize">{row.getValue("name")}</div>
+      <div className="text-center capitalize">{row.getValue("interest")}</div>
     ),
   },
   {
-    accessorKey: "tenure",
-    header: () => <p className="text-center">Tenure</p>,
+    accessorKey: "total",
+    header: () => <p className="text-center">Total</p>,
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("tenure")}</div>
+      <div className="text-center">{row.getValue("total")}</div>
     ),
-  },
-  {
-    accessorKey: "nbfcDisbursedAmount",
-    header: () => <p className="text-center">NBFC Disbursed Amount</p>,
-    cell: ({ row }) => (
-      <div className="text-center">₹ {row.getValue("nbfcDisbursedAmount")}</div>
-    ),
-  },
-  {
-    accessorKey: "posAmount",
-    header: () => <p className="text-center">POS Amount</p>,
-    cell: ({ row }) => (
-      <div className="text-center">₹ {row.getValue("posAmount")}</div>
-    ),
-  },
+  }
 ];
 
 export function DataTable() {

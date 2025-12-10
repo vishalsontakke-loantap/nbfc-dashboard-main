@@ -55,11 +55,9 @@ declare type tableDataParams = {
   sl: number;
   nbfcId: string;
   appId: string;
-  status: "Approved" | "Rejected";
-  name: string;
-  tenure: number;
-  nbfcDisbursedAmount: number;
-  posAmount: number;
+  principal: number;
+  interest: number;
+  total: number;
 };
 
 declare type UsePaginationParams = {
