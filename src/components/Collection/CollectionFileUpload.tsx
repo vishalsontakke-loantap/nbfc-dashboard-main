@@ -101,17 +101,19 @@ const CollectionFileUpload: React.FC = () => {
   const navigate = useNavigate();
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
-    if (!data.file) return;
+ const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
+  if (!data.file) return;
 
-    try {
-      await uploadCollection(data.file).unwrap();
-      console.log("Upload successful!");
-      // navigate to a specific route or show success toast
-    } catch (err) {
-      console.error("Upload failed", err);
-    }
-  };
+  try {
+    await uploadCollection(data.file).unwrap();
+    console.log("Upload successful!");
+    form.reset();          
+  } catch (err) {
+    console.error("Upload failed", err);
+    form.reset();            
+  }
+};
+
 
   const table = useReactTable({
     data: loanApplications,
@@ -149,32 +151,55 @@ const CollectionFileUpload: React.FC = () => {
               </p>
 
               <FormField
-                control={form.control}
-                name="file"
-                render={({ field }) => {
-                  const fileRef = useRef<HTMLInputElement | null>(null);
-                  return (
-                    <FormItem>
-                      <input
-                        type="file"
-                        accept=".csv,.xls,.xlsx,.xlsm"
-                        ref={(e) => {
-                          fileRef.current = e;
-                          field.ref(e);
-                        }}
-                        onChange={(e) => field.onChange(e.target.files?.[0])}
-                        className="hidden"
-                      />
-                      <div className="flex gap-2">
-                        <Button type="button" onClick={() => fileRef.current?.click()} disabled={!!field.value?.name}>
-                          {field.value?.name ? "Uploaded" : "Upload"}
-                        </Button>
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
+  control={form.control}
+  name="file"
+  render={({ field }) => {
+    const fileRef = useRef<HTMLInputElement | null>(null);
+
+    return (
+      <FormItem>
+        <input
+          type="file"
+          accept=".csv,.xls,.xlsx,.xlsm"
+          ref={(e) => {
+            fileRef.current = e;
+            field.ref(e);
+          }}
+          onChange={(e) => {
+            field.onChange(e.target.files?.[0]);
+          }}
+          className="hidden"
+        />
+
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={!!field.value?.name}
+          >
+            {field.value?.name ? "Uploaded" : "Upload"}
+          </Button>
+
+          {field.value?.name && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                form.setValue("file", undefined);
+                if (fileRef.current) fileRef.current.value = "";
+              }}
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+
+        <FormMessage />
+      </FormItem>
+    );
+  }}
+/>
+
             </span>
           </div>
 
