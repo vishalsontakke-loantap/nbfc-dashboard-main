@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "../Layout";
-import LoanAccount from "./LoanAccount";
 import NotFound from "../NotFound";
-import LoanDetailsView from "../LoanDetailsView";
-import { RepaymentSchedule } from "../RepaymentSchedule";
+import CollectionFileUpload from "./CollectionFileUpload";
+import CollectionFileRundown from "./CollectionFileRundown";
+import CollectionFileInfer from "./CollectionFileInfer";
 
-const LoanAccountRoutes = () => {
+const CollectionFileRoutes = () => {
   return (
     <>
       <Routes>
@@ -13,23 +13,25 @@ const LoanAccountRoutes = () => {
           path=""
           element={
             <Layout>
-              <LoanAccount />
+              <CollectionFileUpload/>
             </Layout>
           }
         />
+
         <Route
-          path="/:id"
+          path="/:batchId"
           element={
             <Layout>
-              <LoanDetailsView />
+              <CollectionFileRundown/>
             </Layout>
           }
         />
+
         <Route
-          path="/repayment/:id"
+          path="/file-infer"
           element={
             <Layout>
-              <RepaymentSchedule />
+              <CollectionFileInfer/>
             </Layout>
           }
         />
@@ -41,4 +43,4 @@ const LoanAccountRoutes = () => {
   );
 };
 
-export default LoanAccountRoutes;
+export default CollectionFileRoutes;
