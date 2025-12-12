@@ -15,6 +15,7 @@ import nbfcReducer from "./features/nbfc/nbfcSlice";
 import breReducer from "./features/bre/breSlice";
 import { userApi } from "./features/user/userApi";
 import userReducer from "./features/user/userSlice";
+import { collectionApi } from "./features/collection/collectionApi";
 export const store = configureStore({
   reducer: {
     // your regular reducers
@@ -34,6 +35,7 @@ export const store = configureStore({
     [lendingRateApi.reducerPath]: lendingRateApi.reducer,
     [activityApi.reducerPath]: activityApi.reducer,
     [disbursementApi.reducerPath]: disbursementApi.reducer,
+    [collectionApi.reducerPath]: collectionApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -49,7 +51,8 @@ export const store = configureStore({
       .concat(roleApi.middleware)
       .concat(lendingRateApi.middleware)
       .concat(activityApi.middleware)
-      .concat(disbursementApi.middleware),
+      .concat(disbursementApi.middleware)
+      .concat(collectionApi.middleware),
 });
 
 // optional: helpers for useSelector/useDispatch typings

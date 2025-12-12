@@ -6,7 +6,7 @@ interface Nbfc {
   contact_email?: string;
   is_active?: boolean;
   business_limit?: number;
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 interface NbfcState {
@@ -57,5 +57,10 @@ export const {
   setError,
   clearNbfcData,
 } = nbfcSlice.actions;
+
+// ✅ Selector MUST be outside createSlice
+export const getSelectedNbfcId = (state: any) =>
+  state.nbfc.selectedNbfc?.partner_id ?? null;
+
 
 export default nbfcSlice.reducer;
