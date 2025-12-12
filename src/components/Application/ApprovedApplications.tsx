@@ -1,232 +1,138 @@
-import * as React from "react";
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-  flexRender,
-} from "@tanstack/react-table";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Search, Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableHead,
-  TableRow,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
-import PaginationComponent from "@/components/PaginationComponent";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, ArrowLeft, Filter } from "lucide-react";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
+import { useGetDisbursementsQuery } from "@/redux/features/disbursement/disbursementApi";
+import useDebounce from "@/hooks/useDebounce";
+import { useNavigate } from "react-router-dom";
+import { Button as ActionButton } from "@/components/ui/button"; // keep original Button alias if needed
 
-// Dummy Loan Data (replace later with API)
-const loanApplications = [
-  { sl: 1, nbfcId: "MFL301326297", appId: "APP7097165262", status: "Rejected", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 101249, posAmount: 64344 },
-  { sl: 2, nbfcId: "MFL710143367", appId: "APP8321270706", status: "Approved", name: "Omega Funds", tenure: 18, nbfcDisbursedAmount: 358023, posAmount: 60492 },
-  { sl: 3, nbfcId: "MFL196642848", appId: "APP4320467576", status: "Rejected", name: "Beta Credit", tenure: 18, nbfcDisbursedAmount: 459825, posAmount: 233960 },
-  { sl: 4, nbfcId: "MFL832109634", appId: "APP2228515797", status: "Rejected", name: "Gamma Loans", tenure: 24, nbfcDisbursedAmount: 174579, posAmount: 96060 },
-  { sl: 5, nbfcId: "MFL922515283", appId: "APP3964930142", status: "Rejected", name: "Beta Credit", tenure: 12, nbfcDisbursedAmount: 214928, posAmount: 137860 },
-  { sl: 6, nbfcId: "MFL503518478", appId: "APP5098277352", status: "Approved", name: "Omega Funds", tenure: 30, nbfcDisbursedAmount: 151106, posAmount: 113345 },
-  { sl: 7, nbfcId: "MFL670557635", appId: "APP3866440685", status: "Rejected", name: "Omega Funds", tenure: 24, nbfcDisbursedAmount: 456589, posAmount: 413285 },
-  { sl: 8, nbfcId: "MFL556047868", appId: "APP6276205905", status: "Approved", name: "Omega Funds", tenure: 30, nbfcDisbursedAmount: 145772, posAmount: 139776 },
-  { sl: 9, nbfcId: "MFL457077200", appId: "APP7763890533", status: "Rejected", name: "Titanium", tenure: 30, nbfcDisbursedAmount: 217714, posAmount: 42973 },
-  { sl: 10, nbfcId: "MFL352719439", appId: "APP1939987780", status: "Approved", name: "Omega Funds", tenure: 30, nbfcDisbursedAmount: 396290, posAmount: 101423 },
-  { sl: 11, nbfcId: "MFL271876512", appId: "APP1928706543", status: "Rejected", name: "Beta Credit", tenure: 24, nbfcDisbursedAmount: 185432, posAmount: 92560 },
-  { sl: 12, nbfcId: "MFL812345678", appId: "APP3456712345", status: "Approved", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 298765, posAmount: 167890 },
-  { sl: 13, nbfcId: "MFL134562789", appId: "APP9876534210", status: "Approved", name: "Omega Funds", tenure: 36, nbfcDisbursedAmount: 512340, posAmount: 309876 },
-  { sl: 14, nbfcId: "MFL456789123", appId: "APP5678912345", status: "Rejected", name: "Titanium", tenure: 12, nbfcDisbursedAmount: 128450, posAmount: 65432 },
-  { sl: 15, nbfcId: "MFL567891345", appId: "APP3456789123", status: "Approved", name: "Beta Credit", tenure: 30, nbfcDisbursedAmount: 398765, posAmount: 201123 },
-  { sl: 16, nbfcId: "MFL678912456", appId: "APP6789123456", status: "Approved", name: "Omega Funds", tenure: 24, nbfcDisbursedAmount: 267890, posAmount: 124321 },
-  { sl: 17, nbfcId: "MFL789123567", appId: "APP7891234567", status: "Rejected", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 187654, posAmount: 72345 },
-  { sl: 18, nbfcId: "MFL891234678", appId: "APP8912345678", status: "Approved", name: "Titanium", tenure: 24, nbfcDisbursedAmount: 325678, posAmount: 167890 },
-  { sl: 19, nbfcId: "MFL912345789", appId: "APP9123456789", status: "Rejected", name: "Beta Credit", tenure: 12, nbfcDisbursedAmount: 142345, posAmount: 80321 },
-  { sl: 20, nbfcId: "MFL102345890", appId: "APP1023456789", status: "Approved", name: "Omega Funds", tenure: 30, nbfcDisbursedAmount: 512345, posAmount: 271234 },
-  { sl: 21, nbfcId: "MFL112345901", appId: "APP1123456789", status: "Rejected", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 156780, posAmount: 60345 },
-  { sl: 22, nbfcId: "MFL122345912", appId: "APP1223456789", status: "Approved", name: "Omega Funds", tenure: 24, nbfcDisbursedAmount: 329876, posAmount: 178934 },
-  { sl: 23, nbfcId: "MFL132345923", appId: "APP1323456789", status: "Approved", name: "Beta Credit", tenure: 36, nbfcDisbursedAmount: 567890, posAmount: 345678 },
-  { sl: 24, nbfcId: "MFL142345934", appId: "APP1423456789", status: "Rejected", name: "Gamma Loans", tenure: 12, nbfcDisbursedAmount: 125678, posAmount: 60345 },
-  { sl: 25, nbfcId: "MFL152345945", appId: "APP1523456789", status: "Approved", name: "Omega Funds", tenure: 18, nbfcDisbursedAmount: 278901, posAmount: 120987 },
-  { sl: 26, nbfcId: "MFL162345956", appId: "APP1623456789", status: "Rejected", name: "Beta Credit", tenure: 24, nbfcDisbursedAmount: 190876, posAmount: 90432 },
-  { sl: 27, nbfcId: "MFL172345967", appId: "APP1723456789", status: "Approved", name: "Omega Funds", tenure: 30, nbfcDisbursedAmount: 398765, posAmount: 201123 },
-  { sl: 28, nbfcId: "MFL182345978", appId: "APP1823456789", status: "Rejected", name: "Gamma Loans", tenure: 12, nbfcDisbursedAmount: 142345, posAmount: 65321 },
-  { sl: 29, nbfcId: "MFL192345989", appId: "APP1923456789", status: "Approved", name: "Omega Funds", tenure: 24, nbfcDisbursedAmount: 398761, posAmount: 195432 },
-  { sl: 30, nbfcId: "MFL202345990", appId: "APP2023456789", status: "Rejected", name: "Titanium", tenure: 18, nbfcDisbursedAmount: 178654, posAmount: 79345 },
-  { sl: 31, nbfcId: "MFL212345001", appId: "APP2123456789", status: "Approved", name: "Omega Funds", tenure: 36, nbfcDisbursedAmount: 589012, posAmount: 321456 },
-  { sl: 32, nbfcId: "MFL222345012", appId: "APP2223456789", status: "Rejected", name: "Beta Credit", tenure: 24, nbfcDisbursedAmount: 190876, posAmount: 95678 },
-  { sl: 33, nbfcId: "MFL232345023", appId: "APP2323456789", status: "Approved", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 265432, posAmount: 132098 },
-  { sl: 34, nbfcId: "MFL242345034", appId: "APP2423456789", status: "Rejected", name: "Titanium", tenure: 12, nbfcDisbursedAmount: 123456, posAmount: 65432 },
-  { sl: 35, nbfcId: "MFL252345045", appId: "APP2523456789", status: "Approved", name: "Omega Funds", tenure: 24, nbfcDisbursedAmount: 310987, posAmount: 165432 },
-  { sl: 36, nbfcId: "MFL262345056", appId: "APP2623456789", status: "Approved", name: "Beta Credit", tenure: 30, nbfcDisbursedAmount: 435678, posAmount: 209876 },
-  { sl: 37, nbfcId: "MFL272345067", appId: "APP2723456789", status: "Rejected", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 156789, posAmount: 73456 },
-  { sl: 38, nbfcId: "MFL282345078", appId: "APP2823456789", status: "Approved", name: "Omega Funds", tenure: 24, nbfcDisbursedAmount: 298765, posAmount: 167890 },
-  { sl: 39, nbfcId: "MFL292345089", appId: "APP2923456789", status: "Rejected", name: "Beta Credit", tenure: 12, nbfcDisbursedAmount: 178654, posAmount: 85321 },
-  { sl: 40, nbfcId: "MFL302345090", appId: "APP3023456789", status: "Approved", name: "Titanium", tenure: 30, nbfcDisbursedAmount: 512345, posAmount: 287654 },
-  { sl: 41, nbfcId: "MFL312345101", appId: "APP3123456789", status: "Rejected", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 167890, posAmount: 65432 },
-  { sl: 42, nbfcId: "MFL322345112", appId: "APP3223456789", status: "Approved", name: "Omega Funds", tenure: 24, nbfcDisbursedAmount: 345678, posAmount: 187654 },
-  { sl: 43, nbfcId: "MFL332345123", appId: "APP3323456789", status: "Approved", name: "Beta Credit", tenure: 36, nbfcDisbursedAmount: 567890, posAmount: 321098 },
-  { sl: 44, nbfcId: "MFL342345134", appId: "APP3423456789", status: "Rejected", name: "Titanium", tenure: 12, nbfcDisbursedAmount: 112345, posAmount: 55432 },
-  { sl: 45, nbfcId: "MFL352345145", appId: "APP3523456789", status: "Approved", name: "Omega Funds", tenure: 18, nbfcDisbursedAmount: 278901, posAmount: 120987 },
-  { sl: 46, nbfcId: "MFL362345156", appId: "APP3623456789", status: "Rejected", name: "Gamma Loans", tenure: 24, nbfcDisbursedAmount: 198765, posAmount: 98765 },
-  { sl: 47, nbfcId: "MFL372345167", appId: "APP3723456789", status: "Approved", name: "Omega Funds", tenure: 30, nbfcDisbursedAmount: 423456, posAmount: 210987 },
-  { sl: 48, nbfcId: "MFL382345178", appId: "APP3823456789", status: "Rejected", name: "Beta Credit", tenure: 12, nbfcDisbursedAmount: 145678, posAmount: 69876 },
-  { sl: 49, nbfcId: "MFL392345189", appId: "APP3923456789", status: "Approved", name: "Omega Funds", tenure: 24, nbfcDisbursedAmount: 312345, posAmount: 156789 },
-  { sl: 50, nbfcId: "MFL402345190", appId: "APP4023456789", status: "Rejected", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 176543, posAmount: 78965 },
-];
+type Disbursement = {
+  id: number;
+  app_id: string;
+  lead_id: string;
+  customer_name: string;
+  mobilenumber: string;
+  sanction_limit: string;
+  bank_sanction_amount?: string | null;
+  nbfc_sanction_amount?: string | null;
+  created_at: string;
+};
 
-
-export const columns: ColumnDef<typeof loanApplications[number]>[] = [
-  {
-    accessorKey: "sl",
-    header: () => <p className="text-center">SL</p>,
-    cell: ({ row }) => (
-      <p className="text-center font-bold">{row.getValue("sl") as number}</p>
-    ),
-  },
-  {
-    accessorKey: "nbfcId",
-    header: () => <p className="text-center">NBFC ID</p>,
-    cell: ({ row }) => (
-      <p className="text-center uppercase">{row.getValue("nbfcId") as string}</p>
-    ),
-  },
-  {
-    accessorKey: "appId",
-    header: () => <p className="text-center">App ID</p>,
-    cell: ({ row }) => (
-      <p className="text-center uppercase">{row.getValue("appId") as string}</p>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: () => <p className="text-center">Status</p>,
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const color =
-        status === "Approved"
-          ? "text-green-600 font-semibold"
-          : "text-red-500 font-semibold";
-      return <p className={`text-center ${color}`}>{status}</p>;
-    },
-  },
-  {
-    accessorKey: "name",
-    header: () => <p className="text-center">Name</p>,
-    cell: ({ row }) => (
-      <p className="text-center capitalize">{row.getValue("name") as string}</p>
-    ),
-  },
-  {
-    accessorKey: "tenure",
-    header: () => <p className="text-center">Tenure</p>,
-    cell: ({ row }) => <p className="text-center">{row.getValue("tenure") as number}</p>,
-  },
-  {
-    accessorKey: "nbfcDisbursedAmount",
-    header: () => <p className="text-center">NBFC Disbursed Amount</p>,
-    cell: ({ row }) => {
-      const value = row.getValue("nbfcDisbursedAmount") as number;
-      return <p className="text-center">₹ {value.toLocaleString()}</p>;
-    },
-  },
-  {
-    accessorKey: "posAmount",
-    header: () => <p className="text-center">POS Amount</p>,
-    cell: ({ row }) => {
-      const value = row.getValue("posAmount") as number;
-      return <p className="text-center">₹ {value.toLocaleString()}</p>;
-    },
-  },
-
-   {
-    id: "actions",
-    header: () => <p className="text-center">Actions</p>,
-    cell: ({ row }) => {
-      const navigate = useNavigate();
-      const handleViewMore = (id:string) => {
-        // optionally pass an ID if needed, e.g. /details/:id
-        navigate(`/applications/${id}`);
-      };
-      return (
-        <div className="flex justify-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleViewMore(row.getValue("appId") as string)}
-            className="text-blue-600 hover:bg-blue-50"
-          >
-            View More
-          </Button>
-        </div>
-      );
-    },
-  },
-];
-
-
-export default function ApprovedApplication() {
+export default function DisbursementListScreen() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [nbfcFilter, setNbfcFilter] = React.useState("all");
 
-  // Get unique NBFC names from data
-  const nbfcArray = Array.from(
-    new Map(loanApplications.map((item) => [item.name, item])).values()
+  // UI + filters
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const debouncedSearch = useDebounce(searchQuery.trim(), 300);
+  const [nbfcFilter, setNbfcFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState<number>(1); // 1-based for API
+  const [pageSize, setPageSize] = useState<number>(10);
+
+  // Fetch disbursements from API (assumes hook accepts params object)
+  const { data, isLoading, isFetching, error, refetch } = useGetDisbursementsQuery(
+    {
+      page: currentPage,
+      per_page: pageSize,
+      search: debouncedSearch || undefined,
+      nbfc: nbfcFilter !== "all" ? nbfcFilter : undefined,
+      status: statusFilter !== "all" ? statusFilter : undefined,
+    },
+    { refetchOnMountOrArgChange: true }
   );
 
-  // Filter data based on search and filters
-  const filteredData = React.useMemo(() => {
-    return loanApplications.filter((item) => {
-      const searchLower = searchQuery.toLowerCase();
-      const matchesSearch =
-        !searchQuery ||
-        item.nbfcId.toLowerCase().includes(searchLower) ||
-        item.appId.toLowerCase().includes(searchLower) ||
-        item.name.toLowerCase().includes(searchLower);
+  // Normalize API shape: expects { disbursements: [...], pagination: {...} }
+  const disbursements: Disbursement[] = Array.isArray(data?.disbursements)
+    ? data.disbursements
+    : Array.isArray(data?.data?.disbursements)
+    ? data.data.disbursements
+    : [];
 
-      const matchesStatus = statusFilter === "all" || item.status === statusFilter;
-      const matchesNbfc = nbfcFilter === "all" || item.name === nbfcFilter;
+  const pagination = data?.pagination ?? data?.data?.pagination ?? {
+    current_page: currentPage,
+    per_page: pageSize,
+    total: disbursements.length,
+    last_page: 1,
+  };
 
-      return matchesSearch && matchesStatus && matchesNbfc;
-    });
-  }, [searchQuery, statusFilter, nbfcFilter]);
+  const totalItems = Number(pagination.total ?? 0);
+  const totalPages = Math.max(1, Math.ceil((totalItems || 0) / (pagination.per_page || pageSize)));
+  const apiPage = Number(pagination.current_page ?? currentPage);
 
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
+  // Keep local currentPage in sync with server-provided page
+  useEffect(() => {
+    if (apiPage && !Number.isNaN(apiPage) && apiPage !== currentPage) {
+      setCurrentPage(apiPage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiPage]);
+
+  // Reset to first page when filters/search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch, nbfcFilter, statusFilter, pageSize]);
+
+  // Derive NBFC options from current page results (or fetch separately if you have endpoint)
+  const nbfcOptions = useMemo(() => {
+    if (!disbursements || disbursements.length === 0) return [];
+    const uniq = Array.from(new Map(disbursements.map((d) => [d.customer_name, d.customer_name])).values());
+    return uniq;
+  }, [disbursements]);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   return (
-    <div className="w-full px-6 py-4">
-      <Card className="border-0 shadow-none mb-6">
-        <CardContent className="p-4">
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">Disbursements</h2>
+          <p className="text-gray-600 mt-1">List of disbursement requests</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="ghost" onClick={() => refetch()} disabled={isFetching || isLoading}>Refresh</Button>
+        </div>
+      </div>
+
+      <Card>
+        <CardContent>
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex-1 relative min-w-[220px]">
+            <div className="flex-1 relative min-w-[240px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search by NBFC ID, App ID, or Name..."
+                placeholder="Search by Lead ID, App ID, or Customer..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
+                disabled={isLoading || isFetching}
               />
             </div>
 
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
@@ -234,94 +140,155 @@ export default function ApprovedApplication() {
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="Approved">Approved</SelectItem>
                 <SelectItem value="Rejected">Rejected</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select value={nbfcFilter} onValueChange={setNbfcFilter}>
+            <Select value={nbfcFilter} onValueChange={(v) => setNbfcFilter(v)}>
               <SelectTrigger className="w-[220px]">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by NBFC" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All NBFCs</SelectItem>
-                {nbfcArray.map((nbfc) => (
-                  <SelectItem key={nbfc.name} value={nbfc.name}>
-                    {nbfc.name}
+                {nbfcOptions.map((n) => (
+                  <SelectItem key={n} value={n}>
+                    {n}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
           </div>
 
           <div className="mt-4 text-sm text-gray-600">
-            Showing {filteredData.length} of {loanApplications.length} applications{" "}
+            Showing {disbursements.length} results — Page {pagination.current_page} of {totalPages} (Total: {totalItems})
+            {isFetching && <span className="ml-2 text-xs text-gray-400">Updating...</span>}
           </div>
         </CardContent>
       </Card>
-      <div className="bg-white shadow-sm rounded-lg mb-6 border border-[#D1E9FF]">
-        <div className="flex items-center justify-between p-4 border-b-2 border-[#C3EEFF]">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-[#0A4DA2]"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h2 className="text-lg font-bold text-[#0A4DA2]">
-              Approved Application List
-            </h2>
-          </div>
-        </div>
 
-        <div className="overflow-x-auto">
-          <Table className="min-w-full">
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="text-sm font-bold">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="text-sm text-center">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
+      <Card>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No applications found.
-                  </TableCell>
+                  <TableHead className="text-center">SL</TableHead>
+                  <TableHead className="text-center">Lead ID</TableHead>
+                  <TableHead className="text-center">App ID</TableHead>
+                  <TableHead className="text-center">Customer</TableHead>
+                  <TableHead className="text-center">Mobile</TableHead>
+                  <TableHead className="text-center">Sanction</TableHead>
+                  <TableHead className="text-center">Created At</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+              </TableHeader>
 
-      <PaginationComponent table={table} />
+              <TableBody>
+                {disbursements.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                      {isLoading ? "Loading disbursements..." : "No disbursements found"}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  disbursements.map((d, idx) => {
+                    const serial = (pagination.current_page - 1) * (pagination.per_page || pageSize) + idx + 1;
+                    return (
+                      <TableRow key={d.id}>
+                        <TableCell className="text-center font-semibold">{serial}</TableCell>
+                        <TableCell className="text-center">{d.lead_id}</TableCell>
+                        <TableCell className="text-center">{d.app_id}</TableCell>
+                        <TableCell className="text-center capitalize">{d.customer_name}</TableCell>
+                        <TableCell className="text-center">{d.mobilenumber}</TableCell>
+                        <TableCell className="text-center">₹ {(Number(d.sanction_limit) || 0).toLocaleString()}</TableCell>
+                        <TableCell className="text-center">{new Date(d.created_at).toLocaleString()}</TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex justify-center gap-2">
+                            <ActionButton variant="outline" size="sm" onClick={() => navigate(`/applications/${d.app_id}`)}>
+                              View
+                            </ActionButton>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Pagination at bottom */}
+          <div className="flex justify-end mt-4 items-center gap-3">
+
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} className={currentPage === 1 ? "opacity-50 pointer-events-none" : ""} />
+                </PaginationItem>
+
+                {totalPages <= 7 ? (
+                  [...Array(totalPages)].map((_, i) => (
+                    <PaginationItem key={i}>
+                      <PaginationLink
+                        href="#"
+                        isActive={currentPage === i + 1}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePageChange(i + 1);
+                        }}
+                      >
+                        {i + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))
+                ) : (
+                  <>
+                    <PaginationItem>
+                      <PaginationLink href="#" isActive={currentPage === 1} onClick={(e) => { e.preventDefault(); handlePageChange(1); }}>
+                        1
+                      </PaginationLink>
+                    </PaginationItem>
+
+                    {currentPage > 3 && (
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    )}
+
+                    {[currentPage - 1, currentPage, currentPage + 1]
+                      .filter((p) => p > 1 && p < totalPages)
+                      .map((p) => (
+                        <PaginationItem key={p}>
+                          <PaginationLink href="#" isActive={currentPage === p} onClick={(e) => { e.preventDefault(); handlePageChange(p); }}>
+                            {p}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+
+                    {currentPage < totalPages - 2 && (
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    )}
+
+                    <PaginationItem>
+                      <PaginationLink href="#" isActive={currentPage === totalPages} onClick={(e) => { e.preventDefault(); handlePageChange(totalPages); }}>
+                        {totalPages}
+                      </PaginationLink>
+                    </PaginationItem>
+                  </>
+                )}
+
+                <PaginationItem>
+                  <PaginationNext onClick={() => handlePageChange(currentPage + 1)} className={currentPage === totalPages ? "opacity-50 pointer-events-none" : ""} />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
-

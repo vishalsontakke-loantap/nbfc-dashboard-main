@@ -115,6 +115,11 @@ export default function LoanDetailsView() {
   const repaymentView = () => {
     navigate(`/loans/repayment/${loanApplication.applicationId}`);
   };
+
+  const ledgerView = () => {
+    navigate(`/loans/statement/12`)
+  }
+   
   // const getStatusColor = (status: string) => {
   //   switch (status) {
   //     case 'Approved':
@@ -598,6 +603,10 @@ export default function LoanDetailsView() {
                   <Button variant="outline" className="w-full">
                     <AlertCircle className="w-4 h-4 mr-2" />
                     Request Additional Info
+                  </Button>
+                  <Button variant="outline" className="w-full" onClick={ledgerView}>
+                    <AlertCircle className="w-4 h-4 mr-2" />
+                    Account Statement
                   </Button>
                   <Button variant="outline" className="w-full">
                     <Download className="w-4 h-4 mr-2" />

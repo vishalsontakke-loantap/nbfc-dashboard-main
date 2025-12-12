@@ -4,6 +4,7 @@ import LoanAccount from "./LoanAccount";
 import NotFound from "../NotFound";
 import LoanDetailsView from "../LoanDetailsView";
 import { RepaymentSchedule } from "../RepaymentSchedule";
+import LoanStatement from "../LoanStatement";
 
 const LoanAccountRoutes = () => {
   return (
@@ -30,6 +31,14 @@ const LoanAccountRoutes = () => {
           element={
             <Layout>
               <RepaymentSchedule />
+            </Layout>
+          }
+        />
+        <Route
+        path="/statement/:loan_id"
+          element={
+            <Layout>
+              <LoanStatement /> 
             </Layout>
           }
         />

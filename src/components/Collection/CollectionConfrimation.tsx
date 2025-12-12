@@ -16,7 +16,7 @@ import { CircleX, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { assetPath } from "@/lib/utils";
 
-export function CollectionConfirmation({data}) {
+export function CollectionConfirmation() {
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
 
