@@ -1,95 +1,58 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { flexRender, ColumnDef, useReactTable, getCoreRowModel, getFilteredRowModel, getSortedRowModel, getPaginationRowModel } from "@tanstack/react-table";
-import { ChevronDown, ArrowUpDown, Funnel } from "lucide-react";
 
-import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ArrowUpDown, Funnel } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 
 import CardHeader from "../CardHeader";
 import CardHeadline from "../CardHeadline";
-import PaginationComponent from "@/components/PaginationComponent";
 import { assetPath } from "@/lib/utils";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
-// import { useUploadCollectionMutation } from "@/redux/services/collectionApi";
+import {
+  useUploadCollectionMutation,
+  useGetCollectionBatchListQuery,
+} from "@/redux/features/collection/collectionApi";
+
 import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
-import { useUploadCollectionMutation } from "@/redux/features/collection/collectionApi";
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 
 // ------------------ Form Schema ------------------
 const formSchema = z.object({
   file: z
     .instanceof(File, { message: "File is required" })
     .refine((file) => file.size <= 50 * 1024 * 1024, { message: "Max file size is 5MB" })
-    .refine((file) => {
-      const allowedTypes = [
-        "text/csv",
-        "application/vnd.ms-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "application/vnd.ms-excel.sheet.macroenabled.12",
-      ];
-      return allowedTypes.includes(file.type);
-    }, { message: "Only csv, xls, xlsx, xlsm files allowed" })
+    .refine(
+      (file) => {
+        const allowedTypes = [
+          "text/csv",
+          "application/vnd.ms-excel",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "application/vnd.ms-excel.sheet.macroenabled.12",
+        ];
+        return allowedTypes.includes(file.type);
+      },
+      { message: "Only csv, xls, xlsx, xlsm files allowed" }
+    )
     .optional(),
 });
 
-// ------------------ Sample Table Data ------------------
-const loanApplications = [
-  { sl: 1, nbfcId: "MFL301326297", appId: "APP7097165262", status: "Rejected", name: "Gamma Loans", tenure: 18, nbfcDisbursedAmount: 101249, posAmount: 64344 },
-  { sl: 2, nbfcId: "MFL710143367", appId: "APP8321270706", status: "Approved", name: "Omega Funds", tenure: 18, nbfcDisbursedAmount: 358023, posAmount: 60492 },
-  // ... add the rest of your 50 rows as before
-];
-
-// ------------------ Table Columns ------------------
-export const columns: ColumnDef<typeof loanApplications[number]>[] = [
-  { accessorKey: "sl", header: () => <p className="text-center">SL</p>, cell: ({ row }) => <p className="text-center font-bold">{row.getValue("sl")}</p> },
-  { accessorKey: "nbfcId", header: () => <p className="text-center">NBFC ID</p>, cell: ({ row }) => <p className="text-center uppercase">{row.getValue("nbfcId")}</p> },
-  { accessorKey: "appId", header: () => <p className="text-center">App ID</p>, cell: ({ row }) => <p className="text-center uppercase">{row.getValue("appId")}</p> },
-  {
-    accessorKey: "status",
-    header: () => <p className="text-center">Status</p>,
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const color = status === "Approved" ? "text-green-600 font-semibold" : "text-red-500 font-semibold";
-      return <p className={`text-center ${color}`}>{status}</p>;
-    },
-  },
-  { accessorKey: "name", header: () => <p className="text-center">Name</p>, cell: ({ row }) => <p className="text-center capitalize">{row.getValue("name")}</p> },
-  { accessorKey: "tenure", header: () => <p className="text-center">Tenure</p>, cell: ({ row }) => <p className="text-center">{row.getValue("tenure")}</p> },
-  {
-    accessorKey: "nbfcDisbursedAmount",
-    header: () => <p className="text-center">NBFC Disbursed Amount</p>,
-    cell: ({ row }) => <p className="text-center">₹ {row.getValue("nbfcDisbursedAmount").toLocaleString()}</p>,
-  },
-  {
-    accessorKey: "posAmount",
-    header: () => <p className="text-center">POS Amount</p>,
-    cell: ({ row }) => <p className="text-center">₹ {row.getValue("posAmount").toLocaleString()}</p>,
-  },
-  {
-    id: "actions",
-    header: () => <p className="text-center">Actions</p>,
-    cell: ({ row }) => {
-      const navigate = useNavigate();
-      const handleViewMore = (id: string) => navigate(`/collection/${id}`);
-      return (
-        <div className="flex justify-center">
-          <Button variant="outline" size="sm" onClick={() => handleViewMore(row.getValue("appId"))} className="text-blue-600 hover:bg-blue-50">
-            View More
-          </Button>
-        </div>
-      );
-    },
-  },
-];
-
-// ------------------ Component ------------------
 const CollectionFileUpload: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -99,43 +62,71 @@ const CollectionFileUpload: React.FC = () => {
   const [uploadCollection, { isLoading }] = useUploadCollectionMutation();
   const selectedNbfcId = useSelector(getSelectedNbfcId);
   const navigate = useNavigate();
-  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [globalFilter, setGlobalFilter] = useState("");
 
- const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
-  if (!data.file) return;
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
 
-  try {
-    await uploadCollection(data.file).unwrap();
-    console.log("Upload successful!");
-    form.reset();          
-  } catch (err) {
-    console.error("Upload failed", err);
-    form.reset();            
-  }
-};
+  // Fetch batch list
+  const {
+    data,
+    isLoading: isFetching,
+    refetch,
+  } = useGetCollectionBatchListQuery({ page: currentPage, per_page: perPage });
 
+  // ⬇ NEW — when NBFC changes, refetch instantly
+  useEffect(() => {
+    if (selectedNbfcId) {
+      refetch();
+    }
+  }, [selectedNbfcId]);
 
-  const table = useReactTable({
-    data: loanApplications,
-    columns,
-    state: { globalFilter },
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
+  const batches = data?.data?.batches ?? [];
+  const pagination =
+    data?.data?.pagination ?? { current_page: 1, last_page: 1, total: batches.length, per_page: perPage };
+
+  const totalItems = Number(pagination.total ?? 0);
+  const totalPages = Math.max(1, Math.ceil((totalItems || 0) / (pagination.per_page || perPage)));
+
+  useEffect(() => {
+    if (pagination.current_page && pagination.current_page !== currentPage) {
+      setCurrentPage(pagination.current_page);
+    }
+  }, [pagination.current_page]);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
+    if (!data.file) return;
+    try {
+      await uploadCollection(data.file).unwrap();
+      form.reset();
+      refetch(); // 🔄 Refresh table after upload
+    } catch (err) {
+      console.error("Upload failed", err);
+      form.reset();
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-4 p-5">
       <CardHeader title="Disbursement File Upload" subtitle="Upload your collection files here." />
 
+      {/* Upload form */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="bg-white shadow-sm rounded-lg p-4 space-y-3 space-x-4">
             <div className="flex items-center justify-between">
               <CardHeadline title="Upload Collection File" hr="no" />
-              <Button type="button" variant="outline" className="rounded-sm bg-white text-blue-600 border-blue-500 hover:bg-blue-50">
+              <Button
+                type="button"
+                variant="outline"
+                className="rounded-sm bg-white text-blue-600 border-blue-500 hover:bg-blue-50"
+              >
                 Export Sample File
                 <ChevronDown />
               </Button>
@@ -144,62 +135,54 @@ const CollectionFileUpload: React.FC = () => {
             <hr />
 
             <span className="flex flex-col items-center justify-center p-10">
-              <img src={assetPath("/images/icons/file_open.svg")} alt="Upload Collection File" className="w-14" />
-              <h3 className="font-semibold text-muted-foreground">Key Platform Fields & Expected Mapping Columns</h3>
+              <img src={assetPath("/images/icons/file_open.svg")} alt="Upload" className="w-14" />
+              <h3 className="font-semibold text-muted-foreground">
+                Key Platform Fields & Expected Mapping Columns
+              </h3>
               <p className="text-xs text-muted-foreground text-center mt-2 mb-4 max-w-[85dvh]">
-                Download the sample format, upload your collection file, and map your columns to our required fields.
+                Download the sample format, upload your collection file, and map your columns.
               </p>
 
               <FormField
-  control={form.control}
-  name="file"
-  render={({ field }) => {
-    const fileRef = useRef<HTMLInputElement | null>(null);
+                control={form.control}
+                name="file"
+                render={({ field }) => {
+                  const fileRef = useRef<HTMLInputElement | null>(null);
+                  return (
+                    <FormItem>
+                      <input
+                        type="file"
+                        accept=".csv,.xls,.xlsx,.xlsm"
+                        ref={(e) => {
+                          fileRef.current = e;
+                          field.ref(e);
+                        }}
+                        onChange={(e) => field.onChange(e.target.files?.[0])}
+                        className="hidden"
+                      />
+                      <div className="flex gap-2">
+                        <Button type="button" onClick={() => fileRef.current?.click()} disabled={!!field.value}>
+                          {field.value?.name ? "Uploaded" : "Upload"}
+                        </Button>
 
-    return (
-      <FormItem>
-        <input
-          type="file"
-          accept=".csv,.xls,.xlsx,.xlsm"
-          ref={(e) => {
-            fileRef.current = e;
-            field.ref(e);
-          }}
-          onChange={(e) => {
-            field.onChange(e.target.files?.[0]);
-          }}
-          className="hidden"
-        />
-
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={!!field.value?.name}
-          >
-            {field.value?.name ? "Uploaded" : "Upload"}
-          </Button>
-
-          {field.value?.name && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                form.setValue("file", undefined);
-                if (fileRef.current) fileRef.current.value = "";
-              }}
-            >
-              Clear
-            </Button>
-          )}
-        </div>
-
-        <FormMessage />
-      </FormItem>
-    );
-  }}
-/>
-
+                        {field.value?.name && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                              form.setValue("file", undefined);
+                              if (fileRef.current) fileRef.current.value = "";
+                            }}
+                          >
+                            Clear
+                          </Button>
+                        )}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
             </span>
           </div>
 
@@ -211,36 +194,37 @@ const CollectionFileUpload: React.FC = () => {
         </form>
       </Form>
 
-      {/* Table Section */}
+      {/* Batch Table */}
       <div className="w-full">
         <div className="bg-white shadow-sm rounded-lg mb-6 border border-[#D1E9FF]">
           <div className="flex items-center justify-between p-4 border-b-2 border-[#C3EEFF]">
-            <div className="flex items-center gap-3">
-              <h2 className="text-lg font-bold text-[#0A4DA2]">Batch List</h2>
-            </div>
+            <h2 className="text-lg font-bold text-[#0A4DA2]">Batch List</h2>
 
             <div className="flex items-center gap-2">
               <Input
                 placeholder="Search…"
                 value={globalFilter}
                 onChange={(e) => setGlobalFilter(e.target.value)}
-                className="bg-[#C3EEFF] border border-[#BBDFFF] text-sm w-[240px] focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="bg-[#C3EEFF] border border-[#BBDFFF] text-sm w-[240px]"
               />
-              <Button variant="outline" className="text-[#0A4DA2] border-none p-0 hover:text-[#0A4DA2]/80 hover:bg-white">
+              <Button variant="outline" className="text-[#0A4DA2] border-none p-0">
                 <ArrowUpDown />
               </Button>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="text-[#0A4DA2] border-none p-0 hover:text-[#0A4DA2]/80 hover:bg-white">
+                  <Button variant="outline" className="text-[#0A4DA2] border-none p-0">
                     <Funnel />
                   </Button>
                 </DropdownMenuTrigger>
+
                 <DropdownMenuContent align="end">
-                  {table.getAllColumns().filter((col) => col.getCanHide()).map((column) => (
-                    <DropdownMenuCheckboxItem key={column.id} className="capitalize" checked={column.getIsVisible()} onCheckedChange={(val) => column.toggleVisibility(!!val)}>
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  ))}
+                  {batches.length > 0 &&
+                    Object.keys(batches[0]).map((key) => (
+                      <DropdownMenuCheckboxItem key={key} className="capitalize">
+                        {key}
+                      </DropdownMenuCheckboxItem>
+                    ))}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -249,40 +233,180 @@ const CollectionFileUpload: React.FC = () => {
           <div className="overflow-x-auto">
             <Table className="min-w-full">
               <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-sm font-bold">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
+                <TableRow>
+                  {[
+                    "SL",
+                    "Batch ID",
+                    "Status",
+                    "PF Number",
+                    "Entry Date",
+                    "Total Principal",
+                    "Total Interest",
+                    "NBFC Principal",
+                    "NBFC Interest",
+                    "Actions",
+                  ].map((h) => (
+                    <TableHead key={h} className="text-sm font-bold text-center">
+                      {h}
+                    </TableHead>
+                  ))}
+                </TableRow>
               </TableHeader>
+
               <TableBody>
-                {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="text-sm text-center">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
+                {isFetching ? (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      No applications found.
+                    <TableCell colSpan={10} className="text-center py-6">
+                      Loading...
                     </TableCell>
                   </TableRow>
+                ) : batches.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={10} className="text-center py-6">
+                      No batches found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  batches.map((b, idx) => (
+                    <TableRow key={b.uuid}>
+                      <TableCell className="text-center">
+                        {(pagination.current_page - 1) * perPage + idx + 1}
+                      </TableCell>
+
+                      <TableCell className="text-center">{b.uuid}</TableCell>
+
+                      <TableCell
+                        className={`text-center ${
+                          b.status === "Approved"
+                            ? "text-green-600 font-semibold"
+                            : b.status === "Rejected"
+                            ? "text-red-500 font-semibold"
+                            : ""
+                        }`}
+                      >
+                        {b.status}
+                      </TableCell>
+
+                      <TableCell className="text-center">{b.pf_number}</TableCell>
+                      <TableCell className="text-center">{b.entry_date}</TableCell>
+                      <TableCell className="text-center">{b.total_principal}</TableCell>
+                      <TableCell className="text-center">{b.total_interest}</TableCell>
+                      <TableCell className="text-center">{b.total_nbfc_principal}</TableCell>
+                      <TableCell className="text-center">{b.total_nbfc_interest}</TableCell>
+
+                      <TableCell className="text-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-blue-600 hover:bg-blue-50"
+                          onClick={() => navigate(`/collection/${b.uuid}`)}
+                        >
+                          View More
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
                 )}
               </TableBody>
             </Table>
           </div>
-        </div>
 
-        <PaginationComponent table={table} />
+          {/* Pagination */}
+          <div className="flex justify-end mt-4 mb-4 items-center gap-3">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className={currentPage === 1 ? "opacity-50 pointer-events-none" : ""}
+                  />
+                </PaginationItem>
+
+                {/* Page numbers */}
+                {totalPages <= 7
+                  ? Array.from({ length: totalPages }, (_, i) => (
+                      <PaginationItem key={i}>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === i + 1}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(i + 1);
+                          }}
+                        >
+                          {i + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))
+                  : (
+                    <>
+                      <PaginationItem>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === 1}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(1);
+                          }}
+                        >
+                          1
+                        </PaginationLink>
+                      </PaginationItem>
+
+                      {currentPage > 3 && (
+                        <PaginationItem>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      )}
+
+                      {[currentPage - 1, currentPage, currentPage + 1]
+                        .filter((p) => p > 1 && p < totalPages)
+                        .map((p) => (
+                          <PaginationItem key={p}>
+                            <PaginationLink
+                              href="#"
+                              isActive={currentPage === p}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handlePageChange(p);
+                              }}
+                            >
+                              {p}
+                            </PaginationLink>
+                          </PaginationItem>
+                        ))}
+
+                      {currentPage < totalPages - 2 && (
+                        <PaginationItem>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      )}
+
+                      <PaginationItem>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === totalPages}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(totalPages);
+                          }}
+                        >
+                          {totalPages}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </>
+                  )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className={currentPage === totalPages ? "opacity-50 pointer-events-none" : ""}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
       </div>
     </div>
   );

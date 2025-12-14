@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
 
 interface Nbfc {
   partner_id: number;
@@ -18,7 +19,9 @@ interface NbfcState {
 
 const initialState: NbfcState = {
   list: [],
-  selectedNbfc: null,
+  selectedNbfc: Cookies.get("selectedNbfc")
+    ? JSON.parse(Cookies.get("selectedNbfc")!)
+    : null,
   loading: false,
   error: null,
 };
@@ -34,6 +37,13 @@ export const nbfcSlice = createSlice({
     },
     setSelectedNbfc: (state, action: PayloadAction<Nbfc | null>) => {
       state.selectedNbfc = action.payload;
+
+      if (action.payload) {
+        Cookies.set("selectedNbfc", JSON.stringify(action.payload), { expires: 1 });
+      } else {
+        // Remove cookie if clearing selection
+        Cookies.remove("selectedNbfc");
+      }
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -46,6 +56,7 @@ export const nbfcSlice = createSlice({
       state.selectedNbfc = null;
       state.error = null;
       state.loading = false;
+      Cookies.remove("selectedNbfc");
     },
   },
 });
@@ -58,9 +69,7 @@ export const {
   clearNbfcData,
 } = nbfcSlice.actions;
 
-// ✅ Selector MUST be outside createSlice
 export const getSelectedNbfcId = (state: any) =>
   state.nbfc.selectedNbfc?.partner_id ?? null;
-
 
 export default nbfcSlice.reducer;

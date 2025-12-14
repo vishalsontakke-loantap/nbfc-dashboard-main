@@ -11,10 +11,8 @@ export const collectionApi = createApi({
             const nbfcId = getSelectedNbfcId(state);
             console.log("Selected NBFC ID in collectionApi:", nbfcId);
             if (nbfcId) {
-
                 headers.set("x-partner-id", nbfcId.toString());
             }
-
             return headers;
         },
     }),
@@ -33,18 +31,29 @@ export const collectionApi = createApi({
             },
         }),
 
-        getCollectionBatchList: builder.query<any, any>({
-            query: (params = {}) => {
-                return {
+        getCollectionBatchList: builder.query<any, { page?: number; per_page?: number; nbfcId?: any }>(
+            {
+                query: ({ page = 1, per_page = 10 }) => ({
                     url: "/collection-batch-list",
                     method: "GET",
-                    params,
-                };
-            },
+                    params: { page, per_page }
+                }),
+            }
+        ),
+
+
+        getCollectionListByBatchId: builder.query<any, { batchId: string; page?: number; per_page?: number }>({
+            query: ({ batchId, page = 1, per_page = 10 }) => ({
+                url: "/collection-list",
+                method: "GET",
+                params: { batch_idd: batchId, page, per_page },
+            }),
         }),
+
+
     }),
 
 
 });
 
-export const { useUploadCollectionMutation, useGetCollectionBatchListQuery } = collectionApi;
+export const { useUploadCollectionMutation, useGetCollectionBatchListQuery, useGetCollectionListByBatchIdQuery } = collectionApi;
