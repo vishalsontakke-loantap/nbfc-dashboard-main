@@ -46,7 +46,7 @@ export const collectionApi = createApi({
             query: ({ batchId, page = 1, per_page = 10 }) => ({
                 url: "/collection-list",
                 method: "GET",
-                params: { batch_idd: batchId, page, per_page },
+                params: { batch_id: batchId, page, per_page },
             }),
         }),
 

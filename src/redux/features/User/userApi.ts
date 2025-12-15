@@ -1,11 +1,21 @@
     // redux/features/products/productApi.ts
     import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSelectedNbfcId } from "../nbfc/nbfcSlice";
 
     export const userApi = createApi({
     reducerPath: "userApi",
     baseQuery: fetchBaseQuery({
         baseUrl: import.meta.env.VITE_API_BASE_URL,
         credentials: "include",
+        prepareHeaders: (headers, { getState }) => {
+            const state: any = getState();
+            const nbfcId = getSelectedNbfcId(state);
+            console.log("Selected NBFC ID in collectionApi:", nbfcId);
+            if (nbfcId) {
+                headers.set("x-partner-id", nbfcId.toString());
+            }
+            return headers;
+        },
     }),
     tagTypes: ["User"],
     endpoints: (builder) => ({

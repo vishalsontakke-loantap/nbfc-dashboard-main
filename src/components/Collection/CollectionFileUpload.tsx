@@ -69,18 +69,25 @@ const CollectionFileUpload: React.FC = () => {
   const [perPage] = useState(10);
 
   // Fetch batch list
-  const {
-    data,
-    isLoading: isFetching,
-    refetch,
-  } = useGetCollectionBatchListQuery({ page: currentPage, per_page: perPage });
+ const {
+  data,
+  isLoading: isFetching,
+  isError,
+  refetch,
+} = useGetCollectionBatchListQuery({
+  page: currentPage,
+  per_page: perPage,
+});
+
 
   // ⬇ NEW — when NBFC changes, refetch instantly
-  useEffect(() => {
-    if (selectedNbfcId) {
-      refetch();
-    }
-  }, [selectedNbfcId]);
+useEffect(() => {
+  if (selectedNbfcId) {
+    setCurrentPage(1);
+    refetch();
+  }
+}, [selectedNbfcId]);
+
 
   const batches = data?.data?.batches ?? [];
   const pagination =
@@ -200,7 +207,7 @@ const CollectionFileUpload: React.FC = () => {
           <div className="flex items-center justify-between p-4 border-b-2 border-[#C3EEFF]">
             <h2 className="text-lg font-bold text-[#0A4DA2]">Batch List</h2>
 
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Input
                 placeholder="Search…"
                 value={globalFilter}
@@ -227,7 +234,7 @@ const CollectionFileUpload: React.FC = () => {
                     ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-            </div>
+            </div> */}
           </div>
 
           <div className="overflow-x-auto">

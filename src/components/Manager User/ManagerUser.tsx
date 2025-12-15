@@ -57,6 +57,8 @@ import { useGetAllNbfcQuery } from "@/redux/features/nbfc/nbfcApi";
 import { useGetAllRolesQuery } from "@/redux/features/roles/roleApi";
 import { SkeletonTableShimmer } from "../ui/skeleton-table";
 import { extractApiErrors } from "@/utils/errorHelpers";
+import { useSelector } from "react-redux";
+import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 // NOTE: import your NBFC RTK Query hook. Adjust the path/name if different.
 
 export function UserListingScreen() {
@@ -74,6 +76,7 @@ export function UserListingScreen() {
   const [registrationDialogOpen, setRegistrationDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
+  const selectedNbfcId = useSelector(getSelectedNbfcId);
 
   // NBFC list - fetched from NBFC API
   const {
@@ -92,6 +95,14 @@ export function UserListingScreen() {
     error: rolesError,
     refetch: refetchRoles,
   } = useGetAllRolesQuery();
+
+   useEffect(() => {
+    if (selectedNbfcId) {
+      // setCurrentPage(1);
+      refetchRoles();
+      refetchNbfc();
+    }
+  }, [selectedNbfcId]);
 
   // Robust NBFC extraction
   const nbfcArray: { partner_id?: string | number; nbfc_name?: string; id?: string | number; name?: string }[] =
@@ -130,7 +141,7 @@ export function UserListingScreen() {
       page: currentPage,
       pageSize,
       q: debouncedSearchQuery ? debouncedSearchQuery : undefined,
-      partner_id: nbfcFilter && nbfcFilter !== "all" ? nbfcFilter : undefined,
+      partner_id: selectedNbfcId && selectedNbfcId !== "all" ? selectedNbfcId : undefined,
       role_id: roleFilter && roleFilter !== "all" ? roleFilter : undefined,
     },
     { refetchOnMountOrArgChange: true }
@@ -362,7 +373,7 @@ export function UserListingScreen() {
                 </Select>
 
                 {/* NBFC select */}
-                <Select value={nbfcFilter} onValueChange={(v) => { setNbfcFilter(v); }}>
+                {/* <Select value={nbfcFilter} onValueChange={(v) => { setNbfcFilter(v); }}>
                   <SelectTrigger className="w-[220px]" disabled={anyLoading}>
                     <SelectValue placeholder="NBFC" />
                   </SelectTrigger>
@@ -374,7 +385,7 @@ export function UserListingScreen() {
                       </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
+                </Select> */}
 
               </div>
 
