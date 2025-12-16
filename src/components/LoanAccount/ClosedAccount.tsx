@@ -213,7 +213,7 @@ export default function ClosedAccount() {
   });
 
   return (
-    <div className="w-full px-6 py-4">
+    <div className="w-full ">
        <Card className="mb-4 p-4">           
               <div className="flex flex-wrap items-center gap-4">
               <div className="flex-1 relative min-w-[220px]">
