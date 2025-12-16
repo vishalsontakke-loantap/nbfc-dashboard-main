@@ -27,7 +27,7 @@ const FormSectionCard: React.FC<FormSectionCardProps> = ({
         <hr className="-mt-4"/>
       <CardContent>
         <div
-          className={`grid gap-6 ${
+          className={`grid gap-3 ${
             inputColumns === 1
               ? "grid-cols-1"
               : inputColumns === 3

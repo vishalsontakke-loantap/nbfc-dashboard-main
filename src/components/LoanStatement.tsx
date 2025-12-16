@@ -125,7 +125,7 @@ export default function LoanStatement() {
                     <h2 className="text-lg font-bold text-[#0A4DA2]">Loan Statement</h2>
                 </div>
 
-                <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100">
+                <div className="p-3 bg-gradient-to-r from-blue-50 to-blue-100">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
                         <InfoCard title="Loan ID" value={loanAccountDetails.loanId} />

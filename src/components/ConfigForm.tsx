@@ -24,7 +24,7 @@ const ConfigForm: React.FC<ConfigFormProps> = ({ title, initialParams }) => {
   };
 
   return (
-    <div className="bg-blue-100 rounded-lg shadow-md p-6 mt-4">
+    <div className="bg-blue-100 rounded-lg shadow-md p-3 mt-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold">{title}</h2>
         <div className="flex items-center gap-2">

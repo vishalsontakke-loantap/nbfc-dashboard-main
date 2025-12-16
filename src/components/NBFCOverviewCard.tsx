@@ -13,7 +13,7 @@ export function NBFCOverviewCard() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white rounded-2xl shadow-lg p-3">
       <div className="flex items-center justify-between mb-6">
         <h2>NBFC Overview</h2>
         <div className="flex items-center gap-4">
@@ -28,7 +28,7 @@ export function NBFCOverviewCard() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {overviewData.map((item, index) => {
           const Icon = item.icon;
           return (

@@ -220,7 +220,7 @@ export default function DetailsView() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Main Content - Left Side */}
           <div className="lg:col-span-2 space-y-6 ">
             {/* Applicant Overview Card */}
@@ -237,7 +237,7 @@ export default function DetailsView() {
               </div>
               {/* </CardHeader> */}
               <CardContent className="p-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ">
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Applicant Name</p>
@@ -288,7 +288,7 @@ export default function DetailsView() {
               </div>
               {/* </CardHeader> */}
               <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div className="space-y-4">
                     <div className="p-4 bg-sky-50 rounded-xl border border-sky-100">
                       <p className="text-sm text-gray-600 mb-1">Sanctioned Amount</p>
@@ -358,8 +358,8 @@ export default function DetailsView() {
               {/* </CardHeader> */}
               <CardContent className="pt-6">
                 {/* Credit Score and Risk Level */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                  <div className="p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-sm text-gray-600 mb-1">Credit Score</p>
@@ -394,7 +394,7 @@ export default function DetailsView() {
                     </div>
                   </div>
 
-                  <div className={`p-6 rounded-xl border-2 ${getRiskColor(loanApplication.riskLevel)}`}>
+                  <div className={`p-3 rounded-xl border-2 ${getRiskColor(loanApplication.riskLevel)}`}>
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-sm mb-1">Risk Level</p>
@@ -442,7 +442,7 @@ export default function DetailsView() {
                 </div> */}
 
                 {/* Default Probability and Ratios */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {/* <div className="p-4 bg-gradient-to-br from-red-50 to-rose-50 rounded-xl border border-red-100">
                     <p className="text-sm text-gray-600 mb-3">Default Probability</p>
                     <div className="flex items-end gap-2 mb-3">
@@ -522,7 +522,7 @@ export default function DetailsView() {
             <div className="sticky top-16 space-y-6">
               {/* Quick Risk Summary */}
               {/* <Card className="shadow-md rounded-2xl border-0 overflow-hidden">
-                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-3 text-white">
                   <div className="flex items-center gap-3 mb-4">
                     <Shield className="w-8 h-8" />
                     <h3 className="text-white">Risk Summary</h3>

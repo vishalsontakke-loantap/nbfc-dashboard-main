@@ -46,7 +46,7 @@ export function NBFCPerformanceTable() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white rounded-2xl shadow-lg p-3">
       <div className="flex items-center justify-between mb-6">
         <h2>NBFC Performance Breakdown</h2>
         <span className="text-sm text-gray-500">3 NBFCs in this batch</span>

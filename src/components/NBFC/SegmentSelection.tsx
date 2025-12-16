@@ -141,7 +141,7 @@ const SegmentSelection = () => {
         />
       )}
 
-      <div className="p-6">
+      <div className="p-3">
         <ProgressBar totalSteps={4} currentStep={1} stepName="Product Setup" />
       </div>
     </div>

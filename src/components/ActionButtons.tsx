@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 
 export function ActionButtons() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white rounded-2xl shadow-lg p-3">
       <div className="flex flex-wrap gap-4 justify-center md:justify-end">
         <Button 
           variant="outline"

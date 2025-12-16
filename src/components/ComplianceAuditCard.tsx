@@ -13,7 +13,7 @@ export function ComplianceAuditCard() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white rounded-2xl shadow-lg p-3">
       <h2 className="mb-6">Compliance & Audit</h2>
 
       <div className="space-y-6">

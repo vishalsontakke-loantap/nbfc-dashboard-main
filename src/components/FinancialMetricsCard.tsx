@@ -13,7 +13,7 @@ export function FinancialMetricsCard() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white rounded-2xl shadow-lg p-3">
       <h2 className="mb-6">Financial & Operational Metrics</h2>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

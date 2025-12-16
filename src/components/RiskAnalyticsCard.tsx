@@ -29,10 +29,10 @@ export function RiskAnalyticsCard() {
   // ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white rounded-2xl shadow-lg p-3">
       <h2 className="mb-6">Risk & Analytics</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Risk Distribution Donut Chart */}
         <div>
           <h3 className="text-sm mb-4">Risk Distribution</h3>

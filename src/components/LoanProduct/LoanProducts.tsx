@@ -56,12 +56,12 @@ export default function LoanProducts() {
 
   if (isLoading) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="p-3 space-y-6">
         {/* NBFC Info Skeleton */}
         <NBFCInfoSkeleton />
 
         {/* Loan Products Skeleton */}
-        <div className="grid md:grid-cols-2 gap-6 bg-white mb-6 p-6 shadow">
+        <div className="grid md:grid-cols-2 gap-3 bg-white mb-6 p-3 shadow">
           <LoanCardSkeleton />
           <LoanCardSkeleton />
           <div className="flex justify-center">
@@ -73,13 +73,13 @@ export default function LoanProducts() {
   }
   console.log("Fetched Products Data:", productsData);
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 space-y-6">
       {/* NBFC Info Component */}
       <NBFCInfoCard  />
 
       {/* Loan Products */}
-      <div className="bg-white mb-6 p-6 shadow">
-        <div className="grid md:grid-cols-2 gap-6">
+      <div className="bg-white mb-6 p-3 shadow">
+        <div className="grid md:grid-cols-2 gap-3">
           {productsData?.data.products.map((product:any) => (
             <div key={product.id} className="h-full">
               <LoanCard product={product} />

@@ -125,7 +125,7 @@ export function UserManagement() {
       </div>
 
       {/* Users Table */}
-      <Card className="p-6">
+      <Card className="p-3">
         <h3 className="mb-4">System Users</h3>
         <div className="overflow-x-auto">
           <Table>
@@ -227,7 +227,7 @@ export function UserManagement() {
       </Card>
 
       {/* Audit Log */}
-      <Card className="p-6">
+      <Card className="p-3">
         <h3 className="mb-4">Audit Log</h3>
         <div className="space-y-3">
           {auditLogs.map((log, idx) => (

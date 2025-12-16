@@ -419,7 +419,7 @@ export default function ForgotCredentials({ onBack }: ForgotCredentialsProps) {
       </p>
 
       {recoveryType === 'userid' && (
-        <div className="p-6 bg-blue-50 rounded-xl border border-blue-200 mb-8">
+        <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 mb-8">
           <p className="text-gray-700 mb-3">Your User ID is:</p>
           <div
             className="text-2xl tracking-wider p-4 rounded-lg"
@@ -463,7 +463,7 @@ export default function ForgotCredentials({ onBack }: ForgotCredentialsProps) {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="min-h-screen flex items-center justify-center p-3"
       style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}
     >
       <div className="w-full max-w-md">

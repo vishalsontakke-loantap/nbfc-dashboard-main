@@ -147,7 +147,7 @@ const Reports = () => {
             ].map((item, idx) => (
               <Card
                 key={idx}
-                className={`p-6 bg-gradient-to-br ${item.bg} border-l-4`}
+                className={`p-3 bg-gradient-to-br ${item.bg} border-l-4`}
                 style={{ borderLeftColor: item.color }}
               >
                 <div className="flex items-center gap-3">
@@ -168,7 +168,7 @@ const Reports = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Conversion Funnel */}
-            <Card className="p-6">
+            <Card className="p-3">
               <div className="flex items-center justify-between mb-4">
                 <h3>Lead Conversion Funnel</h3>
                 <Button variant="outline" size="sm">
@@ -193,7 +193,7 @@ const Reports = () => {
               </ResponsiveContainer>
             </Card>
             <div>
-              <Card className="p-6">
+              <Card className="p-3">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg ">Loan & Performance Overview</h3>
                   <Button variant="outline" size="sm">
@@ -248,7 +248,7 @@ const Reports = () => {
 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="p-6">
+            <Card className="p-3">
               <div className="flex items-center justify-between mb-4">
                 <h3>NBFC Performance Metrics</h3>
                 <Button variant="outline" size="sm">
@@ -271,7 +271,7 @@ const Reports = () => {
             </Card>
 
             {/* Product Distribution */}
-            <Card className="p-6">
+            <Card className="p-3">
               <div className="flex items-center justify-between mb-4">
                 <h3>Product Distribution</h3>
                 <Button variant="outline" size="sm">
@@ -302,7 +302,7 @@ const Reports = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="p-6">
+            <Card className="p-3">
               <div className="flex items-center justify-between mb-4">
                 <h3>Collection Efficiency Trends</h3>
                 <Button variant="outline" size="sm">
@@ -345,7 +345,7 @@ const Reports = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <LoanDistributionChart />
-            <Card className="p-6">
+            <Card className="p-3">
               <div className="flex items-center justify-between mb-4">
                 <h3>BRE Effectiveness Trends</h3>
                 <Button variant="outline" size="sm">

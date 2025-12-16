@@ -28,7 +28,7 @@ const BuyOutSegment: React.FC = () => {
         </p>
 
         {/* Options */}
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4 place-items-center">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 place-items-center">
           <OptionCard
             title="Direct Assignment (DA)"
             description="NBFC directly sells loan pool to bank, transferring ownership and risk without intermediaries."
@@ -49,7 +49,7 @@ const BuyOutSegment: React.FC = () => {
         </CardContent>
       </Card>
       
-      <div className="p-6">
+      <div className="p-3">
         <ProgressBar totalSteps={4} currentStep={2} stepName="Segment" />
       </div>
     </div>

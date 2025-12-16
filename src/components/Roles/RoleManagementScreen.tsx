@@ -97,7 +97,7 @@ export function RoleManagementScreen({
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -144,7 +144,7 @@ export function RoleManagementScreen({
         </Card>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-3">
         {/* Roles List */}
         <Card className='px-6 h-[500px]'>
           <CardHeader>

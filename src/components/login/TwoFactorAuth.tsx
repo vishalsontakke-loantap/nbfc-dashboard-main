@@ -158,7 +158,7 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center p-3" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}>
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">

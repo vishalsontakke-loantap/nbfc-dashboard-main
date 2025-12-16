@@ -48,7 +48,7 @@ export function KPISummaryStrip() {
       {kpis.map((kpi, index) => {
         const Icon = kpi.icon;
         return (
-          <div key={index} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+          <div key={index} className="bg-white rounded-2xl shadow-lg p-3 hover:shadow-xl transition-shadow">
             <div className={`${kpi.bgColor} rounded-xl p-3 w-fit mb-4`}>
               <Icon className={`w-6 h-6 ${kpi.iconColor}`} />
             </div>

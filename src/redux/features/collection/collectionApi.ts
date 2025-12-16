@@ -50,10 +50,21 @@ export const collectionApi = createApi({
             }),
         }),
 
+        // get batch details by id
+        getCollectionBatchDetails: builder.query<any, string>({
+            query: (batchId: string) => ({
+                url: `/batch-data`,
+                method: "GET",
+                params: {
+                    batch_id: batchId,
+                },
+            }),
+        }),
+
 
     }),
 
 
 });
 
-export const { useUploadCollectionMutation, useGetCollectionBatchListQuery, useGetCollectionListByBatchIdQuery } = collectionApi;
+export const { useUploadCollectionMutation, useGetCollectionBatchListQuery, useGetCollectionListByBatchIdQuery, useGetCollectionBatchDetailsQuery } = collectionApi;

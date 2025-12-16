@@ -33,7 +33,7 @@ export function StatCard({ title, value, icon: Icon, trend, color = 'primary' }:
   };
 
   return (
-    <Card className={`p-6 border-l-4 ${colorClasses[color]} shadow-sm hover:shadow-md transition-shadow`}>
+    <Card className={`p-3 border-l-4 ${colorClasses[color]} shadow-sm hover:shadow-md transition-shadow`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-muted-foreground mb-2">{title}</p>

@@ -78,7 +78,7 @@ const Dashboard = () => {
           /> */}
 
           {/* Quick Actions */}
-          <Card className="p-6 bg-gradient-to-r from-[#0B5FFF] to-[#00A676] text-white shadow-lg">
+          <Card className="p-3 bg-gradient-to-r from-[#0B5FFF] to-[#00A676] text-white shadow-lg">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <h3 className="text-white mb-2">Quick Actions</h3>
@@ -150,9 +150,9 @@ const Dashboard = () => {
           </div>
 
           {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {/* Conversion Funnel */}
-            <Card className="p-6">
+            <Card className="p-3">
               <h3 className="mb-4 font-semibold">Lead Conversion Funnel</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={conversionData}>
@@ -172,7 +172,7 @@ const Dashboard = () => {
             </Card>
 
             {/* NBFC Distribution */}
-            <Card className="p-6">
+            <Card className="p-3">
               <h3 className="mb-4 font-semibold">NBFC Performance Distribution</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -197,7 +197,7 @@ const Dashboard = () => {
           </div>
 
           {/* Monthly Trend */}
-          <Card className="p-6">
+          <Card className="p-3">
             <h3 className="mb-4 font-semibold">Monthly Performance Trend</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={monthlyTrendData}>
@@ -231,7 +231,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Recent Activity */}
-          {/* <Card className="p-6">
+          {/* <Card className="p-3">
             <h3 className="mb-4 font-semibold">Recent Activity</h3>
             <div className="space-y-4">
               {[

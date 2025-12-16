@@ -33,7 +33,7 @@ export default function LoanDistributionChart() {
 
   const currentData = view === "state" ? statewiseData : districtwiseData;
   return (
-    <Card className="p-6">
+    <Card className="p-3">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg ">

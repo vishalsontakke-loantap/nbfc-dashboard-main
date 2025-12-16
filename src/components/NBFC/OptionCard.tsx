@@ -20,7 +20,7 @@ const OptionCard: React.FC<OptionCardProps> = ({
 }) => {
   return (
     <div
-      className={`w-72 h-80 p-6 border rounded-2xl flex flex-col justify-between shadow-sm cursor-pointer transition-all duration-300 
+      className={`w-72 h-80 p-3 border rounded-2xl flex flex-col justify-between shadow-sm cursor-pointer transition-all duration-300 
       ${
         selected
           ? "bg-blue-50 border-blue-400"

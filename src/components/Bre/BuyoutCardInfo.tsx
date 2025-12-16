@@ -31,7 +31,7 @@ const BuyoutCardInfo: React.FC<PoolBuyoutProps> = ({
     policyHref,
 }) => {
     return (
-        <div className="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-gray-200 mr-6 ml-6 mb-8">
+        <div className="bg-white rounded-xl shadow-md p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border border-gray-200 mr-6 ml-6 mb-8">
             {/* Left section */}
             <div className="flex-1">
                 {/* Header */}
@@ -45,7 +45,7 @@ const BuyoutCardInfo: React.FC<PoolBuyoutProps> = ({
                 <hr />
 
                 {/* Capabilities & Functionalities */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ml-6 mt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ml-6 mt-2">
                     {/* Capabilities */}
                     <div>
                         <h3 className="text-green-600 font-semibold mb-2">

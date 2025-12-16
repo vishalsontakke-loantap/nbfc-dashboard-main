@@ -212,7 +212,7 @@ export default function RejectedApplication() {
   });
 
   return (
-    <div className="w-full px-6 py-4">
+    <div className="w-full">
       <Card className="border-0 shadow-none mb-6">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">

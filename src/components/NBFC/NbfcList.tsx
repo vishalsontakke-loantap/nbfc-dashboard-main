@@ -71,14 +71,14 @@ const NbfcList: React.FC = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen p-6">
+            <div className="min-h-screen p-3">
                 <p className="text-red-600">Failed to load NBFCs.</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen p-6">
+        <div className="min-h-screen p-3">
             <div>
                 <div className="flex justify-between items-center mb-2">
                     <div>

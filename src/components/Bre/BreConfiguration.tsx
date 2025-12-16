@@ -31,7 +31,7 @@ const BreConfiguration: React.FC = () => {
   ];
 
   return (
-    <div className="p-6">
+    <div className="p-3">
       <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
       {activeTab === 1 && (

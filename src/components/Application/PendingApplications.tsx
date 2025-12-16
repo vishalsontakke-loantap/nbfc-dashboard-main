@@ -148,12 +148,12 @@ export const columns: ColumnDef<typeof loanApplications[number]>[] = [
     },
   },
 
-   {
+  {
     id: "actions",
     header: () => <p className="text-center">Actions</p>,
     cell: ({ row }) => {
       const navigate = useNavigate();
-      const handleViewMore = (id:string) => {
+      const handleViewMore = (id: string) => {
         // optionally pass an ID if needed, e.g. /details/:id
         navigate(`/applications/${id}`);
       };
@@ -212,7 +212,7 @@ export default function PendingApplication() {
   });
 
   return (
-    <div className="w-full px-6 py-4">
+    <div className="w-full ">
       <Card className="border-0 shadow-none mb-6">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">

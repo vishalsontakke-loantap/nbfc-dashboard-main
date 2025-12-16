@@ -56,7 +56,7 @@ const Application = () => {
 
   return (
     <div className="flex flex-col space-y-4 p-5">
-      <CardHeader title="BRE Configuration" />
+      {/* <CardHeader title="BRE Configuration" /> */}
       {loading ? (
         <Card className=" mt-40">
           <CardContent>
