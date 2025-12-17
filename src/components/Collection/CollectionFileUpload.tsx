@@ -141,7 +141,7 @@ useEffect(() => {
 
             <hr />
 
-            <span className="flex flex-col items-center justify-center p-10">
+            <span className="flex flex-col items-center justify-center pt-10">
               <img src={assetPath("/images/icons/file_open.svg")} alt="Upload" className="w-14" />
               <h3 className="font-semibold text-muted-foreground">
                 Key Platform Fields & Expected Mapping Columns
@@ -191,13 +191,13 @@ useEffect(() => {
                 }}
               />
             </span>
-          </div>
-
-          <span className="flex justify-end items-center space-x-2 mr-8">
+              <span className="flex justify-end items-center space-x-2 mr-8">
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Uploading..." : "Next"}
             </Button>
           </span>
+          </div>
+
         </form>
       </Form>
 
@@ -206,35 +206,6 @@ useEffect(() => {
         <div className="bg-white shadow-sm rounded-lg mb-6 border border-[#D1E9FF]">
           <div className="flex items-center justify-between p-4 border-b-2 border-[#C3EEFF]">
             <h2 className="text-lg font-bold text-[#0A4DA2]">Batch List</h2>
-
-            {/* <div className="flex items-center gap-2">
-              <Input
-                placeholder="Search…"
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                className="bg-[#C3EEFF] border border-[#BBDFFF] text-sm w-[240px]"
-              />
-              <Button variant="outline" className="text-[#0A4DA2] border-none p-0">
-                <ArrowUpDown />
-              </Button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="text-[#0A4DA2] border-none p-0">
-                    <Funnel />
-                  </Button>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent align="end">
-                  {batches.length > 0 &&
-                    Object.keys(batches[0]).map((key) => (
-                      <DropdownMenuCheckboxItem key={key} className="capitalize">
-                        {key}
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div> */}
           </div>
 
           <div className="overflow-x-auto">
@@ -253,7 +224,7 @@ useEffect(() => {
                     "NBFC Interest",
                     "Actions",
                   ].map((h) => (
-                    <TableHead key={h} className="text-sm font-bold text-center">
+                    <TableHead key={h} className="text-sm font-bold text-left">
                       {h}
                     </TableHead>
                   ))}
@@ -276,14 +247,14 @@ useEffect(() => {
                 ) : (
                   batches.map((b, idx) => (
                     <TableRow key={b.uuid}>
-                      <TableCell className="text-center">
+                      <TableCell className="text-left">
                         {(pagination.current_page - 1) * perPage + idx + 1}
                       </TableCell>
 
-                      <TableCell className="text-center">{b.uuid}</TableCell>
+                      <TableCell className="text-left">{b.uuid}</TableCell>
 
                       <TableCell
-                        className={`text-center ${
+                        className={`text-left ${
                           b.status === "Approved"
                             ? "text-green-600 font-semibold"
                             : b.status === "Rejected"
@@ -294,14 +265,14 @@ useEffect(() => {
                         {b.status}
                       </TableCell>
 
-                      <TableCell className="text-center">{b.pf_number}</TableCell>
-                      <TableCell className="text-center">{b.entry_date}</TableCell>
-                      <TableCell className="text-center">{b.total_principal}</TableCell>
-                      <TableCell className="text-center">{b.total_interest}</TableCell>
-                      <TableCell className="text-center">{b.total_nbfc_principal}</TableCell>
-                      <TableCell className="text-center">{b.total_nbfc_interest}</TableCell>
+                      <TableCell className="text-left">{b.pf_number}</TableCell>
+                      <TableCell className="text-left">{b.entry_date}</TableCell>
+                      <TableCell className="text-left">{b.total_principal}</TableCell>
+                      <TableCell className="text-left">{b.total_interest}</TableCell>
+                      <TableCell className="text-left">{b.total_nbfc_principal}</TableCell>
+                      <TableCell className="text-left">{b.total_nbfc_interest}</TableCell>
 
-                      <TableCell className="text-center">
+                      <TableCell className="text-left">
                         <Button
                           variant="outline"
                           size="sm"

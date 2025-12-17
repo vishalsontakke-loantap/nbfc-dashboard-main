@@ -98,7 +98,7 @@ const NbfcList: React.FC = () => {
                         <div className="flex items-center justify-between mb-4 bg-gray-100 p-2 rounded">
                             <span className="text-sm text-sm">NBFC List</span>
 
-                            <div className="flex items-center gap-4 ml-auto">
+                            {/* <div className="flex items-center gap-4 ml-auto">
                                 <input
                                     type="text"
                                     placeholder="Search NBFC"
@@ -113,7 +113,7 @@ const NbfcList: React.FC = () => {
                                         <img src={assetPath("/images/grid.svg")} alt="" />
                                     </button>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                         {/* Table */}
