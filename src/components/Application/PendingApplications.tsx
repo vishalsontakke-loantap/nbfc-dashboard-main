@@ -23,7 +23,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import useDebounce from "@/hooks/useDebounce";
 import { useGetDisbursementsQuery } from "@/redux/features/disbursement/disbursementApi";
 import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
@@ -49,6 +49,7 @@ export default function PendingApplication() {
   /* ---------------- UI State ---------------- */
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery.trim(), 300);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -65,7 +66,7 @@ export default function PendingApplication() {
       per_page: pageSize,
       search: debouncedSearch || undefined,
       nbfc: selectedNbfcId || undefined, // ✅ NBFC triggers refetch
-      status: "pending",
+      status: statusFilter !== "all" ? statusFilter : undefined,
     },
     {
       refetchOnMountOrArgChange: true,
@@ -136,9 +137,8 @@ export default function PendingApplication() {
               className="pl-10"
               disabled={isLoading}
             />
-          </div>
 
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
+            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
@@ -149,6 +149,9 @@ export default function PendingApplication() {
               <SelectItem value="pending">Pending</SelectItem>
             </SelectContent>
           </Select>
+          </div>
+
+          
 
           
         </CardContent>
