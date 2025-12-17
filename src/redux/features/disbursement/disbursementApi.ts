@@ -79,11 +79,6 @@ export const disbursementApi = createApi({
           nbfc,
           status,
         },
-        headers: {
-          "client-id": "CLIENT12345",
-          "client-secret":
-            "7dacf9c63bcfb108c2e298e9a53c0e75681866d5041a73cba714cf250ce6a212",
-        },
       }),
       providesTags: ["Disbursement"],
       transformResponse: (response: DisbursementResponse) => response, // no reshape, just pass through
