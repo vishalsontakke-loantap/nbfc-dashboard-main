@@ -64,7 +64,7 @@ export default function DisbursementListScreen() {
       per_page: pageSize,
       search: debouncedSearch || undefined,
       nbfc: selectedNbfcId || undefined,
-      status: "pending",
+      // status: "pending",
     },
     {
       refetchOnMountOrArgChange: true,
@@ -116,14 +116,14 @@ export default function DisbursementListScreen() {
   return (
     <div className="p-3 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Disbursements</h2>
           <p className="text-gray-600 mt-1">
             List of pending disbursement requests
           </p>
         </div>
-      </div>
+      </div> */}
 
       {/* Filters */}
       <Card>
@@ -141,9 +141,7 @@ export default function DisbursementListScreen() {
             </div>
           </div>
 
-          <div className="mt-3 text-sm text-gray-600">
-            {isFetching && !isLoading && "Updating results..."}
-          </div>
+          
         </CardContent>
       </Card>
 
@@ -245,8 +243,12 @@ export default function DisbursementListScreen() {
             </Table>
           </div>
 
-          {/* Pagination */}
-          <div className="flex justify-end mt-4">
+        
+        </CardContent>
+      </Card>
+
+        {/* Pagination */}
+          <div className="flex justify-end ml-4 mt-4">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
@@ -323,8 +325,6 @@ export default function DisbursementListScreen() {
               </PaginationContent>
             </Pagination>
           </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

@@ -117,12 +117,12 @@ export default function PendingApplication() {
   return (
     <div className="p-3 space-y-6">
       {/* Header */}
-      <div>
+      {/* <div>
         <h2 className="text-2xl font-bold">Disbursements</h2>
         <p className="text-gray-600 mt-1">
           List of pending disbursement requests
         </p>
-      </div>
+      </div> */}
 
       {/* Search */}
       <Card>
@@ -138,9 +138,7 @@ export default function PendingApplication() {
             />
           </div>
 
-          {isFetching && !isLoading && (
-            <p className="text-xs text-gray-400 mt-2">Updating…</p>
-          )}
+          
         </CardContent>
       </Card>
 
@@ -237,8 +235,9 @@ export default function PendingApplication() {
               </TableBody>
             </Table>
           </div>
-
-          {/* Pagination */}
+        </CardContent>
+      </Card>
+        {/* Pagination */}
           <div className="flex justify-end mt-4">
             <Pagination>
               <PaginationContent>
@@ -316,8 +315,6 @@ export default function PendingApplication() {
               </PaginationContent>
             </Pagination>
           </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

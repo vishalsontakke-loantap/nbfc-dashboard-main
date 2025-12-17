@@ -116,15 +116,6 @@ export default function RejectedApplications() {
   /* ---------------- Render ---------------- */
   return (
     <div className="p-3 space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold">Rejected Disbursements</h2>
-        <p className="text-gray-600 mt-1">
-          List of rejected disbursement requests
-        </p>
-      </div>
-
-      {/* Search */}
       <Card>
         <CardContent className="p-4">
           <div className="relative min-w-[240px]">
@@ -138,9 +129,7 @@ export default function RejectedApplications() {
             />
           </div>
 
-          {isFetching && !isLoading && (
-            <p className="text-xs text-gray-400 mt-2">Updating…</p>
-          )}
+       
         </CardContent>
       </Card>
 
