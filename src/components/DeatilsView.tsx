@@ -48,46 +48,52 @@ import { Card, CardContent, CardDescription, CardTitle } from './ui/card';
 import { Separator } from '@radix-ui/react-select';
 import { Progress } from '@radix-ui/react-progress';
 import { Button } from './ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useGetDisburseDataByIdQuery } from '@/redux/features/disbursement/disbursementApi';
+import DetailsViewSkeleton from './DetailsViewSkeleton';
 
 // Mock data for demonstration
-const loanApplication = {
-  status: 'Approved', // 'Approved', 'Rejected', 'Pending'
-  applicantName: 'Rajesh Kumar Sharma',
-  applicationId: 'LA-2025-00847',
-  nbfcId: 'NBFC-45821',
-  accountNumber: '4578 9632 1047 8523',
-  nbfcName: 'Bajaj Finserv Ltd.',
-  poolBatchId: 'PB-2025-Q1-102',
-  dateOfSubmission: '05-Nov-2025',
-  loanType: 'Titanium',
+// const loanApplication = {
+//   status: 'Approved', // 'Approved', 'Rejected', 'Pending'
+//   applicantName: 'Rajesh Kumar Sharma',
+//   applicationId: 'LA-2025-00847',
+//   nbfcId: 'NBFC-45821',
+//   accountNumber: '4578 9632 1047 8523',
+//   nbfcName: 'Bajaj Finserv Ltd.',
+//   poolBatchId: 'PB-2025-Q1-102',
+//   dateOfSubmission: '05-Nov-2025',
+//   loanType: 'Titanium',
 
-  // Loan Details
-  approvedLoanAmount: '₹15,00,000',
-  buyoutAmount: '₹12,75,000',
-  nbfcDisbursedAmount: '₹15,00,000',
-  nbfcTenure: '60 months',
-  bankTenure: '48 months',
-  bankROI: '9.5%',
-  processingFee: '₹15,000',
-  emiAmount: '₹31,272',
-  disbursementDate: '10-Nov-2025',
-  collateralType: 'Property - Residential',
+//   // Loan Details
+//   approvedLoanAmount: '₹15,00,000',
+//   buyoutAmount: '₹12,75,000',
+//   nbfcDisbursedAmount: '₹15,00,000',
+//   nbfcTenure: '60 months',
+//   bankTenure: '48 months',
+//   bankROI: '9.5%',
+//   processingFee: '₹15,000',
+//   emiAmount: '₹31,272',
+//   disbursementDate: '10-Nov-2025',
+//   collateralType: 'Property - Residential',
 
-  // Risk & Analytics
-  creditScore: 760,
-  riskLevel: 'Low', // 'Low', 'Medium', 'High'
-  defaultProbability: 8.2,
-  debtToIncomeRatio: 32,
-  loanToValueRatio: 65,
+//   // Risk & Analytics
+//   creditScore: 760,
+//   riskLevel: 'Low', // 'Low', 'Medium', 'High'
+//   defaultProbability: 8.2,
+//   debtToIncomeRatio: 32,
+//   loanToValueRatio: 65,
 
-  // Remarks
-  underwritingRemarks: 'Applicant has strong credit history with consistent income from salaried employment. Property valuation completed and found satisfactory. All KYC documents verified.',
-  breResult: 'Pass',
-  approvalNotes: 'Approved with standard terms. No additional collateral required.',
-  lastUpdated: '10-Nov-2025, 2:45 PM',
-  updatedBy: 'Priya Deshmukh (Senior Underwriter)'
-};
+//   // Remarks
+//   underwritingRemarks: 'Applicant has strong credit history with consistent income from salaried employment. Property valuation completed and found satisfactory. All KYC documents verified.',
+//   breResult: 'Pass',
+//   approvalNotes: 'Approved with standard terms. No additional collateral required.',
+//   lastUpdated: '10-Nov-2025, 2:45 PM',
+//   updatedBy: 'Priya Deshmukh (Senior Underwriter)'
+// };
+
+
+
+
 
 // Chart data
 const paymentHistoryData = [
@@ -101,32 +107,24 @@ const paymentHistoryData = [
   { month: 'Aug', onTime: 100, delayed: 0 },
 ];
 
-// const creditScoreData = [
-//   {
-//     name: 'Credit Score',
-//     value: loanApplication.creditScore,
-//     fill: '#10b981',
-//   },
-// ];
 
 export default function DetailsView() {
-  const [currentStatus] = useState(loanApplication.status);
   const navigate = useNavigate();
   const repaymentView = () => {
     navigate("/history/payment-details");
   };
-  // const getStatusColor = (status: string) => {
-  //   switch (status) {
-  //     case 'Approved':
-  //       return 'bg-green-500';
-  //     case 'Rejected':
-  //       return 'bg-red-500';
-  //     case 'Pending':
-  //       return 'bg-amber-500';
-  //     default:
-  //       return 'bg-gray-500';
-  //   }
-  // };
+  
+const { id } = useParams();
+console.log("get id from url",id)
+
+ const { data:loanApplication, isLoading, error } =
+    useGetDisburseDataByIdQuery(id!, {
+      skip: !id,
+  });
+
+  console.log("getting data ",loanApplication)
+
+  const [currentStatus] = useState("Pending");
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -154,69 +152,31 @@ export default function DetailsView() {
     }
   };
 
+  if (isLoading) {
+  return <DetailsViewSkeleton />;
+}
+
+if (error || !loanApplication) {
   return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-red-600">Failed to load disbursement details</p>
+    </div>
+  );
+}
+
+  return (
+    
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50">
-      {/* Header */}
-      {/* <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center">
-                  <Briefcase className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-gray-900">Bank of Maharashtra</h1>
-                  <p className="text-xs text-gray-500">Co-Lending Admin Portal</p>
-                </div>
-              </div>
-            </div>
-            <Button variant="outline" className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Back to List
-            </Button>
-          </div>
-        </div>
-      </header> */}
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
         {/* Breadcrumb and Page Title */}
         <div className="mb-6">
-          {/* <Breadcrumb className="mb-4">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#" className="flex items-center gap-1">
-                  <Home className="w-3 h-3" />
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#">Upload Pool File</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#">Loan Application List</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Application Detail</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb> */}
-
           <div className="flex items-center justify-between">
             <div>
               <h2>Loan Application Detail View</h2>
               <p className="text-gray-600 mt-1">Complete overview of loan application and risk assessment</p>
             </div>
-            {/* <Badge 
-              className={`${getStatusColor(currentStatus)} text-white px-4 py-2 gap-2 rounded-full`}
-            >
-              {getStatusIcon(currentStatus)}
-              {currentStatus}
-            </Badge> */}
           </div>
         </div>
 
@@ -241,33 +201,33 @@ export default function DetailsView() {
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Applicant Name</p>
-                      <p className="text-gray-900">{loanApplication.applicantName}</p>
+                      <p className="text-gray-900">{loanApplication.customer_name}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 mb-1">BANK Application ID</p>
-                      <p className="text-gray-900">{loanApplication.applicationId}</p>
+                      <p className="text-gray-900">{loanApplication.lead_id}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 mb-1">NBFC Application ID</p>
-                      <p className="text-gray-900">{loanApplication.applicationId}</p>
+                      <p className="text-gray-900">{loanApplication.app_id}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">NBFC Name</p>
-                      <p className="text-gray-900">{loanApplication.nbfcName}</p>
+                      <p className="text-gray-900">{loanApplication?.app_id}</p>
                     </div>
                     
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Date of Submission</p>
                       <p className="text-gray-900 flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-sky-600" />
-                        {loanApplication.dateOfSubmission}
+                        {loanApplication.created_at}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Loan Type</p>
-                        {loanApplication.loanType||"GOLD LOAN"}
+                        {"GOLD LOAN"}
                     </div>
                   </div>
                 </div>
@@ -292,25 +252,25 @@ export default function DetailsView() {
                   <div className="space-y-4">
                     <div className="p-4 bg-sky-50 rounded-xl border border-sky-100">
                       <p className="text-sm text-gray-600 mb-1">Sanctioned Amount</p>
-                      <p className="text-gray-900">{loanApplication.approvedLoanAmount}</p>
+                      <p className="text-gray-900">{loanApplication.sanction_limit}</p>
                     </div>
                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                       <p className="text-sm text-gray-600 mb-1">Bank Sanction Amount</p>
-                      <p className="text-gray-900">{loanApplication.buyoutAmount}</p>
+                      <p className="text-gray-900">{loanApplication.bank_sanction_amount}</p>
                     </div>
                     <div className="p-4 bg-cyan-50 rounded-xl border border-cyan-100">
                       <p className="text-sm text-gray-600 mb-1">NBFC Sanction Amount</p>
-                      <p className="text-gray-900">{loanApplication.nbfcDisbursedAmount}</p>
+                      <p className="text-gray-900">{loanApplication.nbfc_sanction_amount}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
                       <p className="text-sm text-gray-600 mb-1">NBFC Tenure</p>
-                      <p className="text-gray-900">{loanApplication.nbfcTenure}</p>
+                      <p className="text-gray-900">{loanApplication?.nbfcTenure}</p>
                     </div>
                     <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
                       <p className="text-sm text-gray-600 mb-1">Bank Tenure</p>
-                      <p className="text-gray-900">{loanApplication.bankTenure}</p>
+                      <p className="text-gray-900">{loanApplication?.bankTenure}</p>
                     </div>
                     <div className="p-4 bg-violet-50 rounded-xl border border-violet-100">
                       <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
@@ -321,25 +281,18 @@ export default function DetailsView() {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <div className="p-4 bg-rose-50 rounded-xl border border-rose-100">
+                    {/* <div className="p-4 bg-rose-50 rounded-xl border border-rose-100">
                       <p className="text-sm text-gray-600 mb-1">Processing Fee</p>
                       <p className="text-gray-900">{loanApplication.processingFee}</p>
-                    </div>
-                    <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                    </div> */}
+                    {/* <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
                       <p className="text-sm text-gray-600 mb-1">EMI Amount</p>
                       <p className="text-gray-900">{loanApplication.emiAmount}</p>
-                    </div>
+                    </div> */}
                     
                   </div>
                 </div>
                 <Separator className="my-6" />
-                {/* <div className="flex items-center gap-2 p-4 bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl">
-                  <Home className="w-5 h-5 text-sky-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Collateral / Security Type</p>
-                    <p className="text-gray-900">{loanApplication.collateralType}</p>
-                  </div>
-                </div> */}
               </CardContent>
             </Card>
 
@@ -519,93 +472,7 @@ export default function DetailsView() {
 
           {/* Right Sidebar - Risk Summary Widget */}
           <div className="lg:col-span-1">
-            <div className="sticky top-16 space-y-6">
-              {/* Quick Risk Summary */}
-              {/* <Card className="shadow-md rounded-2xl border-0 overflow-hidden">
-                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-3 text-white">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Shield className="w-8 h-8" />
-                    <h3 className="text-white">Risk Summary</h3>
-                  </div>
-                  <p className="text-indigo-100 text-sm">Quick overview of applicant's risk profile</p>
-                </div>
-                <CardContent className="pt-6 space-y-4">
-                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
-                    <p className="text-sm text-gray-600 mb-2">Credit Score</p>
-                    <p className="text-4xl text-gray-900 mb-1">{loanApplication.creditScore}</p>
-                    <Badge className="bg-green-500 text-white">Excellent</Badge>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Risk Level</span>
-                      <Badge className={`${loanApplication.riskLevel === 'Low' ? 'bg-green-100 text-green-700' :
-                          loanApplication.riskLevel === 'Medium' ? 'bg-amber-100 text-amber-700' :
-                            'bg-red-100 text-red-700'
-                        }`}>
-                        {loanApplication.riskLevel}
-                      </Badge>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Default Probability</span>
-                      <span className="text-gray-900">{loanApplication.defaultProbability}%</span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">DTI Ratio</span>
-                      <span className="text-gray-900">{loanApplication.debtToIncomeRatio}%</span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">LTV Ratio</span>
-                      <span className="text-gray-900">{loanApplication.loanToValueRatio}%</span>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-600">Payment Trend (Last 8 months)</p>
-                    <div className="bg-gradient-to-br from-sky-50 to-blue-50 p-3 rounded-lg">
-                      <ResponsiveContainer width="100%" height={80}>
-                        <LineChart data={paymentHistoryData}>
-                          <Line
-                            type="monotone"
-                            dataKey="onTime"
-                            stroke="#0ea5e9"
-                            strokeWidth={2}
-                            dot={false}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card> */}
-
-              {/* Action Buttons */}
-              {/* <Card className="shadow-md rounded-2xl border-0 p-2">
-                <CardTitle className='ml-2'>Actions</CardTitle>
-                <CardContent className="space-y-3">
-                  <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
-                    onClick={repaymentView}>
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    View Repayment Schedule
-                  </Button>
-                  <Button variant="outline" className="w-full">
-                    <AlertCircle className="w-4 h-4 mr-2" />
-                    Request Additional Info
-                  </Button>
-                  <Button variant="outline" className="w-full">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Report
-                  </Button>
-                </CardContent>
-              </Card> */}
-            </div>
+            <div className="sticky top-16 space-y-6"></div>
           </div>
         </div>
       </main>
