@@ -116,52 +116,50 @@ export default function PendingApplication() {
 
   /* ---------------- Render ---------------- */
   return (
-    <div className="p-3 space-y-6">
+    <div className=" space-y-6">
       {/* Header */}
-      {/* <div>
+      <div>
         <h2 className="text-2xl font-bold">Disbursements</h2>
-        <p className="text-gray-600 mt-1">
-          List of pending disbursement requests
+        <p className="text-gray-600 ">
+          List of Disbursement Applications
         </p>
-      </div> */}
+      </div>
 
       {/* Search */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="relative min-w-[240px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search by Lead ID, App ID, or Customer..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-              disabled={isLoading}
-            />
+      <Card className="p-3">
+        <CardContent>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex-1 relative min-w-[240px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search by Lead ID, App ID, or Customer..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+                disabled={isLoading || isFetching}
+              />
+            </div>
 
             <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="Approved">Approved</SelectItem>
-              <SelectItem value="Rejected">Rejected</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-            </SelectContent>
-          </Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="Approved">Approved</SelectItem>
+                <SelectItem value="Rejected">Rejected</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-
-          
-
-          
         </CardContent>
       </Card>
 
       {/* Table */}
       <Card>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
+          <div className="overflow-x-auto ">
+            <Table className="!text-xs">
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-center">SL</TableHead>
@@ -179,7 +177,7 @@ export default function PendingApplication() {
                 {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8">
-                      Loading disbursements...
+                      loading...
                     </TableCell>
                   </TableRow>
                 ) : isError ? (
@@ -188,7 +186,7 @@ export default function PendingApplication() {
                       colSpan={8}
                       className="text-center py-8 text-red-500"
                     >
-                      Failed to load disbursements. Please try again.
+                      Failed to load. Please try again.
                     </TableCell>
                   </TableRow>
                 ) : displayData.length === 0 ? (
@@ -197,20 +195,20 @@ export default function PendingApplication() {
                       colSpan={8}
                       className="text-center py-8 text-gray-500"
                     >
-                      No disbursements found
+                      No Records Found.
                     </TableCell>
                   </TableRow>
                 ) : (
                   displayData.map((d, idx) => {
                     const serial =
                       (pagination.current_page - 1) *
-                        pagination.per_page +
+                      pagination.per_page +
                       idx +
                       1;
 
                     return (
                       <TableRow key={d.id}>
-                        <TableCell className="text-center font-semibold">
+                        <TableCell className="text-center font-xs">
                           {serial}
                         </TableCell>
                         <TableCell className="text-center">
@@ -252,84 +250,84 @@ export default function PendingApplication() {
           </div>
         </CardContent>
       </Card>
-        {/* Pagination */}
-          <div className="flex justify-end mt-4">
-            <Pagination>
-              <PaginationContent>
+      {/* Pagination */}
+      <div className="flex justify-end mt-4">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => handlePageChange(currentPage - 1)}
+                className={
+                  currentPage === 1
+                    ? "opacity-50 pointer-events-none"
+                    : ""
+                }
+              />
+            </PaginationItem>
+
+            {totalPages <= 7 ? (
+              [...Array(totalPages)].map((_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    isActive={currentPage === i + 1}
+                    onClick={() => handlePageChange(i + 1)}
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))
+            ) : (
+              <>
                 <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    className={
-                      currentPage === 1
-                        ? "opacity-50 pointer-events-none"
-                        : ""
-                    }
-                  />
+                  <PaginationLink
+                    isActive={currentPage === 1}
+                    onClick={() => handlePageChange(1)}
+                  >
+                    1
+                  </PaginationLink>
                 </PaginationItem>
 
-                {totalPages <= 7 ? (
-                  [...Array(totalPages)].map((_, i) => (
-                    <PaginationItem key={i}>
+                {currentPage > 3 && <PaginationEllipsis />}
+
+                {[currentPage - 1, currentPage, currentPage + 1]
+                  .filter((p) => p > 1 && p < totalPages)
+                  .map((p) => (
+                    <PaginationItem key={p}>
                       <PaginationLink
-                        isActive={currentPage === i + 1}
-                        onClick={() => handlePageChange(i + 1)}
+                        isActive={currentPage === p}
+                        onClick={() => handlePageChange(p)}
                       >
-                        {i + 1}
+                        {p}
                       </PaginationLink>
                     </PaginationItem>
-                  ))
-                ) : (
-                  <>
-                    <PaginationItem>
-                      <PaginationLink
-                        isActive={currentPage === 1}
-                        onClick={() => handlePageChange(1)}
-                      >
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
+                  ))}
 
-                    {currentPage > 3 && <PaginationEllipsis />}
-
-                    {[currentPage - 1, currentPage, currentPage + 1]
-                      .filter((p) => p > 1 && p < totalPages)
-                      .map((p) => (
-                        <PaginationItem key={p}>
-                          <PaginationLink
-                            isActive={currentPage === p}
-                            onClick={() => handlePageChange(p)}
-                          >
-                            {p}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
-
-                    {currentPage < totalPages - 2 && <PaginationEllipsis />}
-
-                    <PaginationItem>
-                      <PaginationLink
-                        isActive={currentPage === totalPages}
-                        onClick={() => handlePageChange(totalPages)}
-                      >
-                        {totalPages}
-                      </PaginationLink>
-                    </PaginationItem>
-                  </>
-                )}
+                {currentPage < totalPages - 2 && <PaginationEllipsis />}
 
                 <PaginationItem>
-                  <PaginationNext
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    className={
-                      currentPage === totalPages
-                        ? "opacity-50 pointer-events-none"
-                        : ""
-                    }
-                  />
+                  <PaginationLink
+                    isActive={currentPage === totalPages}
+                    onClick={() => handlePageChange(totalPages)}
+                  >
+                    {totalPages}
+                  </PaginationLink>
                 </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+              </>
+            )}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => handlePageChange(currentPage + 1)}
+                className={
+                  currentPage === totalPages
+                    ? "opacity-50 pointer-events-none"
+                    : ""
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
     </div>
   );
 }

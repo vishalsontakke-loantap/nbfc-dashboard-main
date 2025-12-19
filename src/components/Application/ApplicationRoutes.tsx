@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Layout from "../Layout";
 import Applications from "./Application";
 import NotFound from "../NotFound";
-import DetailsView from "../DeatilsView";
+import DetailsView from "./DeatilsView";
 
 const ApplicationRoutes = () => {
   return (

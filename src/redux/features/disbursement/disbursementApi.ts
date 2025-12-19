@@ -111,7 +111,15 @@ export const disbursementApi = createApi({
         return response.data || [];
       },
     }),
+
+
+    getDisburseDataById: builder.query<any, string>({
+      query: (id) =>
+        `/disburse-data?disbursement_id=${id}`,
+    }),
   }),
+
+
 });
 
 // Export hooks
@@ -120,4 +128,5 @@ export const {
   useGetDisbursementByIdQuery,
   useGetDisbursementsByStatusQuery,
   useGetDisbursementsByAppIdQuery,
+  useGetDisburseDataByIdQuery
 } = disbursementApi;
