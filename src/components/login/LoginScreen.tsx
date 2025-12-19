@@ -218,7 +218,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
               </div>
 
               {/* Remember Me and Forgot Password */}
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="remember"
@@ -242,7 +242,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
                 >
                   Forgot User ID / Password?
                 </a>
-              </div>
+              </div> */}
 
               {/* Login Button */}
               <Button

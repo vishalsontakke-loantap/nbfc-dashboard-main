@@ -55,14 +55,17 @@ const monthlyTrendData = [
 ];
 
 const Dashboard = () => {
-
- const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleDone = () => {
     navigate("/nbfc-list");
   };
 
   const handlereports = () => {
     navigate("/reports");
+  };
+
+  const handleApplications = () => {
+    navigate("/applications");
   };
   return (
     <div className="">
@@ -90,12 +93,13 @@ const Dashboard = () => {
                 <Button
                   variant="secondary"
                   className="bg-white text-[#0B5FFF] hover:bg-blue-50 cursor-pointer"
+                  onClick={handleApplications}
                 >
                   View Leads <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button
                   variant="secondary"
-                 className="bg-white text-[#0B5FFF] hover:bg-blue-50 cursor-pointer"
+                  className="bg-white text-[#0B5FFF] hover:bg-blue-50 cursor-pointer"
                   onClick={handleDone}
                 >
                   Manage NBFCs
@@ -173,7 +177,9 @@ const Dashboard = () => {
 
             {/* NBFC Distribution */}
             <Card className="p-3">
-              <h3 className="mb-4 font-semibold">NBFC Performance Distribution</h3>
+              <h3 className="mb-4 font-semibold">
+                NBFC Performance Distribution
+              </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -181,7 +187,9 @@ const Dashboard = () => {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={(props: any) => `${props.name}: ${(props.percent * 100).toFixed(0)}%`}
+                    label={(props: any) =>
+                      `${props.name}: ${(props.percent * 100).toFixed(0)}%`
+                    }
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
