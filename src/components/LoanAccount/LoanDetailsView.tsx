@@ -23,13 +23,37 @@ import { useNavigate, useParams } from 'react-router-dom';
 import DetailsViewSkeleton from '../DetailsViewSkeleton';
 import { useGetLoanAccountAppDetailsQuery } from '@/redux/features/loan/loanApi';
 
+export interface loanApplication {
+  id: number;
+  app_id: string;
+  loan_id?: string;
+  loan_account_number: string;
+  customer_name: string;
+  mobilenumber: string;
+  loan_amount: string;
+  status: string;
+  created_at: string;
+  nbfcName?: string;
+  sanction_amount?: string;
+  bank_sanction_amount?: string;
+  nbfc_sanction_amount?: string;
+  nbfcTenure?: number;
+  loan_tenure?: number;
+  bank_interest?: string;
+  creditScore?: number;
+  riskLevel?: string;
+  debtToIncomeRatio?: number;
+  loanToValueRatio?: number;
+  breResult?: string;
+  lastUpdated?: string;
+}
 export default function LoanDetailsView() {
   const navigate = useNavigate();
   const { id } = useParams();
   const {data:loanData, isLoading, isError} = useGetLoanAccountAppDetailsQuery(id || "");
   
   // Initialize state before any conditional returns
-  const loanApplication = loanData;
+  const loanApplication: loanApplication | any = loanData;
   const [currentStatus] = useState(loanApplication?.status || 'Pending');
 
   if (isLoading) {
@@ -176,11 +200,11 @@ export default function LoanDetailsView() {
               </div>
               {/* </CardHeader> */}
               <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-4">
                     <div className="p-4 bg-sky-50 rounded-xl border border-sky-100">
                       <p className="text-sm text-gray-600 mb-1">Sanctioned Amount</p>
-                      <p className="text-gray-900">₹ {loanApplication?.sanction_amount ? parseFloat(loanApplication.sanction_amount).toLocaleString() : 'N/A'}</p>
+                      <p className="text-gray-900">₹ {loanApplication?.sanction_amount??0}</p>
                     </div>
                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                       <p className="text-sm text-gray-600 mb-1">Bank Sanction Amount</p>
@@ -208,26 +232,8 @@ export default function LoanDetailsView() {
                       <p className="text-gray-900">{loanApplication?.bank_interest || 'N/A'}</p>
                     </div>
                   </div>
-                  {/* <div className="space-y-4">
-                    <div className="p-4 bg-rose-50 rounded-xl border border-rose-100">
-                      <p className="text-sm text-gray-600 mb-1">Processing Fee</p>
-                      <p className="text-gray-900">{loanApplication.processingFee}</p>
-                    </div>
-                    <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
-                      <p className="text-sm text-gray-600 mb-1">EMI Amount</p>
-                      <p className="text-gray-900">{loanApplication.emiAmount}</p>
-                    </div>
-                    
-                  </div> */}
                 </div>
                 <Separator className="my-6" />
-                {/* <div className="flex items-center gap-2 p-4 bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl">
-                  <Home className="w-5 h-5 text-sky-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Collateral / Security Type</p>
-                    <p className="text-gray-900">{loanApplication.collateralType}</p>
-                  </div>
-                </div> */}
               </CardContent>
             </Card>
 
