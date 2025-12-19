@@ -240,7 +240,7 @@ export default function ActiveAccounts() {
                             variant="outline"
                             size="sm"
                             onClick={() =>
-                              navigate(`/applications/${d.loan_id}`)
+                              navigate(`/loans/${d.loan_id}`)
                             }
                           >
                             View

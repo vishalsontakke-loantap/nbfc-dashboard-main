@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import {
-
   User,
-  FileText,
   CreditCard,
   Calendar,
   TrendingUp,
@@ -13,126 +11,54 @@ import {
   Download,
   Shield,
   BarChart3,
-  Activity,
   DollarSign,
   Percent,
   Home,
-  Badge
 } from 'lucide-react';
-// import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './components/ui/card';
-// import { Badge } from './components/ui/badge';
-// import { Button } from './components/ui/button';
-// import { Progress } from './components/ui/progress';
-// import { Separator } from './components/ui/separator';
-// import {
-//   Breadcrumb,
-//   BreadcrumbItem,
-//   BreadcrumbLink,
-//   BreadcrumbList,
-//   BreadcrumbPage,
-//   BreadcrumbSeparator,
-// } from './components/ui/breadcrumb';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-
-} from 'recharts';
-import { Card, CardContent, CardDescription, CardTitle } from './ui/card';
+import { Card, CardContent, CardDescription, CardTitle } from '../ui/card';
 import { Separator } from '@radix-ui/react-select';
 import { Progress } from '@radix-ui/react-progress';
-import { Button } from './ui/button';
-import { useNavigate } from 'react-router-dom';
-
-// Mock data for demonstration
-const loanApplication = {
-  status: 'Approved', // 'Approved', 'Rejected', 'Pending'
-  applicantName: 'Rajesh Kumar Sharma',
-  applicationId: 'LA-2025-00847',
-  nbfcId: 'NBFC-45821',
-  accountNumber: '4578 9632 1047 8523',
-  nbfcName: 'Bajaj Finserv Ltd.',
-  poolBatchId: 'PB-2025-Q1-102',
-  dateOfSubmission: '05-Nov-2025',
-  loanType: 'Titanium',
-
-  // Loan Details
-  approvedLoanAmount: '₹15,00,000',
-  buyoutAmount: '₹12,75,000',
-  nbfcDisbursedAmount: '₹15,00,000',
-  nbfcTenure: '60 months',
-  bankTenure: '48 months',
-  bankROI: '9.5%',
-  processingFee: '₹15,000',
-  emiAmount: '₹31,272',
-  disbursementDate: '10-Nov-2025',
-  collateralType: 'Property - Residential',
-
-  // Risk & Analytics
-  creditScore: 760,
-  riskLevel: 'Low', // 'Low', 'Medium', 'High'
-  defaultProbability: 8.2,
-  debtToIncomeRatio: 32,
-  loanToValueRatio: 65,
-
-  // Remarks
-  underwritingRemarks: 'Applicant has strong credit history with consistent income from salaried employment. Property valuation completed and found satisfactory. All KYC documents verified.',
-  breResult: 'Pass',
-  approvalNotes: 'Approved with standard terms. No additional collateral required.',
-  lastUpdated: '10-Nov-2025, 2:45 PM',
-  updatedBy: 'Priya Deshmukh (Senior Underwriter)'
-};
-
-// Chart data
-const paymentHistoryData = [
-  { month: 'Jan', onTime: 100, delayed: 0 },
-  { month: 'Feb', onTime: 100, delayed: 0 },
-  { month: 'Mar', onTime: 95, delayed: 5 },
-  { month: 'Apr', onTime: 100, delayed: 0 },
-  { month: 'May', onTime: 100, delayed: 0 },
-  { month: 'Jun', onTime: 100, delayed: 0 },
-  { month: 'Jul', onTime: 100, delayed: 0 },
-  { month: 'Aug', onTime: 100, delayed: 0 },
-];
-
-// const creditScoreData = [
-//   {
-//     name: 'Credit Score',
-//     value: loanApplication.creditScore,
-//     fill: '#10b981',
-//   },
-// ];
+import { Button } from '../ui/button';
+import { useNavigate, useParams } from 'react-router-dom';
+import DetailsViewSkeleton from '../DetailsViewSkeleton';
+import { useGetLoanAccountAppDetailsQuery } from '@/redux/features/loan/loanApi';
 
 export default function LoanDetailsView() {
-  const [currentStatus] = useState(loanApplication.status);
   const navigate = useNavigate();
+  const { id } = useParams();
+  const {data:loanData, isLoading, isError} = useGetLoanAccountAppDetailsQuery(id || "");
+  
+  // Initialize state before any conditional returns
+  const loanApplication = loanData;
+  const [currentStatus] = useState(loanApplication?.status || 'Pending');
+
+  if (isLoading) {
+    return <DetailsViewSkeleton />;
+  }
+
+  if (isError || !loanData || loanData.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50 flex items-center justify-center">
+        <Card className="p-8 max-w-md">
+          <CardContent className="text-center space-y-4">
+            <XCircle className="w-16 h-16 text-red-500 mx-auto" />
+            <h2 className="text-2xl font-bold">Error Loading Loan Details</h2>
+            <p className="text-gray-600">Unable to fetch loan application details. Please try again later.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   const repaymentView = () => {
-    navigate(`/loans/repayment/${loanApplication.applicationId}`);
+    navigate(`/loans/repayment/${loanApplication?.app_id || id}`);
   };
 
   const ledgerView = () => {
-    navigate(`/loans/statement/12`)
+    navigate(`/loans/statement/${loanApplication?.loan_id || id}`);
   }
    
-  // const getStatusColor = (status: string) => {
-  //   switch (status) {
-  //     case 'Approved':
-  //       return 'bg-green-500';
-  //     case 'Rejected':
-  //       return 'bg-red-500';
-  //     case 'Pending':
-  //       return 'bg-amber-500';
-  //     default:
-  //       return 'bg-gray-500';
-  //   }
-  // };
 
+  // console.log("Loan Application Data:", data);
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'Approved':
@@ -162,55 +88,12 @@ export default function LoanDetailsView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50">
       {/* Header */}
-      {/* <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center">
-                  <Briefcase className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-gray-900">Bank of Maharashtra</h1>
-                  <p className="text-xs text-gray-500">Co-Lending Admin Portal</p>
-                </div>
-              </div>
-            </div>
-            <Button variant="outline" className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Back to List
-            </Button>
-          </div>
-        </div>
-      </header> */}
+     
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
         {/* Breadcrumb and Page Title */}
         <div className="mb-6">
-          {/* <Breadcrumb className="mb-4">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#" className="flex items-center gap-1">
-                  <Home className="w-3 h-3" />
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#">Upload Pool File</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#">Loan Application List</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Application Detail</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb> */}
-
           <div className="flex items-center justify-between">
             <div>
               <h2>Loan Application Detail View</h2>
@@ -246,33 +129,33 @@ export default function LoanDetailsView() {
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Applicant Name</p>
-                      <p className="text-gray-900">{loanApplication.applicantName}</p>
+                      <p className="text-gray-900">{loanApplication?.customer_name || 'N/A'}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 mb-1">BANK Application ID</p>
-                      <p className="text-gray-900">{loanApplication.applicationId}</p>
+                      <p className="text-gray-900">{loanApplication?.loan_id || 'N/A'}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 mb-1">NBFC Application ID</p>
-                      <p className="text-gray-900">{loanApplication.applicationId}</p>
+                      <p className="text-gray-900">{loanApplication?.app_id || 'N/A'}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">NBFC Name</p>
-                      <p className="text-gray-900">{loanApplication.nbfcName}</p>
+                      <p className="text-gray-900">{loanApplication?.nbfcName || 'N/A'}</p>
                     </div>
                     
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Date of Submission</p>
                       <p className="text-gray-900 flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-sky-600" />
-                        {loanApplication.dateOfSubmission}
+                        {loanApplication?.created_at ? new Date(loanApplication.created_at).toLocaleDateString() : 'N/A'}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Loan Type</p>
-                        {loanApplication.loanType||"GOLD LOAN"}
+                        {"GOLD LOAN"}
                     </div>
                   </div>
                 </div>
@@ -297,35 +180,35 @@ export default function LoanDetailsView() {
                   <div className="space-y-4">
                     <div className="p-4 bg-sky-50 rounded-xl border border-sky-100">
                       <p className="text-sm text-gray-600 mb-1">Sanctioned Amount</p>
-                      <p className="text-gray-900">{loanApplication.approvedLoanAmount}</p>
+                      <p className="text-gray-900">₹ {loanApplication?.sanction_amount ? parseFloat(loanApplication.sanction_amount).toLocaleString() : 'N/A'}</p>
                     </div>
                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                       <p className="text-sm text-gray-600 mb-1">Bank Sanction Amount</p>
-                      <p className="text-gray-900">{loanApplication.buyoutAmount}</p>
+                      <p className="text-gray-900">₹ {loanApplication?.bank_sanction_amount ? parseFloat(loanApplication.bank_sanction_amount).toLocaleString() : 'N/A'}</p>
                     </div>
                     <div className="p-4 bg-cyan-50 rounded-xl border border-cyan-100">
                       <p className="text-sm text-gray-600 mb-1">NBFC Sanction Amount</p>
-                      <p className="text-gray-900">{loanApplication.nbfcDisbursedAmount}</p>
+                      <p className="text-gray-900">₹ {loanApplication?.nbfc_sanction_amount ? parseFloat(loanApplication.nbfc_sanction_amount).toLocaleString() : 'N/A'}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
                       <p className="text-sm text-gray-600 mb-1">NBFC Tenure</p>
-                      <p className="text-gray-900">{loanApplication.nbfcTenure}</p>
+                      <p className="text-gray-900">{loanApplication?.nbfcTenure || 'N/A'}</p>
                     </div>
                     <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
                       <p className="text-sm text-gray-600 mb-1">Bank Tenure</p>
-                      <p className="text-gray-900">{loanApplication.bankTenure}</p>
+                      <p className="text-gray-900">{loanApplication?.loan_tenure ? `${loanApplication.loan_tenure} months` : 'N/A'}</p>
                     </div>
                     <div className="p-4 bg-violet-50 rounded-xl border border-violet-100">
                       <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
                         <Percent className="w-3 h-3" />
                         Bank ROI
                       </p>
-                      <p className="text-gray-900">{loanApplication.bankROI}</p>
+                      <p className="text-gray-900">{loanApplication?.bank_interest || 'N/A'}</p>
                     </div>
                   </div>
-                  <div className="space-y-4">
+                  {/* <div className="space-y-4">
                     <div className="p-4 bg-rose-50 rounded-xl border border-rose-100">
                       <p className="text-sm text-gray-600 mb-1">Processing Fee</p>
                       <p className="text-gray-900">{loanApplication.processingFee}</p>
@@ -335,7 +218,7 @@ export default function LoanDetailsView() {
                       <p className="text-gray-900">{loanApplication.emiAmount}</p>
                     </div>
                     
-                  </div>
+                  </div> */}
                 </div>
                 <Separator className="my-6" />
                 {/* <div className="flex items-center gap-2 p-4 bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl">
@@ -368,7 +251,7 @@ export default function LoanDetailsView() {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-sm text-gray-600 mb-1">Credit Score</p>
-                        <p className="text-4xl text-gray-900">{loanApplication.creditScore}</p>
+                        <p className="text-4xl text-gray-900">{loanApplication?.creditScore || 'N/A'}</p>
                         <p className="text-sm text-green-600 mt-1">Excellent</p>
                       </div>
                       <div className="relative w-24 h-24">
@@ -388,7 +271,7 @@ export default function LoanDetailsView() {
                             stroke="#10b981"
                             strokeWidth="8"
                             fill="none"
-                            strokeDasharray={`${(loanApplication.creditScore / 850) * 251.2} 251.2`}
+                            strokeDasharray={`${((loanApplication?.creditScore || 0) / 850) * 251.2} 251.2`}
                             strokeLinecap="round"
                           />
                         </svg>
@@ -399,21 +282,21 @@ export default function LoanDetailsView() {
                     </div>
                   </div>
 
-                  <div className={`p-3 rounded-xl border-2 ${getRiskColor(loanApplication.riskLevel)}`}>
+                  <div className={`p-3 rounded-xl border-2 ${getRiskColor(loanApplication?.riskLevel || 'Low')}`}>
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-sm mb-1">Risk Level</p>
-                        <p className="text-3xl">{loanApplication.riskLevel}</p>
+                        <p className="text-3xl">{loanApplication?.riskLevel || 'N/A'}</p>
                       </div>
-                      <Shield className={`w-16 h-16 ${loanApplication.riskLevel === 'Low' ? 'text-green-600' :
-                          loanApplication.riskLevel === 'Medium' ? 'text-amber-600' :
+                      <Shield className={`w-16 h-16 ${loanApplication?.riskLevel === 'Low' ? 'text-green-600' :
+                          loanApplication?.riskLevel === 'Medium' ? 'text-amber-600' :
                             'text-red-600'
                         }`} />
                     </div>
                     <Progress
                       value={
-                        loanApplication.riskLevel === 'Low' ? 20 :
-                          loanApplication.riskLevel === 'Medium' ? 50 : 80
+                        loanApplication?.riskLevel === 'Low' ? 20 :
+                          loanApplication?.riskLevel === 'Medium' ? 50 : 80
                       }
                       className="h-2"
                     />
@@ -463,11 +346,11 @@ export default function LoanDetailsView() {
                   <div className="p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
                     <p className="text-sm text-gray-600 mb-3">Debt-to-Income Ratio</p>
                     <div className="flex items-end gap-2 mb-3">
-                      <p className="text-3xl text-gray-900">{loanApplication.debtToIncomeRatio}%</p>
+                      <p className="text-3xl text-gray-900">{loanApplication?.debtToIncomeRatio || 0}%</p>
                       <CreditCard className="w-5 h-5 text-blue-500 mb-1" />
                     </div>
                     <Progress
-                      value={loanApplication.debtToIncomeRatio}
+                      value={loanApplication?.debtToIncomeRatio || 0}
                       className="h-2 bg-blue-100"
                     />
                   </div>
@@ -475,11 +358,11 @@ export default function LoanDetailsView() {
                   <div className="p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">
                     <p className="text-sm text-gray-600 mb-3">Loan-to-Value Ratio</p>
                     <div className="flex items-end gap-2 mb-3">
-                      <p className="text-3xl text-gray-900">{loanApplication.loanToValueRatio}%</p>
+                      <p className="text-3xl text-gray-900">{loanApplication?.loanToValueRatio || 0}%</p>
                       <Home className="w-5 h-5 text-purple-500 mb-1" />
                     </div>
                     <Progress
-                      value={loanApplication.loanToValueRatio}
+                      value={loanApplication?.loanToValueRatio || 0}
                       className="h-2 bg-purple-100"
                     />
                   </div>
@@ -496,7 +379,7 @@ export default function LoanDetailsView() {
                     <p className="text-sm text-gray-600 mb-2">Auto BRE Result</p>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-green-600" />
-                      <p className="text-gray-900">{loanApplication.breResult}</p>
+                      <p className="text-gray-900">{loanApplication?.breResult || 'N/A'}</p>
                     </div>
                   </div>
 
@@ -514,7 +397,7 @@ export default function LoanDetailsView() {
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    <span>Last Updated: {loanApplication.lastUpdated}</span>
+                    <span>Last Updated: {loanApplication?.lastUpdated || new Date().toLocaleDateString()}</span>
                   </div>
                   
                 </div>

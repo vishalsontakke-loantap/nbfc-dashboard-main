@@ -44,13 +44,13 @@ import {
   ResponsiveContainer,
 
 } from 'recharts';
-import { Card, CardContent, CardDescription, CardTitle } from './ui/card';
+import { Card, CardContent, CardDescription, CardTitle } from '../ui/card';
 import { Separator } from '@radix-ui/react-select';
 import { Progress } from '@radix-ui/react-progress';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetDisburseDataByIdQuery } from '@/redux/features/disbursement/disbursementApi';
-import DetailsViewSkeleton from './DetailsViewSkeleton';
+import DetailsViewSkeleton from '../DetailsViewSkeleton';
 
 // Mock data for demonstration
 // const loanApplication = {

@@ -8,12 +8,26 @@ import { getSelectedNbfcId } from "../nbfc/nbfcSlice";
 export interface LoanAccount {
   id: number;
   app_id: string;
+  loan_id?: string;
   loan_account_number: string;
   customer_name: string;
   mobilenumber: string;
   loan_amount: string;
   status: string;
   created_at: string;
+  nbfcName?: string;
+  sanction_amount?: string;
+  bank_sanction_amount?: string;
+  nbfc_sanction_amount?: string;
+  nbfcTenure?: number;
+  loan_tenure?: number;
+  bank_interest?: string;
+  creditScore?: number;
+  riskLevel?: string;
+  debtToIncomeRatio?: number;
+  loanToValueRatio?: number;
+  breResult?: string;
+  lastUpdated?: string;
 }
 
 export interface LoanPaginationResponse {
@@ -74,19 +88,15 @@ export const loanApi = createApi({
       transformResponse: (response: LoanPaginationResponse) => response,
     }),
 
-    getLoanAccountAppDetails: builder.query<
-      LoanAccount[],
-      { app_id: string }
-    >({
-      query: ({ app_id }) => ({
+    getLoanAccountAppDetails: builder.query<LoanAccount[], string>({
+      query: (loan_id) => ({
         url: "/loan-account-app-details",
         method: "GET",
-        params: { app_id },
+        params: { loan_id },
       }),
-      providesTags: (_result, _error, { app_id }) => [
-        { type: "Loan", id: app_id },
-      ],
+      providesTags: ["Loan"],
     }),
+
   }),
 });
 
