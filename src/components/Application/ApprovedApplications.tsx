@@ -168,7 +168,7 @@ export default function DisbursementListScreen() {
                 {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8">
-                      Loading disbursements...
+                      loading...
                     </TableCell>
                   </TableRow>
                 ) : isError ? (
@@ -178,7 +178,7 @@ export default function DisbursementListScreen() {
                       colSpan={8}
                       className="text-center py-8 text-red-500"
                     >
-                       No disbursements found.
+                       No Records Found..
                     </TableCell>
                   </TableRow>
                 ) : displayData.length === 0 ? (
@@ -188,7 +188,7 @@ export default function DisbursementListScreen() {
                       colSpan={8}
                       className="text-center py-8 text-gray-500"
                     >
-                      No disbursements found
+                      No Records Found.
                     </TableCell>
                   </TableRow>
                 ) : (
