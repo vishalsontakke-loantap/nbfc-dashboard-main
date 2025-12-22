@@ -9,6 +9,14 @@ import { StatusBadge } from '../StatusBadge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGetActivitiesByModuleQuery } from '@/redux/features/activity/activityApi';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+} from "@/components/ui/pagination";
 
 export function CheckerDashboard() {
   const navigate = useNavigate();
@@ -26,6 +34,9 @@ export function CheckerDashboard() {
   });
 
   const requests = apiData?.data?.data || [];
+  const totalPages = apiData?.data?.last_page || 1;
+  const currentPage = apiData?.data?.current_page || 1;
+  const totalRecords = apiData?.data?.total || 0;
 
   // Only filter by search term locally, as module, status, and activity_type are handled by API
   const filteredRequests = requests.filter(req => {
@@ -35,6 +46,22 @@ export function CheckerDashboard() {
     
     return matchesSearch;
   });
+
+  // Reset to page 1 when filters change
+  const handleModuleChange = (value: string) => {
+    setFilterModule(value);
+    setPage(1);
+  };
+
+  const handleStatusChange = (value: string) => {
+    setFilterStatus(value);
+    setPage(1);
+  };
+
+  const handleActivityTypeChange = (value: string) => {
+    setFilterActivityType(value);
+    setPage(1);
+  };
 
   const stats = {
     total: requests.length,
@@ -85,7 +112,7 @@ export function CheckerDashboard() {
                 className="pl-10 w-full"
               />
             </div>
-            <Select value={filterModule} onValueChange={setFilterModule}>
+            <Select value={filterModule} onValueChange={handleModuleChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Modules" />
               </SelectTrigger>
@@ -98,7 +125,7 @@ export function CheckerDashboard() {
                 <SelectItem value="roles">Roles</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={filterActivityType} onValueChange={setFilterActivityType}>
+            <Select value={filterActivityType} onValueChange={handleActivityTypeChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Activities" />
               </SelectTrigger>
@@ -109,7 +136,7 @@ export function CheckerDashboard() {
                 <SelectItem value="delete">Delete</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <Select value={filterStatus} onValueChange={handleStatusChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
@@ -127,7 +154,7 @@ export function CheckerDashboard() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Request ID</TableHead>
+                  {/* <TableHead>Request ID</TableHead> */}
                   <TableHead>Module</TableHead>
                   <TableHead>Activity Type</TableHead>
                   <TableHead>Submitted By</TableHead>
@@ -146,9 +173,9 @@ export function CheckerDashboard() {
                 ) : (
                   filteredRequests.map((request: any) => (
                     <TableRow key={request.id}>
-                      <TableCell className="font-mono font-medium">
+                      {/* <TableCell className="font-mono font-medium">
                         {request.id}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="capitalize">{request.module_name?.replace('_', ' ')}</TableCell>
                       <TableCell className="capitalize">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
@@ -184,6 +211,72 @@ export function CheckerDashboard() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between py-4 px-2">
+              <div className="text-sm text-gray-600">
+                Showing {apiData?.data?.from || 0} to {apiData?.data?.to || 0} of {totalRecords} results
+              </div>
+
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-600">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        className={
+                          currentPage === 1
+                            ? "opacity-50 pointer-events-none cursor-not-allowed"
+                            : "cursor-pointer"
+                        }
+                      />
+                    </PaginationItem>
+
+                    {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
+                      let pageNumber;
+                      if (totalPages <= 5) {
+                        pageNumber = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNumber = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNumber = totalPages - 4 + i;
+                      } else {
+                        pageNumber = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <PaginationItem key={pageNumber}>
+                          <PaginationLink
+                            onClick={() => setPage(pageNumber)}
+                            isActive={currentPage === pageNumber}
+                            className="cursor-pointer"
+                          >
+                            {pageNumber}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        className={
+                          currentPage === totalPages
+                            ? "opacity-50 pointer-events-none cursor-not-allowed"
+                            : "cursor-pointer"
+                        }
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

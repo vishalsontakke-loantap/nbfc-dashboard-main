@@ -135,8 +135,8 @@ export const activityApi = createApi({
         // APPROVE activity
         approveActivity: builder.mutation<ActivityLog, ApproveActivityInput>({
             query: ({ id, remarks }) => ({
-                url: `/activities/${id}/approve`,
-                method: "PATCH",
+                url: `/activity-requests/${id}/approve`,
+                method: "POST",
                 body: { remarks },
             }),
             invalidatesTags: (_result, _error, arg) => [
@@ -148,8 +148,8 @@ export const activityApi = createApi({
         // REJECT activity
         rejectActivity: builder.mutation<ActivityLog, RejectActivityInput>({
             query: ({ id, remarks }) => ({
-                url: `/activities/${id}/reject`,
-                method: "PATCH",
+                url: `/activity-requests/${id}/reject`,
+                method: "POST",
                 body: { remarks },
             }),
             invalidatesTags: (_result, _error, arg) => [
