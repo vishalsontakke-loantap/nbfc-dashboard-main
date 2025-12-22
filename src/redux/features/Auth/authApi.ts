@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
+type ForgotPasswordRequest =
+  | { reset_with: "email"; email: string }
+  | { reset_with: "pf_no"; pf_no: string };
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
@@ -33,6 +35,34 @@ export const authApi = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+ 
+    forgotPassword: builder.mutation<any, ForgotPasswordRequest>({
+      query: (data) => ({
+        url: "/auth/forgot-password-init",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    verifyOtpAndResetPassword: builder.mutation<
+      {
+        success: boolean;
+        message: string;
+      },
+      {
+        otp_reference_id: string;
+        otp: string;
+        new_password: string;
+        new_password_confirmation: string;
+      }
+    >({
+      query: (data) => ({
+        url: "/auth/forgot-password-verify",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
     getCurrentUser: builder.query<any, void>({
       query: () => "/auth/user",
       providesTags: ["User"],
@@ -42,4 +72,4 @@ export const authApi = createApi({
   keepUnusedDataFor: 60,
 });
 
-export const { useLoginMutation, useValidateOTPMutation, useLogoutMutation, useLazyGetCurrentUserQuery  } = authApi;
+export const { useLoginMutation, useValidateOTPMutation, useLogoutMutation, useLazyGetCurrentUserQuery,useForgotPasswordMutation, useVerifyOtpAndResetPasswordMutation } = authApi;

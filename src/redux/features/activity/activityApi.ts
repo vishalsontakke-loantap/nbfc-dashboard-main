@@ -31,7 +31,7 @@ export interface CreateActivityInput {
     activityType: "ADD" | "UPDATE" | "DELETE";
     details: ActivityDetail[];
     previousDetails?: ActivityDetail[];
-    module: "users" | "bre" | "roles" | "lending_rates";
+    module: "users" | "bre" | "roles" | "lending_rates"|"nbfc";
 }
 
 export interface ApproveActivityInput {
@@ -63,17 +63,20 @@ export const activityApi = createApi({
 
         // GET activities by module
         getActivitiesByModule: builder.query<
-            ActivityLog[],
-            "users" | "bre" | "roles" | "lending_rates"
+            ActivityResponse["data"],
+            {
+                module: "users" | "bre" | "roles" | "lendingRates" | "nbfc";
+                page: number;
+            }
         >({
-            query: (module) => `/activities?module=${module}`,
-            providesTags: (_result, _error, module) => [
-                { type: "Activity", id: module },
+            query: ({ module, page }) =>
+                `/activity-requests?module=${module}&page=${page}`,
+            providesTags: (_res, _err, arg) => [
+                { type: "Activity", id: arg.module },
             ],
-            transformResponse: (response: ActivityResponse) => {
-                return response.data || [];
-            },
+            transformResponse: (response: ActivityResponse) => response.data,
         }),
+
 
         // GET activity by ID
         getActivityById: builder.query<ActivityLog, string>({

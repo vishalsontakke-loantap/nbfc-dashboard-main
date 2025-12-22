@@ -3,10 +3,11 @@ import LoadingScreen from './LoadingScreen';
 import LoginScreen from './LoginScreen';
 import TwoFactorAuth from './TwoFactorAuth';
 import ForgotCredentials from './ForgotCredentials';
+import ResetPassword from './ResetPassword';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-type Screen = 'loading' | 'login' | '2fa' | 'forgot';
+type Screen = 'loading' | 'login' | '2fa' | 'forgot' | 'reset';
 
 export default function AuthScreens() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('loading');
@@ -33,7 +34,8 @@ export default function AuthScreens() {
 
   const handleLoginSubmit = () => setCurrentScreen('2fa');
   const handleBackToLogin = () => setCurrentScreen('login');
-  const handleForgotCredentials = () => setCurrentScreen('forgot');
+  const handleForgotCredentials = () => setCurrentScreen('reset');
+  const handleResetSuccess = () => setCurrentScreen('login');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -56,6 +58,7 @@ export default function AuthScreens() {
       )}
       {currentScreen === '2fa' && <TwoFactorAuth onBack={handleBackToLogin} userId={userId} />}
       {currentScreen === 'forgot' && <ForgotCredentials onBack={handleBackToLogin} />}
+      {currentScreen === 'reset' && <ResetPassword onBack={handleBackToLogin} onSuccess={handleResetSuccess} />}
     </div>
   );
 }

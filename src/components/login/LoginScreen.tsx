@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { assetPath } from '@/lib/utils';
 import { useDispatch } from 'react-redux';
-import { useLoginMutation } from '@/redux/features/auth/authApi';
+import { useForgotPasswordMutation, useLoginMutation } from '@/redux/features/auth/authApi';
 import { setKey } from '@/utils/localStorage';
 import { toast } from 'sonner';
 import { setCredentials } from '@/redux/features/auth/authSlice';
@@ -44,10 +44,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
     if (!userId || !password || !captcha) return;
     try {
       // call trigger (don't try to inspect loginResult here)
-      await loginTrigger({ pf_no: userId, password, login_with: pf_no }).unwrap();
-      dispatch(setCredentials({
-        user: data?.data?.user || null,
-      }));
+      const response = await loginTrigger({ pf_no: userId, password, login_with: pf_no }).unwrap();
       // the hook will update loginResult and cause a rerender -> useEffect will run
     } catch (err: any) {
       console.error('login error', err.data.message);
@@ -55,6 +52,40 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
       // optionally you can set local error state here
     }
   };
+
+  const [forgotPasswordTrigger] =
+    useForgotPasswordMutation();
+
+
+  const handleForgotPassword = async () => {
+    if (!userId) {
+      toast.error("Please enter your Email or PF Number first");
+      return;
+    }
+
+    const reset_with = userId.includes("@") ? "email" : "pf_no";
+
+    try {
+      const response = await forgotPasswordTrigger(
+        reset_with === "email"
+          ? { reset_with: "email", email: userId }
+          : { reset_with: "pf_no", pf_no: userId }
+      ).unwrap();
+
+      // Store OTP reference ID for password reset
+      if (response?.otp_reference_id) {
+        setKey('otp_reference_id', response.otp_reference_id);
+      }
+
+      toast.success("OTP sent successfully to your registered mobile/email");
+      onForgotCredentials(); // navigate to reset password screen
+    } catch (err: any) {
+      const msg =
+        err?.data?.message || "Failed to initiate password reset";
+      toast.error(msg);
+    }
+  };
+
 
   // react to the mutation result
   useEffect(() => {
@@ -218,7 +249,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
               </div>
 
               {/* Remember Me and Forgot Password */}
-              {/* <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="remember"
@@ -237,12 +268,13 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
                   className="text-[#00ADEF] hover:text-[#1B4E9B] transition-colors"
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log('Forgot credentials clicked');
+                    handleForgotPassword();
                   }}
                 >
                   Forgot User ID / Password?
                 </a>
-              </div> */}
+
+              </div>
 
               {/* Login Button */}
               <Button
