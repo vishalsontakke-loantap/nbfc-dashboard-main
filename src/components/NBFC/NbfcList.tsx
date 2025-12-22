@@ -87,7 +87,7 @@ const NbfcList: React.FC = () => {
                             Effortlessly configure your cloud account for seamless, secure access anytime
                         </p>
                     </div>
-                    <button className="bg-[#b3e0ff] hover:bg-[#90d4ff] text-[#0077c2] px-4 py-2 rounded font-medium">
+                    <button className="bg-[#b3e0ff] hover:bg-[#90d4ff] text-[#0077c2] px-4 py-2 rounded font-medium" onClick={()=>navigate('/onboarding/nbfc-form')}>
                         Add New NBFC
                     </button>
                 </div>

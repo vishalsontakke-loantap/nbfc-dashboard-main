@@ -9,6 +9,7 @@ import NbfcList from "./NbfcList";
 import LoanProducts from "../LoanProduct/LoanProducts";
 import BuyOutSegment from "./BuyOutSegment";
 import LoanProductConfig from "../LoanProduct/LoanProductConfig";
+import BREConfig from "../Bre/BREConfig";
 
 const NBFCRoutes = () => {
   return (
@@ -99,6 +100,14 @@ const NBFCRoutes = () => {
           element={
             <Layout>
             <BuyOutSegment/>
+            </Layout>
+          }
+        />
+        <Route
+          path="/nbfc/product-bre/:productId"
+          element={
+            <Layout>  
+            <BREConfig />
             </Layout>
           }
         />

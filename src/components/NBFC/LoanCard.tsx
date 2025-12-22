@@ -24,6 +24,7 @@ const LoanProductCard: React.FC<{ product: LoanProduct }> = ({ product }) => {
 
   const navigate = useNavigate();
   const breNav = () => {
+    // console.log("Navigating to BRE for product ID:", product.id);
     navigate(`/nbfc/product-bre/${product.id}`);
   } 
   return (
