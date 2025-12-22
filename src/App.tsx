@@ -18,10 +18,13 @@ import LoanAccountRoutes from "./components/LoanAccount/LoanAccountRoutes";
 import ActivitiesRoutes from "./components/Activity/ActivityRoutes";
 import CollectionFileRoutes from "./components/Collection/CollectionFileRoutes";
 import LoanStatement from "./components/LoanStatement";
+import { useSelector } from "react-redux";
 // import NbfcList from "./components/NBFC/NbfcList";
 
 
 function App() {
+  const user = useSelector((state: any) => state.auth.user);
+  console.log("SSS",user)
   return (
     <>
       <Routes>

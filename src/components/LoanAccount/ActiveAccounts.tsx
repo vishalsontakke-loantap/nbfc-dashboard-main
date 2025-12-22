@@ -186,9 +186,9 @@ export default function ActiveAccounts() {
                   <TableRow>
                     <TableCell
                       colSpan={8}
-                      className="text-center py-8 text-red-500"
+                      className="text-center py-8 text-gray-500"
                     >
-                      Failed to load. Please try again.
+                      No records found.
                     </TableCell>
                   </TableRow>
                 ) : displayData.length === 0 ? (
