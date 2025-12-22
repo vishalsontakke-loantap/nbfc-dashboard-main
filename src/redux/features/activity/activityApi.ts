@@ -63,24 +63,38 @@ export const activityApi = createApi({
 
         // GET activities by module
         getActivitiesByModule: builder.query<
-            ActivityResponse["data"],
+            ActivityResponse,
             {
-                module: "users" | "bre" | "roles" | "lendingRates" | "nbfc";
-                page: number;
+                module?: string;
+                status?: "pending" | "approved" | "rejected";
+                activity_type?: string;
+                page?: number;
             }
         >({
-            query: ({ module, page }) =>
-                `/activity-requests?module=${module}&page=${page}`,
+            query: ({ module, status, activity_type, page = 1 }) => {
+                const params = new URLSearchParams();
+                if (module) params.append("module", module);
+                if (status) params.append("status", status);
+                if (activity_type) params.append("activity_type", activity_type);
+                params.append("page", page.toString());
+                
+                return `/activity-requests?${params.toString()}`;
+            },
             providesTags: (_res, _err, arg) => [
-                { type: "Activity", id: arg.module },
+                { type: "Activity", id: arg.module || 'all' },
             ],
-            transformResponse: (response: ActivityResponse) => response.data,
         }),
 
 
         // GET activity by ID
         getActivityById: builder.query<ActivityLog, string>({
             query: (id) => `/activities/${id}`,
+            providesTags: (_result, _error, id) => [{ type: "Activity", id }],
+        }),
+
+        // GET activity request by ID
+        getActivityRequestById: builder.query<any, string>({
+            query: (id) => `/activity-requests/${id}`,
             providesTags: (_result, _error, id) => [{ type: "Activity", id }],
         }),
 
@@ -172,6 +186,7 @@ export const {
     useGetActivitiesQuery,
     useGetActivitiesByModuleQuery,
     useGetActivityByIdQuery,
+    useGetActivityRequestByIdQuery,
     useGetActivitiesWithPaginationQuery,
     useCreateActivityMutation,
     useApproveActivityMutation,
