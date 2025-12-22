@@ -69,7 +69,7 @@ const Dashboard = () => {
   };
   return (
     <div className="">
-      <Card className="scale-95 w-full h-full flex flex-col p-2">
+      <Card className="scale-95 w-full h-full flex flex-col p-2 px-6 py-4">
         {/* Section Title */}
         {/* <CardHeadline title="Dashboard Overview" /> */}
 
