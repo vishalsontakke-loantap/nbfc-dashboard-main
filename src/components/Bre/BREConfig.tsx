@@ -16,10 +16,10 @@ import { setBreData } from "@/redux/features/bre/breSlice";
 import type { RootState } from "@/redux/store";
 
 const BREConfig = () => {
-  const { id } = useParams();
+  const { productId } = useParams();
   
   // ⬇ RTK Query data + loading + error
-  const { data: breResult, isLoading, error } = useGetBreByIdQuery(Number(id));
+  const { data: breResult, isLoading, error } = useGetBreByIdQuery(Number(productId));
 
   const dispatch = useDispatch();
 
