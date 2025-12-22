@@ -144,11 +144,11 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           {/* Logo and Header */}
-          <div className="mb-8 text-center">
+          <div className=" text-center">
             <img
               src={assetPath("/loaders/bom.png")}
               alt="Bank of Maharashtra"
-              className="h-16 mx-auto mb-6"
+              className="h-16 mx-auto mb-2"
             />
             {/* <h1 className="mb-2" style={{ color: '#1B4E9B' }}>
               Co-lending System
@@ -162,8 +162,8 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* User ID Field */}
-              <div>
-                <label htmlFor="userId" className="block text-gray-700 mb-2">
+              <div className='mb-4'>
+                <label htmlFor="userId" className="block text-gray-700 mb-">
                   User ID
                 </label>
                 <div className="relative">
@@ -181,8 +181,8 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
               </div>
 
               {/* Password Field */}
-              <div>
-                <label htmlFor="password" className="block text-gray-700 mb-2">
+              <div className='mb-4'>
+                <label htmlFor="password" className="block text-gray-700 mb-">
                   Password
                 </label>
                 <div className="relative">
@@ -211,8 +211,8 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
               </div>
 
               {/* CAPTCHA Field */}
-              <div>
-                <label htmlFor="captcha" className="block text-gray-700 mb-2">
+              <div className='mb-4'>
+                <label htmlFor="captcha" className="block text-gray-700 mb-">
                   Verify you are not a robot
                 </label>
                 <div className="flex gap-3 mb-3">
@@ -293,19 +293,19 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
 
 
               {/* Security Notice */}
-              <div className="flex items-start gap-2 p-4 bg-blue-50 rounded-xl border border-blue-100">
+              {/* <div className="flex items-start gap-2 p-4 bg-blue-50 rounded-xl border border-blue-100">
                 <Shield className="w-5 h-5 text-[#1B4E9B] flex-shrink-0 mt-0.5" />
                 <p className="text-blue-900">
                   Your session is encrypted and secure. Never share your credentials with anyone.
                 </p>
-              </div>
+              </div> */}
             </form>
           </div>
 
           {/* Footer */}
-          <p className="text-center text-gray-500 mt-6">
+          {/* <p className="text-center text-gray-500 mt-6">
             © 2025 Bank of Maharashtra. All rights reserved.
-          </p>
+          </p> */}
         </div>
       </div>
 
@@ -314,17 +314,18 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
         className="hidden lg:flex flex-1 items-center justify-center p-8"
         style={{ backgroundColor: '#1B4E9B' }}
       >
-        <div className="max-w-lg">
+        <div className="max-w-lg align-center">
           <img
             src={assetPath("/loaders/login.gif")}
             alt="Security Illustration"
-            className="w-full h-auto"
+            className="w-[300px] h-[300px] object-center mx-auto"
           />
           <div className="text-center mt-8 text-white">
             <h2 className="mb-3">
               Secure Co-Lending Experience
             </h2>
             <p className="text-blue-100">
+              <img src="" alt="" />
               Multi-layer authentication ensures your account remains protected at all times.
             </p>
           </div>
