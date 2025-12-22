@@ -97,7 +97,7 @@ const productDistributionData1 = [
 const Reports = () => {
   return (
     <div className="">
-      <Card className="scale-95 w-full h-full flex flex-col items-start ">
+      <Card className="scale-95 w-full h-full flex flex-col items-start px-6 py-4">
         {/* <CardHeadline title="Reports & Analytics" /> */}
         <CardContent className="w-full space-y-6">
           <PageHeader
