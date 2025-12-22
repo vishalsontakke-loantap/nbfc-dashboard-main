@@ -158,7 +158,7 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-3" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center " style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}>
       <div className="w-full max-w-md">
         {/* Logo */}
         {/* <div className="text-center mb-8">
@@ -257,7 +257,8 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
           </div> */}
         </div>
 
-        {/* <p className="text-center text-gray-500 mt-6">© 2025 Bank of Maharashtra. All rights reserved.</p> */}
+            {/* <img src="?hhh" alt="hhhhjhj" /> */}
+        <p className="text-center text-gray-500 mt-2">All rights reserved.</p>
       </div>
     </div>
   );

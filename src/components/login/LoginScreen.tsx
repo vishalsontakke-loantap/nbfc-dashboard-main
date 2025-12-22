@@ -141,7 +141,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           {/* Logo and Header */}
           <div className=" text-center">
