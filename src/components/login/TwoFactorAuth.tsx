@@ -161,25 +161,25 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
     <div className="min-h-screen flex items-center justify-center p-3" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}>
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
+        {/* <div className="text-center mb-8">
           <img src={assetPath('/loaders/bom.png')} alt="Bank of Maharashtra" className="h-14 mx-auto mb-4" />
-        </div>
+        </div> */}
 
         {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-2" style={{ background: 'linear-gradient(90deg, #1B4E9B 0%, #00ADEF 100%)' }} />
 
-          <button onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-[#1B4E9B] transition-colors mb-6">
+          <button onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-[#1B4E9B] transition-colors mb-2">
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Login</span>
           </button>
 
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#1B4E9B' }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: '#1B4E9B' }}>
             <Shield className="w-8 h-8 text-white" />
           </div>
 
           <h2 className="text-center mb-2" style={{ color: '#1B4E9B' }}>Two-Factor Authentication</h2>
-          <p className="text-center text-gray-600 mb-8">Enter the 6-digit OTP sent to your registered mobile number</p>
+          <p className="text-center text-gray-600 mb-2">Enter the 6-digit OTP sent to your registered mobile number</p>
 
           <div className="flex justify-center gap-2 mb-6">
             {otp.map((digit, index) => (
@@ -201,8 +201,8 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
           <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100 mb-6">
             <Smartphone className="w-5 h-5 text-[#00ADEF] flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-blue-900 mb-1">OTP sent successfully</p>
-              <p className="text-blue-700">Check your registered mobile number ending with ****7890</p>
+              <p className="text-blue-900 mb-1">Please check your registered mobile number for the OTP.</p>
+              {/* <p className="text-blue-700">Check your registered mobile number ending with ****7890</p> */}
             </div>
           </div>
 
@@ -249,15 +249,15 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
             </div>
           )}
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
+          {/* <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="flex items-start gap-2">
               <Shield className="w-4 h-4 text-[#1B4E9B] flex-shrink-0 mt-0.5" />
               <p className="text-gray-600">For your security, this OTP will expire in 10 minutes</p>
             </div>
-          </div>
+          </div> */}
         </div>
 
-        <p className="text-center text-gray-500 mt-6">© 2025 Bank of Maharashtra. All rights reserved.</p>
+        {/* <p className="text-center text-gray-500 mt-6">© 2025 Bank of Maharashtra. All rights reserved.</p> */}
       </div>
     </div>
   );
