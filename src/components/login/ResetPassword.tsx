@@ -253,7 +253,7 @@ export default function ResetPassword({ onBack, onSuccess }: ResetPasswordProps)
           </form>
 
           {/* Resend OTP */}
-          <div className="text-center mt-6">
+          {/* <div className="text-center mt-6">
             <span className="text-gray-600 text-sm">Didn't receive the OTP? </span>
             <button
               onClick={() => {
@@ -264,7 +264,7 @@ export default function ResetPassword({ onBack, onSuccess }: ResetPasswordProps)
             >
               Resend OTP
             </button>
-          </div>
+          </div> */}
 
           {/* Footer */}
           <p className="text-center text-gray-500 mt-8 text-sm">
