@@ -122,29 +122,29 @@ const CollectionFileRundown = () => {
                     <div className="text-[#62748E] flex justify-between bg-[#C3EEFF] min-h-[40px] min-w-full rounded-2xl p-3">
                         <span className="flex justify-between">
                             <p className="font-bold">Total Collection: </p>
-                            <p>4088</p>
+                            <p>{batchDetailsData?.total_interest+batchDetailsData?.total_principal}</p>
                         </span>
                         <span className="flex justify-between">
                             <p className="font-bold">Total Principal: </p>
-                            <p>3408</p>
+                            <p>{batchDetailsData?.total_principal}</p>
                         </span>
                         <span className="flex justify-between">
                             <p className="font-bold">Total Interest: </p>
-                            <p>₹ 20,00,000</p>
+                            <p>{batchDetailsData?.total_interest}</p>
                         </span>
                     </div>
                     <div className="text-[#62748E] flex justify-between bg-[#C3EEFF] min-h-[40px] min-w-full rounded-2xl p-3 mt-2">
                         <span className="flex justify-between">
                             <p className="font-bold">Bank Collection: </p>
-                            <p>4088</p>
+                            <p>{batchDetailsData?.total_interest+batchDetailsData?.total_principal}</p>
                         </span>
                         <span className="flex justify-between">
                             <p className="font-bold">Bank Principal: </p>
-                            <p>3408</p>
+                            <p>{batchDetailsData?.total_bank_principal}</p>
                         </span>
                         <span className="flex justify-between">
                             <p className="font-bold">Bank Interest: </p>
-                            <p>₹ 20,00,000</p>
+                            <p>{batchDetailsData?.total_bank_interest}</p>
                         </span>
                     </div>
                 </div>
@@ -170,8 +170,8 @@ const CollectionFileRundown = () => {
                                 <TableRow>
                                     {[
                                         "SL",
-                                        "FORACID",
-                                        "REQ NUMBER",
+                                        "Loan ID",
+                                        "NBFC ID",
                                         "Bank Principal",
                                         "Bank Interest",
                                         "Status",
@@ -190,8 +190,8 @@ const CollectionFileRundown = () => {
                                             {(pagination.current_page - 1) * perPage + idx + 1}
                                         </TableCell>
 
-                                        <TableCell className="text-center">{row.FORACID}</TableCell>
-                                        <TableCell className="text-center">{row.REQ_NUMBER}</TableCell>
+                                        <TableCell className="text-center">{row.loan_id}</TableCell>
+                                        <TableCell className="text-center">{row.nbfc_id}</TableCell>
                                         <TableCell className="text-center">{row.bank_principal}</TableCell>
                                         <TableCell className="text-center">{row.bank_interest}</TableCell>
 

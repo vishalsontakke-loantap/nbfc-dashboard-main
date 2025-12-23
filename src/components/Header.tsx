@@ -95,7 +95,7 @@ const Header: React.FC = () => {
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="all">All NBFCs</SelectItem>
+                {/* <SelectItem value="all">All NBFCs</SelectItem> */}
 
                 {nbfcArray.map((nbfc: any) => (
                   <SelectItem
