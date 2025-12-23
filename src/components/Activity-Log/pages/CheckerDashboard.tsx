@@ -102,8 +102,8 @@ export function CheckerDashboard() {
           <CardTitle>Approval Requests</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="relative w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {/* <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
               <Input
                 placeholder="Search by ID or Maker..."
@@ -111,7 +111,7 @@ export function CheckerDashboard() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-full"
               />
-            </div>
+            </div> */}
             <Select value={filterModule} onValueChange={handleModuleChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Modules" />
