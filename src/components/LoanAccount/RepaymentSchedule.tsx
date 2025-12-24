@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGetLoanAccountRpsDetailsQuery } from "@/redux/features/loan/loanApi";
 import { useParams } from "react-router-dom";
+import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
+import { useSelector } from "react-redux";
+import { SkeletonTable } from "@/components/ui/skeleton-table";
+import { CardDescription, CardHeader, CardTitle } from "../ui/card";
 
-
-// Types
 interface RPSItem {
   installment_no: number;
   installment_date: string;
@@ -15,54 +17,82 @@ interface RPSItem {
 
 type RPSType = "total_rps" | "bank_rps" | "nbfc_rps";
 
-// Main Repayment Schedule Component
 export function RepaymentSchedule() {
   const { id } = useParams();
   const [selectedRPSType, setSelectedRPSType] = useState<RPSType>("total_rps");
+  const selectedNbfcId = useSelector(getSelectedNbfcId);
 
   const {
     data,
     error,
     isLoading,
     isFetching,
+    refetch,
   } = useGetLoanAccountRpsDetailsQuery({
     loan_id: id || "",
   });
 
-  console.log("Repayment Schedule API Data:", data);
+  useEffect(() => {
+    refetch();
+  }, [selectedNbfcId, refetch]);
+
 
   const handleRPSTypeChange = (value: string) => {
     setSelectedRPSType(value as RPSType);
   };
 
-  // Get the selected RPS data
   const selectedData: RPSItem[] = data?.data?.[selectedRPSType] || [];
 
-  // Calculate totals
   const totalPrincipal = selectedData.reduce((sum, item) => sum + item.installment_principal, 0);
   const totalInterest = selectedData.reduce((sum, item) => sum + item.installment_interest, 0);
   const totalRepayment = selectedData.reduce((sum, item) => sum + item.installment_amount, 0);
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return (
-      <div className="bg-[#c3eeff] min-h-screen flex items-center justify-center">
-        <div className="text-[#62748e] text-lg">Loading...</div>
+      <div className="bg-[#c3eeff] min-h-screen">
+        <div className="ml-4 mr-4 mt-4 mb-4">
+          <div className="bg-white rounded-[12px] overflow-hidden border border-[#cad5e2]">
+            <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
+              <p className="font-['Poppins:Bold',sans-serif] text-[16px] text-[#62748e]">
+                Repayment Schedule
+              </p>
+            </div>
+            <div className="p-4">
+              <SkeletonTable rows={10} columns={5} />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (error) {
+  if (!data?.data || error) {
     return (
-      <div className="bg-[#c3eeff] min-h-screen flex items-center justify-center">
-        <div className="text-red-500 text-lg">Error loading repayment schedule</div>
-      </div>
-    );
-  }
-
-  if (!data?.data) {
-    return (
-      <div className="bg-[#c3eeff] min-h-screen flex items-center justify-center">
-        <div className="text-[#62748e] text-lg">No data available</div>
+      <div className="bg-[#c3eeff] min-h-screen">
+        <div className="ml-4 mr-4 mt-4 mb-4">
+          <div className="bg-white rounded-[12px] overflow-hidden border border-[#cad5e2]">
+            <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
+              <p className="font-['Poppins:Bold',sans-serif] text-[16px] text-[#62748e]">
+                Repayment Schedule
+              </p>
+            </div>
+            <div className="flex flex-col items-center justify-center py-[80px] px-[40px]">
+              <div className="w-[80px] h-[80px] mb-[24px] rounded-full bg-[#eaf2ff] flex items-center justify-center">
+                <svg className="w-[40px] h-[40px] text-[#62748e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <p className="font-['Poppins:Bold',sans-serif] text-[18px] text-[#1d2d3e] mb-[8px]">
+                {error ? "Unable to Load Data" : "No Repayment Schedule"}
+              </p>
+              <p className="font-['Poppins:Regular',sans-serif] text-[14px] text-[#62748e] text-center max-w-[400px]">
+                {error 
+                  ? "There was an error loading the repayment schedule. Please try again later." 
+                  : "No repayment schedule data is available for this loan account at the moment."}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -70,6 +100,13 @@ export function RepaymentSchedule() {
   return (
     <div className="bg-[#c3eeff] min-h-screen">
       <div className="ml-4 mr-4 mt-4 mb-4">
+
+        <CardHeader className="mb-3">
+          <CardTitle>Repayment Schedule</CardTitle>
+          <CardDescription>
+           loan account repayment schedule details - {id}
+          </CardDescription>
+        </CardHeader>
         {/* Repayment Schedule Table */}
         <div className="bg-white rounded-[12px] overflow-hidden border border-[#cad5e2]">
           <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
@@ -89,9 +126,6 @@ export function RepaymentSchedule() {
                   </SelectContent>
                 </Select>
               </div>
-              {isFetching && (
-                <span className="text-[#62748e] text-sm">Loading...</span>
-              )}
             </div>
           </div>
 

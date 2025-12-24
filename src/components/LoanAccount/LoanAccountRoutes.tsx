@@ -3,7 +3,7 @@ import Layout from "../Layout";
 import LoanAccount from "./LoanAccount";
 import NotFound from "../NotFound";
 import LoanDetailsView from "./LoanDetailsView";
-import { RepaymentSchedule } from "../RepaymentSchedule";
+import { RepaymentSchedule } from "./RepaymentSchedule";
 import LoanStatement from "../LoanStatement";
 
 const LoanAccountRoutes = () => {
