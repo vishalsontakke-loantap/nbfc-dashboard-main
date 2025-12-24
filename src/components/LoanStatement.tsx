@@ -176,7 +176,7 @@ export default function LoanStatement() {
             <CardHeader className="mb-3">
                 <CardTitle>Account Statement</CardTitle>
                 <CardDescription>
-                    loan account - {loan_id}
+                    Loan Account - {loan_id}
                 </CardDescription>
             </CardHeader>
 
@@ -185,7 +185,7 @@ export default function LoanStatement() {
                 <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
                     <div className="flex items-center gap-[16px]">
                         <p className="font-['Poppins:Bold',sans-serif] text-[16px] text-[#62748e]">
-                            Statement Type -
+                           Loan Account Statement
                         </p>
                         <div className="w-[250px]">
                             <Select value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
