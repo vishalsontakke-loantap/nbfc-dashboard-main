@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect } from "react";
 import {
     ColumnDef,
     useReactTable,
@@ -125,10 +126,17 @@ export default function LoanStatement() {
     const navigate = useNavigate();
     const {loan_id} = useParams();
 
-    const {data: loanStatementResponse, error, isLoading, isFetching, refetch} = useGetLoanAccountStatementQuery({ loan_id: loan_id || "" });
+    const [activeTab, setActiveTab] = React.useState<"nbfc" | "bank" | "total">("nbfc");
+
+    const {data: loanStatementResponse, error, isLoading, isFetching, refetch} = useGetLoanAccountStatementQuery({ 
+        loan_id: loan_id || "",
+        statement_type: activeTab 
+    });
     console.log("Loan Statement Data:", loanStatementResponse, error);
 
-    const [activeTab, setActiveTab] = React.useState<"tab80" | "tab20" | "tab100">("tab20");
+    useEffect(() => {
+        refetch();
+    }, [activeTab, refetch]);
 
     // Transform API data to table format
     const transformedData: StatementRow[] = React.useMemo(() => {
@@ -193,9 +201,9 @@ export default function LoanStatement() {
                                     <SelectValue placeholder="Select Statement Type" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="tab80">Loan Statement (80%) PDF</SelectItem>
-                                    <SelectItem value="tab20">Loan Statement (20%)</SelectItem>
-                                    <SelectItem value="tab100">Loan Statement (100%)</SelectItem>
+                                    <SelectItem value="nbfc">Loan Statement (NBFC)</SelectItem>
+                                    <SelectItem value="bank">Loan Statement (Bank)</SelectItem>
+                                    <SelectItem value="total">Loan Statement (Total)</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -204,7 +212,7 @@ export default function LoanStatement() {
 
                 <div className="p-4">
                     {/* PDF View */}
-                    {activeTab === "tab80" && (
+                    {activeTab === "nbfc" && (
                         <>
                             <StatementTable table={table} columns={columns} />
                             <div className="mt-4"><PaginationComponent table={table} /></div>
@@ -212,7 +220,7 @@ export default function LoanStatement() {
                     )}
 
                     {/* 20% Statement */}
-                    {activeTab === "tab20" && (
+                    {activeTab === "bank" && (
                         <>
                             <StatementTable table={table} columns={columns} />
                             <div className="mt-4"><PaginationComponent table={table} /></div>
@@ -220,7 +228,7 @@ export default function LoanStatement() {
                     )}
 
                     {/* 100% Statement */}
-                    {activeTab === "tab100" && (
+                    {activeTab === "total" && (
                         <>
                             <StatementTable table={table} columns={columns} />
                             <div className="mt-4"><PaginationComponent table={table} /></div>
