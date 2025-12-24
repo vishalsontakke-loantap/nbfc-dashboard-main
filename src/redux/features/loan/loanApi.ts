@@ -102,11 +102,20 @@ export const loanApi = createApi({
       }),
       providesTags: ["Loan"],
     }),
+    getLoanAccountStatement: builder.query<any, { loan_id: string }>({
+      query: ({ loan_id }) => ({
+        url: `/loan-statement/${loan_id}`,
+        method: "GET",
+      }),
+      providesTags: ["Loan"],
+    }),
   }),
 });
 
 export const {
   useGetLoanAccountDetailsQuery,
   useGetLoanAccountAppDetailsQuery,
-  useGetLoanAccountRpsDetailsQuery
+  useGetLoanAccountRpsDetailsQuery,
+  useGetLoanAccountStatementQuery,
+
 } = loanApi;

@@ -8,37 +8,13 @@ import {
     getPaginationRowModel,
     flexRender,
 } from "@tanstack/react-table";
-import { ArrowLeft, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PaginationComponent from "@/components/PaginationComponent";
-import { useNavigate } from "react-router-dom";
-
-// Dummy Loan Account Details
-const loanAccountDetails = {
-    loanId: "LOAN-2024-001234",
-    accountNumber: "ACC-789456123",
-    borrowerName: "Rajesh Kumar",
-    loanAmount: 500000,
-    disbursedAmount: 500000,
-    principalOutstanding: 450000,
-    interestOutstanding: 12500,
-    totalOutstanding: 462500,
-    loanTerm: 36,
-    loanType: "Personal Loan",
-    interestRate: 9.5,
-    startDate: "2023-01-15",
-    endDate: "2026-01-15",
-    status: "Active",
-    nbfcName: "Omega Funds",
-};
-
-// Dummy full statement data (you already had)
-const allStatementData = [ /* YOUR DATA ARRAY HERE */ ];
-
-// 20% = first 70% of rows
-const tab20Data = allStatementData.slice(0, Math.ceil(allStatementData.length * 0.70));
+import { useNavigate, useParams } from "react-router-dom";
+import { useGetLoanAccountStatementQuery } from "@/redux/features/loan/loanApi";
+import { SkeletonTable } from "@/components/ui/skeleton-table";
+import { CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 interface StatementRow {
     date: string;
@@ -50,15 +26,37 @@ interface StatementRow {
     osBalance: number;
 }
 
+interface ApiStatementItem {
+    date: string;
+    particulars: string;
+    debit: string | number;
+    credit: number;
+    balance: string | number;
+    interest_balance: number | string;
+    principal_balance: string | number;
+    type: string;
+}
+
 const columns: ColumnDef<StatementRow>[] = [
     {
         accessorKey: "date",
         header: () => <p className="text-center font-bold">Date</p>,
-        cell: ({ row }) => <p className="text-center text-sm">{row.getValue("date")}</p>,
+        cell: ({ row }) => {
+            const date = new Date(row.getValue("date"));
+            return (
+                <p className="text-center text-sm">
+                    {date.toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                    })}
+                </p>
+            );
+        },
     },
     {
         accessorKey: "description",
-        header: () => <p className="text-center font-bold">Description</p>,
+        header: () => <p className="text-center font-bold">Particulars</p>,
         cell: ({ row }) => <p className="text-center text-sm">{row.getValue("description")}</p>,
     },
     {
@@ -66,7 +64,11 @@ const columns: ColumnDef<StatementRow>[] = [
         header: () => <p className="text-center font-bold">Debit (₹)</p>,
         cell: ({ row }) => {
             const value = row.getValue("debit") as number;
-            return <p className="text-center text-sm text-red-600">{value > 0 ? value.toLocaleString() : "-"}</p>;
+            return (
+                <p className="text-center text-sm text-red-600">
+                    {value > 0 ? `₹ ${value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-"}
+                </p>
+            );
         },
     },
     {
@@ -74,146 +76,159 @@ const columns: ColumnDef<StatementRow>[] = [
         header: () => <p className="text-center font-bold">Credit (₹)</p>,
         cell: ({ row }) => {
             const value = row.getValue("credit") as number;
-            return <p className="text-center text-sm text-green-600">{value > 0 ? value.toLocaleString() : "-"}</p>;
+            return (
+                <p className="text-center text-sm text-green-600">
+                    {value > 0 ? `₹ ${value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-"}
+                </p>
+            );
         },
     },
     {
         accessorKey: "osInterest",
         header: () => <p className="text-center font-bold">O/S Interest (₹)</p>,
-        cell: ({ row }) => <p className="text-center text-sm">{(row.getValue("osInterest") as number).toLocaleString()}</p>,
+        cell: ({ row }) => {
+            const value = row.getValue("osInterest") as number;
+            return (
+                <p className="text-center text-sm">
+                    ₹ {Math.abs(value).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+            );
+        },
     },
     {
         accessorKey: "osPrincipal",
         header: () => <p className="text-center font-bold">O/S Principal (₹)</p>,
-        cell: ({ row }) => <p className="text-center text-sm">{(row.getValue("osPrincipal") as number).toLocaleString()}</p>,
+        cell: ({ row }) => {
+            const value = row.getValue("osPrincipal") as number;
+            return (
+                <p className="text-center text-sm">
+                    ₹ {Math.abs(value).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+            );
+        },
     },
     {
         accessorKey: "osBalance",
         header: () => <p className="text-center font-bold">O/S Balance (₹)</p>,
-        cell: ({ row }) => <p className="text-center text-sm font-semibold">{(row.getValue("osBalance") as number).toLocaleString()}</p>,
+        cell: ({ row }) => {
+            const value = row.getValue("osBalance") as number;
+            return (
+                <p className="text-center text-sm font-semibold">
+                    ₹ {Math.abs(value).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+            );
+        },
     },
 ];
 
 export default function LoanStatement() {
     const navigate = useNavigate();
+    const {loan_id} = useParams();
 
-    const [activeTab, setActiveTab] = React.useState<"tab80" | "tab20" | "tab100">("tab80");
+    const {data: loanStatementResponse, error, isLoading, isFetching, refetch} = useGetLoanAccountStatementQuery({ loan_id: loan_id || "" });
+    console.log("Loan Statement Data:", loanStatementResponse, error);
 
-    const currentData =
-        activeTab === "tab20" ? tab20Data :
-        activeTab === "tab100" ? allStatementData :
-        []; // tab80 uses PDF
+    const [activeTab, setActiveTab] = React.useState<"tab80" | "tab20" | "tab100">("tab20");
+
+    // Transform API data to table format
+    const transformedData: StatementRow[] = React.useMemo(() => {
+        if (!loanStatementResponse?.data) return [];
+        
+        return loanStatementResponse.data.map((item: ApiStatementItem) => ({
+            date: item.date,
+            description: item.particulars,
+            debit: typeof item.debit === "string" ? parseFloat(item.debit) : item.debit,
+            credit: item.credit,
+            osInterest: typeof item.interest_balance === "string" ? parseFloat(item.interest_balance) : item.interest_balance,
+            osPrincipal: typeof item.principal_balance === "string" ? parseFloat(item.principal_balance) : item.principal_balance,
+            osBalance: typeof item.balance === "string" ? parseFloat(item.balance) : item.balance,
+        }));
+    }, [loanStatementResponse]);
 
     const table = useReactTable({
-        data: currentData,
+        data: transformedData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        initialState: {
+            pagination: {
+                pageSize: 10,
+            },
+        },
     });
+
+    if (isLoading || isFetching) {
+        return (
+            <div className="w-full px-6 py-4">
+                <div className="bg-white shadow-sm rounded-lg border border-[#D1E9FF] p-4">
+                    <SkeletonTable rows={10} columns={7} />
+                </div>
+            </div>
+        );
+    }
+
 
     return (
         <div className="w-full px-6 py-4">
-            
-            {/* Header */}
-            <div className="mb-6 bg-white shadow-sm rounded-lg border border-[#D1E9FF]">
-                <div className="flex items-center gap-3 p-4 border-b-2 border-[#C3EEFF]">
-                    <Button variant="ghost" size="icon" className="text-[#0A4DA2]" onClick={() => navigate(-1)}>
-                        <ArrowLeft className="h-5 w-5" />
-                    </Button>
-                    <h2 className="text-lg font-bold text-[#0A4DA2]">Loan Statement</h2>
-                </div>
 
-                <div className="p-3 bg-gradient-to-r from-blue-50 to-blue-100">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <CardHeader className="mb-3">
+                <CardTitle>Account Statement</CardTitle>
+                <CardDescription>
+                    loan account - {loan_id}
+                </CardDescription>
+            </CardHeader>
 
-                        <InfoCard title="Loan ID" value={loanAccountDetails.loanId} />
-                        <InfoCard title="Borrower Name" value={loanAccountDetails.borrowerName} />
-                        <InfoCard title="Loan Amount" value={`₹ ${loanAccountDetails.loanAmount.toLocaleString()}`} />
-                        <InfoCard title="Status" value={loanAccountDetails.status} valueClass="text-green-600" />
-                        <InfoCard title="Interest Rate" value={`${loanAccountDetails.interestRate}%`} />
-                        <InfoCard title="Loan Term" value={`${loanAccountDetails.loanTerm} months`} />
-                        <InfoCard title="O/S Principal" value={`₹ ${loanAccountDetails.principalOutstanding.toLocaleString()}`} valueClass="text-red-600" />
-                        <InfoCard title="O/S Interest" value={`₹ ${loanAccountDetails.interestOutstanding.toLocaleString()}`} valueClass="text-red-600" />
-
-                    </div>
-
-                    <div className="mt-6">
-                        <Button className="bg-[#0A4DA2] text-white flex items-center gap-2">
-                            <Download className="h-4 w-4" />
-                            Download Loan Statement
-                        </Button>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Tabs */}
+            {/* Statement Table */}
             <div className="bg-white shadow-sm rounded-lg border border-[#D1E9FF]">
-                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
-
-                    <div className="border-b border-gray-200">
-                        <TabsList className="w-full flex bg-transparent p-0 h-auto rounded-none">
-                            
-                            <TabButton label="Loan Statement (80%) PDF" value="tab80" active={activeTab} />
-                            <TabButton label="Loan Statement (20%)" value="tab20" active={activeTab} />
-                            <TabButton label="Loan Statement (100%)" value="tab100" active={activeTab} />
-
-                        </TabsList>
-                    </div>
-
-                    {/* PDF TAB */}
-                    <TabsContent value="tab80" className="p-4">
-                        <div className="w-full h-[750px] border rounded-lg overflow-hidden shadow-md">
-                            <iframe
-                                src="/loan-statement-80.pdf"
-                                className="w-full h-full"
-                                title="Loan Statement PDF"
-                            />
+                <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
+                    <div className="flex items-center gap-[16px]">
+                        <p className="font-['Poppins:Bold',sans-serif] text-[16px] text-[#62748e]">
+                            Statement Type -
+                        </p>
+                        <div className="w-[250px]">
+                            <Select value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+                                <SelectTrigger className="bg-white border-[#cad5e2] h-[32px]">
+                                    <SelectValue placeholder="Select Statement Type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="tab80">Loan Statement (80%) PDF</SelectItem>
+                                    <SelectItem value="tab20">Loan Statement (20%)</SelectItem>
+                                    <SelectItem value="tab100">Loan Statement (100%)</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
-                    </TabsContent>
+                    </div>
+                </div>
 
-                    {/* 20% TAB */}
-                    <TabsContent value="tab20" className="p-4">
-                        <StatementTable table={table} columns={columns} />
-                        <div className="mt-4"><PaginationComponent table={table} /></div>
-                    </TabsContent>
+                <div className="p-4">
+                    {/* PDF View */}
+                    {activeTab === "tab80" && (
+                        <>
+                            <StatementTable table={table} columns={columns} />
+                            <div className="mt-4"><PaginationComponent table={table} /></div>
+                        </>
+                    )}
 
-                    {/* 100% TAB */}
-                    <TabsContent value="tab100" className="p-4">
-                        <StatementTable table={table} columns={columns} />
-                        <div className="mt-4"><PaginationComponent table={table} /></div>
-                    </TabsContent>
+                    {/* 20% Statement */}
+                    {activeTab === "tab20" && (
+                        <>
+                            <StatementTable table={table} columns={columns} />
+                            <div className="mt-4"><PaginationComponent table={table} /></div>
+                        </>
+                    )}
 
-                </Tabs>
+                    {/* 100% Statement */}
+                    {activeTab === "tab100" && (
+                        <>
+                            <StatementTable table={table} columns={columns} />
+                            <div className="mt-4"><PaginationComponent table={table} /></div>
+                        </>
+                    )}
+                </div>
             </div>
-
         </div>
-    );
-}
-
-function InfoCard({ title, value, valueClass = "" }: any) {
-    return (
-        <div className="bg-white rounded-lg p-4 shadow-sm border border-blue-200">
-            <p className="text-xs text-gray-600 font-semibold uppercase">{title}</p>
-            <p className={`text-lg font-bold mt-1 ${valueClass}`}>{value}</p>
-        </div>
-    );
-}
-
-function TabButton({ label, value, active }: any) {
-    return (
-        <TabsTrigger
-            value={value}
-            className={`flex-1 py-4 px-4 text-center font-semibold border-b-2 transition-all rounded-none ${
-                active === value
-                    ? "border-[#0A4DA2] text-[#0A4DA2]"
-                    : "border-transparent text-gray-600 hover:text-gray-900"
-            }`}
-        >
-            {label}
-        </TabsTrigger>
     );
 }
 

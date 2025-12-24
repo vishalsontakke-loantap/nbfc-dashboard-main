@@ -216,16 +216,6 @@ export function RepaymentSchedule() {
             )}
           </div>
         </div>
-
-        {/* Action Buttons */}
-        {/* <div className="flex gap-[16px] mt-[24px] justify-end">
-          <button className="bg-white border border-[#0089cf] rounded-[4px] px-[24px] py-[10px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.05)]">
-            <span className="font-['Manrope:SemiBold',sans-serif] text-[14px] text-[#0089cf]">Download Schedule</span>
-          </button>
-          <button className="bg-[#0089cf] rounded-[4px] px-[24px] py-[10px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.05)]">
-            <span className="font-['Manrope:SemiBold',sans-serif] text-[14px] text-white">Print Schedule</span>
-          </button>
-        </div> */}
       </div>
     </div>
   );
