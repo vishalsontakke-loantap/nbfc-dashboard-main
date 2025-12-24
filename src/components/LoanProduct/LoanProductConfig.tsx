@@ -385,7 +385,7 @@ const LoanProductConfig: React.FC = () => {
                       <FormLabel>Interest Type</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select Interest Type" />
                           </SelectTrigger>
                         </FormControl>
