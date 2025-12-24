@@ -159,8 +159,10 @@ const onSubmitHandler = async (data: z.infer<typeof formSchema>) => {
                       <TableCell className="w-[30%]">
                         <Input
                           type="number"
+                          step="0.01"
                           placeholder={paramsArr[index].subtitle}
                           {...form.register(`mappings.${index}.value`)}
+                          onWheel={(e) => e.currentTarget.blur()}
                         />
                       </TableCell>
                       {/* For MCLR, show date for all rows. For RLLR, only for Final Lending Rate row. */}
