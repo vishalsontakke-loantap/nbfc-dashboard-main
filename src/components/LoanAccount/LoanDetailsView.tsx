@@ -74,7 +74,7 @@ export default function LoanDetailsView() {
     );
   }
   const repaymentView = () => {
-    navigate(`/loans/repayment/${loanApplication?.app_id || id}`);
+    navigate(`/loans/repayment/${loanApplication?.loan_id || id}`);
   };
 
   const ledgerView = () => {

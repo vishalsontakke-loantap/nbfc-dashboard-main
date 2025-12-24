@@ -6,6 +6,7 @@ import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { useSelector } from "react-redux";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { ErrorState } from "../Error/ErrorState";
 
 interface RPSItem {
   installment_no: number;
@@ -99,6 +100,8 @@ export function RepaymentSchedule() {
 
   return (
     <div className="bg-[#c3eeff] min-h-screen">
+
+      {/* <ErrorState title="Repayment Schedule Unavailable" message="The repayment schedule data could not be loaded at this time. Please try again later." /> */}
       <div className="ml-4 mr-4 mt-4 mb-4">
 
         <CardHeader className="mb-3">
