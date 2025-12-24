@@ -68,7 +68,7 @@ const formSchema = z
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "Bank share must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
 
-    nbfc_roi: z
+    nbfc_interest: z
       .union([z.string(), z.number()])
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "NBFC ROI must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
@@ -78,7 +78,7 @@ const formSchema = z
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "NBFC Spread must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
 
-    bank_roi: z
+    bank_interest: z
       .union([z.string(), z.number()])
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "Bank ROI must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
@@ -133,9 +133,9 @@ const LoanProductConfig: React.FC = () => {
       nbfc_share: undefined,
       interest_type: "",
       bank_share: undefined,
-      nbfc_roi: undefined,
+      nbfc_interest: undefined,
       nbfc_spread: undefined,
-      bank_roi: undefined,
+      bank_interest: undefined,
       bank_spread: undefined,
       blended_roi: undefined,
       colending_arrangement_doc: undefined,
@@ -157,9 +157,9 @@ const LoanProductConfig: React.FC = () => {
         nbfc_share: d.nbfc_share ?? undefined,
         interest_type: d.interest_type ?? "",
         bank_share: d.bank_share ?? undefined,
-        nbfc_roi: d.nbfc_roi ?? undefined,
+        nbfc_interest: d.nbfc_interest ?? undefined,
         nbfc_spread: d.nbfc_spread ?? undefined,
-        bank_roi: d.bank_roi ?? undefined,
+        bank_interest: d.bank_interest ?? undefined,
         bank_spread: d.bank_spread ?? undefined,
         blended_roi: d.blended_roi ?? undefined,
         colending_arrangement_doc: undefined,
@@ -171,12 +171,12 @@ const LoanProductConfig: React.FC = () => {
   // Auto-calculate blended_roi
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
-      if (name === 'nbfc_share' || name === 'nbfc_roi' || name === 'nbfc_spread' || name === 'bank_share' || name === 'bank_roi' || name === 'bank_spread') {
+      if (name === 'nbfc_share' || name === 'nbfc_interest' || name === 'nbfc_spread' || name === 'bank_share' || name === 'bank_interest' || name === 'bank_spread') {
         const nbfcShare = Number(value.nbfc_share) || 0;
-        const nbfcRoi = Number(value.nbfc_roi) || 0;
+        const nbfcRoi = Number(value.nbfc_interest) || 0;
         const nbfcSpread = Number(value.nbfc_spread) || 0;
         const bankShare = Number(value.bank_share) || 0;
-        const bankRoi = Number(value.bank_roi) || 0;
+        const bankRoi = Number(value.bank_interest) || 0;
         const bankSpread = Number(value.bank_spread) || 0;
         
         const blendedRoi = (nbfcShare * (nbfcRoi + nbfcSpread) + bankShare * (bankRoi + bankSpread)) / 100;
@@ -220,9 +220,9 @@ const LoanProductConfig: React.FC = () => {
         bank_share: Number(data.bank_share),
         collateral_type_required: "Gold",
         collateral_verification: "Pre",
-        nbfc_roi: toNumberOrNull(data.nbfc_roi),
+        nbfc_interest: toNumberOrNull(data.nbfc_interest),
         nbfc_spread: toNumberOrNull(data.nbfc_spread),
-        bank_roi: toNumberOrNull(data.bank_roi),
+        bank_interest: toNumberOrNull(data.bank_interest),
         bank_spread: toNumberOrNull(data.bank_spread),
         blended_roi: toNumberOrNull(data.blended_roi),
       };
@@ -407,7 +407,7 @@ const LoanProductConfig: React.FC = () => {
               <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Controller
                   control={form.control}
-                  name="bank_roi"
+                  name="bank_interest"
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Bank Interest %</FormLabel>
@@ -421,7 +421,7 @@ const LoanProductConfig: React.FC = () => {
 
                 <Controller
                   control={form.control}
-                  name="nbfc_roi"
+                  name="nbfc_interest"
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>NBFC Interest %</FormLabel>
