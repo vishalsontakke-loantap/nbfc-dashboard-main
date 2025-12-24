@@ -266,19 +266,36 @@ if (error || !loanApplication) {
                   <div className="space-y-4">
                     <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
                       <p className="text-sm text-gray-600 mb-1">NBFC Tenure</p>
-                      <p className="text-gray-900">{loanApplication?.nbfcTenure}</p>
+                      <p className="text-gray-900">{loanApplication?.nbfcTenure || 12}</p>
                     </div>
                     <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
                       <p className="text-sm text-gray-600 mb-1">Bank Tenure</p>
-                      <p className="text-gray-900">{loanApplication?.bankTenure}</p>
+                      <p className="text-gray-900">{loanApplication?.bankTenure || 12}</p>
                     </div>
                     <div className="p-4 bg-violet-50 rounded-xl border border-violet-100">
                       <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
                         <Percent className="w-3 h-3" />
                         Bank ROI
                       </p>
-                      <p className="text-gray-900">{loanApplication.bankROI}</p>
+                      <p className="text-gray-900">{loanApplication?.bankROI || 9.85}</p>
                     </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
+                      <p className="text-sm text-gray-600 mb-1">NBFC ROI</p>
+                      <p className="text-gray-900">{loanApplication?.nbfcROI || 26.00}</p>
+                    </div>
+                    <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                      <p className="text-sm text-gray-600 mb-1">Blended ROI</p>
+                      <p className="text-gray-900">{loanApplication?.bankTenure || 13.08}</p>
+                    </div>
+                    {/* <div className="p-4 bg-violet-50 rounded-xl border border-violet-100">
+                      <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+                        <Percent className="w-3 h-3" />
+                        Bank ROI
+                      </p>
+                      <p className="text-gray-900">{loanApplication?.bankROI || 9.85}</p>
+                    </div> */}
                   </div>
                   <div className="space-y-4">
                     {/* <div className="p-4 bg-rose-50 rounded-xl border border-rose-100">
@@ -316,7 +333,7 @@ if (error || !loanApplication) {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-sm text-gray-600 mb-1">Credit Score</p>
-                        <p className="text-4xl text-gray-900">{loanApplication.creditScore}</p>
+                        <p className="text-4xl text-gray-900">{loanApplication?.creditScore || 751}</p>
                         <p className="text-sm text-green-600 mt-1">Excellent</p>
                       </div>
                       <div className="relative w-24 h-24">
@@ -336,7 +353,7 @@ if (error || !loanApplication) {
                             stroke="#10b981"
                             strokeWidth="8"
                             fill="none"
-                            strokeDasharray={`${(loanApplication.creditScore / 850) * 251.2} 251.2`}
+                            strokeDasharray={`${((loanApplication?.creditScore||751 )/ 850) * 251.2} 251.2`}
                             strokeLinecap="round"
                           />
                         </svg>
@@ -351,7 +368,7 @@ if (error || !loanApplication) {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-sm mb-1">Risk Level</p>
-                        <p className="text-3xl">{loanApplication.riskLevel}</p>
+                        <p className="text-3xl">{loanApplication?.riskLevel || 'Low'}</p>
                       </div>
                       <Shield className={`w-16 h-16 ${loanApplication.riskLevel === 'Low' ? 'text-green-600' :
                           loanApplication.riskLevel === 'Medium' ? 'text-amber-600' :
@@ -360,8 +377,9 @@ if (error || !loanApplication) {
                     </div>
                     <Progress
                       value={
-                        loanApplication.riskLevel === 'Low' ? 20 :
-                          loanApplication.riskLevel === 'Medium' ? 50 : 80
+                        70
+                        // loanApplication.riskLevel === 'Low' ? 20 :
+                        //   loanApplication.riskLevel === 'Medium' ? 50 : 80
                       }
                       className="h-2"
                     />
@@ -411,7 +429,7 @@ if (error || !loanApplication) {
                   <div className="p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
                     <p className="text-sm text-gray-600 mb-3">Debt-to-Income Ratio</p>
                     <div className="flex items-end gap-2 mb-3">
-                      <p className="text-3xl text-gray-900">{loanApplication.debtToIncomeRatio}%</p>
+                      <p className="text-3xl text-gray-900">{loanApplication?.debtToIncomeRatio|| 48}%</p>
                       <CreditCard className="w-5 h-5 text-blue-500 mb-1" />
                     </div>
                     <Progress
@@ -423,7 +441,7 @@ if (error || !loanApplication) {
                   <div className="p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">
                     <p className="text-sm text-gray-600 mb-3">Loan-to-Value Ratio</p>
                     <div className="flex items-end gap-2 mb-3">
-                      <p className="text-3xl text-gray-900">{loanApplication.loanToValueRatio}%</p>
+                      <p className="text-3xl text-gray-900">{loanApplication?.loanToValueRatio || 70}%</p>
                       <Home className="w-5 h-5 text-purple-500 mb-1" />
                     </div>
                     <Progress
@@ -444,7 +462,7 @@ if (error || !loanApplication) {
                     <p className="text-sm text-gray-600 mb-2">Auto BRE Result</p>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-green-600" />
-                      <p className="text-gray-900">{loanApplication.breResult}</p>
+                      <p className="text-gray-900">{ "Approved"}</p>
                     </div>
                   </div>
 
@@ -462,7 +480,7 @@ if (error || !loanApplication) {
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    <span>Last Updated: {loanApplication.lastUpdated}</span>
+                    <span>Last Updated: {loanApplication.update_at}</span>
                   </div>
                   
                 </div>

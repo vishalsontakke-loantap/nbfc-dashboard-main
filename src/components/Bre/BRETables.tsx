@@ -52,7 +52,7 @@ const BRETables = ({
 
   const headerRef = useRef(null);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { productId } = useParams();
   const [updateBre, { isLoading }] = useUpdateBreMutation();
 
   const form = useForm({
@@ -91,7 +91,7 @@ const BRETables = ({
     };
 
     try {
-      await updateBre({ id: Number(id), ...payload }).unwrap();
+      await updateBre({ id: Number(productId), ...payload }).unwrap();
       toast.success("BRE updated successfully");
       onSubmit && onSubmit();
       navigate(`#${navTo}`);

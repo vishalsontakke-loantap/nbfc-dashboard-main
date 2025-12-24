@@ -31,7 +31,7 @@ import { useGetLoanAccountDetailsQuery } from "@/redux/features/loan/loanApi";
 /* ---------------- Types ---------------- */
 type Disbursement = {
   id: number;
-  lapp_id: string;
+  nbfc_ref_no: string;
   loan_tenure: string;
   loan_id: string;
   bank_sanction_amount?: string | null;
@@ -147,9 +147,8 @@ export default function ActiveAccounts() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="Approved">Approved</SelectItem>
-                <SelectItem value="Rejected">Rejected</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="closed">Closed</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -214,7 +213,7 @@ export default function ActiveAccounts() {
                           {serial}
                         </TableCell>
                         <TableCell className="text-center">
-                          {d.lapp_id}
+                          {d.nbfc_ref_no}
                         </TableCell>
                         <TableCell className="text-center">
                           {d.loan_id}
