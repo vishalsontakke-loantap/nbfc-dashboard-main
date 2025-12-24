@@ -112,10 +112,16 @@ useEffect(() => {
     try {
       await uploadCollection(data.file).unwrap();
       form.reset();
+      // Clear the file input element
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
       refetch(); // 🔄 Refresh table after upload
     } catch (err) {
       console.error("Upload failed", err);
       form.reset();
+      // Clear the file input element even on error
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
     }
   };
 
@@ -216,7 +222,7 @@ useEffect(() => {
                     "SL",
                     "Batch ID",
                     "Status",
-                    "PF Number",
+                    // "PF Number",
                     "Entry Date",
                     "Total Principal",
                     "Total Interest",
@@ -265,7 +271,7 @@ useEffect(() => {
                         {b.status}
                       </TableCell>
 
-                      <TableCell className="text-left">{b.pf_number}</TableCell>
+                      {/* <TableCell className="text-left">{b.pf_number}</TableCell> */}
                       <TableCell className="text-left">{b.entry_date}</TableCell>
                       <TableCell className="text-left">{b.total_principal}</TableCell>
                       <TableCell className="text-left">{b.total_interest}</TableCell>
