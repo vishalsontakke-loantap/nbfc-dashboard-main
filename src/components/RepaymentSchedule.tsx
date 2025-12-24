@@ -212,7 +212,7 @@ export function RepaymentSchedule() {
     <div className="bg-[#c3eeff] min-h-screen">
       <div className="ml-4 mr-4 mt-4 mb-4">
         {/* NBFC Bank Selection Dropdown */}
-        <div className="bg-white rounded-[16px] p-[24px] mb-[24px] border border-[#cad5e2]">
+        {/* <div className="bg-white rounded-[16px] p-[24px] mb-[24px] border border-[#cad5e2]">
           <div className="flex items-center gap-[16px]">
             <label className="font-['DM_Sans:Bold',sans-serif] text-[16px] text-[#62748e]" style={{ fontVariationSettings: "'opsz' 14" }}>
               Select NBFC Bank:
@@ -235,7 +235,7 @@ export function RepaymentSchedule() {
               <span className="text-[#62748e] text-sm">Loading...</span>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Account Info Card */}
         <div className="bg-white rounded-[16px] p-[40px] mb-[24px] border border-[#cad5e2]">
