@@ -88,7 +88,7 @@ const formSchema = z
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "Bank Spread must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
 
-    blended_roi: z
+    blended_interest: z
       .union([z.string(), z.number()])
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "Blended ROI must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
@@ -137,7 +137,7 @@ const LoanProductConfig: React.FC = () => {
       nbfc_spread: undefined,
       bank_interest: undefined,
       bank_spread: undefined,
-      blended_roi: undefined,
+      blended_interest: undefined,
       colending_arrangement_doc: undefined,
     },
   });
@@ -161,14 +161,14 @@ const LoanProductConfig: React.FC = () => {
         nbfc_spread: d.nbfc_spread ?? undefined,
         bank_interest: d.bank_interest ?? undefined,
         bank_spread: d.bank_spread ?? undefined,
-        blended_roi: d.blended_roi ?? undefined,
+        blended_interest: d.blended_interest ?? undefined,
         colending_arrangement_doc: undefined,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productDetails, productId]);
 
-  // Auto-calculate blended_roi
+  // Auto-calculate blended_interest
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'nbfc_share' || name === 'nbfc_interest' || name === 'nbfc_spread' || name === 'bank_share' || name === 'bank_interest' || name === 'bank_spread') {
@@ -180,7 +180,7 @@ const LoanProductConfig: React.FC = () => {
         const bankSpread = Number(value.bank_spread) || 0;
         
         const blendedRoi = (nbfcShare * (nbfcRoi + nbfcSpread) + bankShare * (bankRoi + bankSpread)) / 100;
-        form.setValue('blended_roi', blendedRoi, { shouldValidate: false });
+        form.setValue('blended_interest', blendedRoi, { shouldValidate: false });
       }
     });
     return () => subscription.unsubscribe();
@@ -224,8 +224,11 @@ const LoanProductConfig: React.FC = () => {
         nbfc_spread: toNumberOrNull(data.nbfc_spread),
         bank_interest: toNumberOrNull(data.bank_interest),
         bank_spread: toNumberOrNull(data.bank_spread),
-        blended_roi: toNumberOrNull(data.blended_roi),
+        blended_interest: toNumberOrNull(data.blended_interest),
       };
+
+      console.log("Payload:", payload);
+      // return;
 
       if (arrangementDocBase64 !== null) {
         payload.documents = { arrangement_doc: arrangementDocBase64 };
@@ -383,7 +386,11 @@ const LoanProductConfig: React.FC = () => {
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Interest Type</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select 
+                        key={`interest-type-${productId || 'new'}-${field.value}`}
+                        onValueChange={field.onChange} 
+                        value={field.value || ""}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select Interest Type" />
@@ -463,7 +470,7 @@ const LoanProductConfig: React.FC = () => {
 
                 <Controller
                   control={form.control}
-                  name="blended_roi"
+                  name="blended_interest"
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Blended Interest % (Auto-calculated)</FormLabel>

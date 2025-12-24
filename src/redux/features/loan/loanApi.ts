@@ -48,9 +48,6 @@ export type LoanQueryArgs = {
   app_id?: string;
 };
 
-/* =========================
-   API Slice
-========================= */
 
 export const loanApi = createApi({
   reducerPath: "loanApi",
@@ -97,14 +94,19 @@ export const loanApi = createApi({
       providesTags: ["Loan"],
     }),
 
+    getLoanAccountRpsDetails: builder.query<any, { loan_id: string }>({
+      query: ({ loan_id }) => ({
+        url: "/repayment-schedule",
+        method: "GET",
+        params: { loan_id },
+      }),
+      providesTags: ["Loan"],
+    }),
   }),
 });
-
-/* =========================
-   Hooks
-========================= */
 
 export const {
   useGetLoanAccountDetailsQuery,
   useGetLoanAccountAppDetailsQuery,
+  useGetLoanAccountRpsDetailsQuery
 } = loanApi;
