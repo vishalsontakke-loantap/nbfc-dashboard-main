@@ -127,7 +127,7 @@ useEffect(() => {
 
   return (
     <div className="flex flex-col space-y-4 p-5">
-      <CardHeader title="Disbursement File Upload" subtitle="Upload your collection files here." />
+      <CardHeader title="Collection File Upload" subtitle="Upload your collection files here." />
 
       {/* Upload form */}
       <Form {...form}>
