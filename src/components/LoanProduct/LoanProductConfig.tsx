@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CardHeader from "../CardHeader";
 import CardHeadline from "../CardHeadline";
 import MultiSectionForm from "@/components/ui/MultiSectionForm";
@@ -60,6 +61,8 @@ const formSchema = z
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "NBFC share must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
 
+    interest_type: z.string().min(1, { message: "Interest type is required" }),
+
     bank_share: z
       .union([z.string(), z.number()])
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "Bank share must be valid (max 2 decimals)" })
@@ -70,9 +73,19 @@ const formSchema = z
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "NBFC ROI must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
 
+    nbfc_spread: z
+      .union([z.string(), z.number()])
+      .refine((v) => twoDecimalRegex.test(String(v)), { message: "NBFC Spread must be valid (max 2 decimals)" })
+      .transform((v) => Number(v)),
+
     bank_roi: z
       .union([z.string(), z.number()])
       .refine((v) => twoDecimalRegex.test(String(v)), { message: "Bank ROI must be valid (max 2 decimals)" })
+      .transform((v) => Number(v)),
+
+    bank_spread: z
+      .union([z.string(), z.number()])
+      .refine((v) => twoDecimalRegex.test(String(v)), { message: "Bank Spread must be valid (max 2 decimals)" })
       .transform((v) => Number(v)),
 
     blended_roi: z
@@ -118,9 +131,12 @@ const LoanProductConfig: React.FC = () => {
       service_fee: undefined,
       gst_on_service_fee: undefined,
       nbfc_share: undefined,
+      interest_type: "",
       bank_share: undefined,
       nbfc_roi: undefined,
+      nbfc_spread: undefined,
       bank_roi: undefined,
+      bank_spread: undefined,
       blended_roi: undefined,
       colending_arrangement_doc: undefined,
     },
@@ -139,15 +155,36 @@ const LoanProductConfig: React.FC = () => {
         service_fee: d.service_fee ?? undefined,
         gst_on_service_fee: d.gst_on_service ?? undefined,
         nbfc_share: d.nbfc_share ?? undefined,
+        interest_type: d.interest_type ?? "",
         bank_share: d.bank_share ?? undefined,
         nbfc_roi: d.nbfc_roi ?? undefined,
+        nbfc_spread: d.nbfc_spread ?? undefined,
         bank_roi: d.bank_roi ?? undefined,
+        bank_spread: d.bank_spread ?? undefined,
         blended_roi: d.blended_roi ?? undefined,
         colending_arrangement_doc: undefined,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productDetails, productId]);
+
+  // Auto-calculate blended_roi
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'nbfc_share' || name === 'nbfc_roi' || name === 'nbfc_spread' || name === 'bank_share' || name === 'bank_roi' || name === 'bank_spread') {
+        const nbfcShare = Number(value.nbfc_share) || 0;
+        const nbfcRoi = Number(value.nbfc_roi) || 0;
+        const nbfcSpread = Number(value.nbfc_spread) || 0;
+        const bankShare = Number(value.bank_share) || 0;
+        const bankRoi = Number(value.bank_roi) || 0;
+        const bankSpread = Number(value.bank_spread) || 0;
+        
+        const blendedRoi = (nbfcShare * (nbfcRoi + nbfcSpread) + bankShare * (bankRoi + bankSpread)) / 100;
+        form.setValue('blended_roi', blendedRoi, { shouldValidate: false });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const maybeConvertFile = async (file?: File | null) => {
     if (!file) return null;
@@ -179,11 +216,14 @@ const LoanProductConfig: React.FC = () => {
         emi_frequency: "Monthly",
         moratorium_period: 1,
         nbfc_share: Number(data.nbfc_share),
+        interest_type: data.interest_type,
         bank_share: Number(data.bank_share),
         collateral_type_required: "Gold",
         collateral_verification: "Pre",
         nbfc_roi: toNumberOrNull(data.nbfc_roi),
+        nbfc_spread: toNumberOrNull(data.nbfc_spread),
         bank_roi: toNumberOrNull(data.bank_roi),
+        bank_spread: toNumberOrNull(data.bank_spread),
         blended_roi: toNumberOrNull(data.blended_roi),
       };
 
@@ -336,6 +376,28 @@ const LoanProductConfig: React.FC = () => {
                     </FormItem>
                   )}
                 />
+
+                <Controller
+                  control={form.control}
+                  name="interest_type"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>Interest Type</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Interest Type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="fixed">Fixed</SelectItem>
+                          <SelectItem value="floating">Floating</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage>{fieldState.error?.message}</FormMessage>
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
@@ -373,12 +435,47 @@ const LoanProductConfig: React.FC = () => {
 
                 <Controller
                   control={form.control}
+                  name="nbfc_spread"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>NBFC Spread %</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="number" placeholder="NBFC Spread" />
+                      </FormControl>
+                      <FormMessage>{fieldState.error?.message}</FormMessage>
+                    </FormItem>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="bank_spread"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>Bank Spread %</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="number" placeholder="Bank Spread" />
+                      </FormControl>
+                      <FormMessage>{fieldState.error?.message}</FormMessage>
+                    </FormItem>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
                   name="blended_roi"
                   render={({ field, fieldState }) => (
                     <FormItem>
-                      <FormLabel>Blended Interest %</FormLabel>
+                      <FormLabel>Blended Interest % (Auto-calculated)</FormLabel>
                       <FormControl>
-                        <Input {...field} type="number" placeholder="Blended Interest" />
+                        <Input 
+                          {...field} 
+                          type="number" 
+                          placeholder="Auto-calculated" 
+                          readOnly 
+                          disabled
+                          className="bg-gray-100 cursor-not-allowed"
+                        />
                       </FormControl>
                       <FormMessage>{fieldState.error?.message}</FormMessage>
                     </FormItem>

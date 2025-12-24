@@ -103,17 +103,17 @@ const CollectionFileRundown = () => {
 
                     {/** DISBURSEMENT FILE DATE AND USER*/}
                     <span className="flex items-center justify-center space-x-4">
-                        <span className="flex space-x-2 text-sm text-[#62748E]">
+                        {/* <span className="flex space-x-2 text-sm text-[#62748E]">
                             <img
                                 src={assetPath("/images/icons/calendar_disbursement.svg")}
                                 alt="calender"
                             />
                             <DateDisplay date={new Date().toISOString()} />
-                        </span>
-                        <span className="flex space-x-2 text-sm text-[#62748E]">
+                        </span> */}
+                        {/* <span className="flex space-x-2 text-sm text-[#62748E]">
                             <img src={assetPath("/images/icons/user_disbursement.svg")} alt="User" />
                             <p>User, U53R1D</p>
-                        </span>
+                        </span> */}
                     </span>
                 </div>
                 <div>
