@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useGetAllNbfcQuery } from "@/redux/features/nbfc/nbfcApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedNbfc } from "@/redux/features/nbfc/nbfcSlice";
+import { ProfileModal } from "./ProfileModal";
 
 import {
   Select,
@@ -16,11 +17,19 @@ import {
 
 const Header: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [profileModalPosition, setProfileModalPosition] = useState({ top: 0, right: 0 });
   const menuRef = useRef<HTMLDivElement>(null);
+  const profileButtonRef = useRef<HTMLButtonElement>(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logoutTrigger] = useLogoutMutation();
+
+  /** Get user data from Redux */
+  const user = useSelector((state: any) => state.auth.user);
+
+  console.log("Header User:", user);
 
   /** ========== Redux selected NBFC from Cookie ========== */
   const selectedNbfcFromStore = useSelector(
@@ -71,6 +80,32 @@ const Header: React.FC = () => {
     await logoutTrigger();
   };
 
+  const handleProfileClick = () => {
+    if (profileButtonRef.current) {
+      const rect = profileButtonRef.current.getBoundingClientRect();
+      setProfileModalPosition({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right,
+      });
+      setProfileModalOpen(true);
+      setOpen(false);
+    }
+  };
+
+  const handleResetPassword = () => {
+    navigate("/reset-password");
+  };
+
+  // Format user data for the modal
+  const userData = {
+    name: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'User' : 'User',
+    role: user?.role?.[0]?.role_name || user?.user_type || 'User',
+    employeeId: user?.id || 'N/A',
+    mobileNo: user?.mobile_no || user?.phone || 'N/A',
+    lastLogin: user?.last_login || new Date().toLocaleString(),
+    profileImage: user?.profile_image || undefined,
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white shadow-[0_2px_0_rgba(0,0,0,0.05)]">
       <div className="w-full">
@@ -112,7 +147,8 @@ const Header: React.FC = () => {
           {/* RIGHT MENU */}
           <div className="relative mr-6" ref={menuRef}>
             <button
-              onClick={() => setOpen(!open)}
+              ref={profileButtonRef}
+              onClick={handleProfileClick}
               className="flex items-center space-x-2"
             >
               <Menu className="w-6 h-6 text-gray-600 cursor-pointer" />
@@ -120,7 +156,10 @@ const Header: React.FC = () => {
 
             {open && (
               <div className="absolute right-0 mt-3 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-3">
-                <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                <a 
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  onClick={handleProfileClick}
+                >
                   Profile
                 </a>
 
@@ -139,6 +178,16 @@ const Header: React.FC = () => {
           </div>
         </nav>
       </div>
+
+      {/* Profile Modal */}
+      <ProfileModal
+        isOpen={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+        position={profileModalPosition}
+        userData={userData}
+        onResetPassword={handleResetPassword}
+        onLogout={handleLogout}
+      />
     </header>
   );
 };
