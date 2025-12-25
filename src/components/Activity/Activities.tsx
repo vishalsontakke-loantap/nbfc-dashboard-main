@@ -13,6 +13,7 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import { useGetActivitiesByModuleQuery } from "@/redux/features/activity/activityApi";
+import { EmptyContentState } from "../Error/EmptyContentState";
 
 
 /* ================= TYPES ================= */
@@ -133,9 +134,12 @@ const Activities: React.FC = () => {
                   Loading activities...
                 </p>
               ) : activityLogs.length === 0 ? (
-                <p className="text-center text-gray-500">
-                  No activities found
-                </p>
+                <div className="flex justify-center py-8">
+                  <EmptyContentState 
+                    title="No Activities Found"
+                    message="There are no activities to display."
+                  />
+                </div>
               ) : (
                 activityLogs.map((log) => (
                   <div

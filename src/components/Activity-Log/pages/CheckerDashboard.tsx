@@ -166,8 +166,13 @@ export function CheckerDashboard() {
               <TableBody>
                 {filteredRequests.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                      No requests found
+                    <TableCell colSpan={7} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <EmptyContentState 
+                          title="No Requests Found"
+                          message="There are no pending requests at this time."
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (

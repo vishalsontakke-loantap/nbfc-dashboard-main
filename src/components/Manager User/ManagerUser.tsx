@@ -39,8 +39,7 @@ import {
 } from "../ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { toast } from "sonner";
-import UserRegistrationDialog from "./UserRegistrationDialog";
-import type { User } from "../../lib/user-mocks";
+import UserRegistrationDialog from "./UserRegistrationDialog";import { EmptyContentState } from "../Error";import type { User } from "../../lib/user-mocks";
 
 import {
   Pagination,
@@ -414,8 +413,17 @@ export function UserListingScreen() {
                   <TableBody>
                     {usersArray.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                          {anyLoading ? "Loading users..." : "No users found"}
+                        <TableCell colSpan={7} className="p-0">
+                          <div className="flex justify-center py-8">
+                            {anyLoading ? (
+                              <p className="text-gray-500">Loading users...</p>
+                            ) : (
+                              <EmptyContentState 
+                                title="No Users Found"
+                                message="There are no users registered yet."
+                              />
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ) : (

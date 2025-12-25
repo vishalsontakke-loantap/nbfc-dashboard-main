@@ -27,6 +27,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { Button as ActionButton } from "@/components/ui/button";
 import { useGetLoanAccountDetailsQuery } from "@/redux/features/loan/loanApi";
+import { ErrorState, EmptyContentState } from "../Error";
 
 /* ---------------- Types ---------------- */
 type Disbursement = {
@@ -183,20 +184,25 @@ export default function ActiveAccounts() {
                   </TableRow>
                 ) : isError ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No records found.
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <ErrorState 
+                          title="Unable to Load Data"
+                          message="There was an error loading active accounts. Please try again later."
+                          onRetry={refetch}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : displayData.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No Records Found.
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <EmptyContentState 
+                          title="No Active Accounts"
+                          message="There are no active loan accounts at this time."
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (

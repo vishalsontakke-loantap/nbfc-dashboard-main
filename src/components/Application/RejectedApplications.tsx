@@ -28,6 +28,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { useGetDisbursementsQuery } from "@/redux/features/disbursement/disbursementApi";
 import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { Button as ActionButton } from "@/components/ui/button";
+import { ErrorState, EmptyContentState } from "../Error";
 
 /* ---------------- Types ---------------- */
 type Disbursement = {
@@ -160,23 +161,26 @@ export default function RejectedApplications() {
                     </TableCell>
                   </TableRow>
                 ) : isError ? (
-                  /* Error */
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-red-500"
-                    >
-                      Failed to load rejected disbursements. Please try again.
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <ErrorState 
+                          title="Unable to Load Data"
+                          message="There was an error loading rejected applications. Please try again later."
+                          onRetry={refetch}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : displayData.length === 0 ? (
-                  /* Empty success */
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No rejected disbursements found
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <EmptyContentState 
+                          title="No Rejected Applications"
+                          message="There are no rejected applications at this time."
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (

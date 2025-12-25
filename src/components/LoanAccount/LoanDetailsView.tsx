@@ -22,6 +22,7 @@ import { Button } from '../ui/button';
 import { useNavigate, useParams } from 'react-router-dom';
 import DetailsViewSkeleton from '../DetailsViewSkeleton';
 import { useGetLoanAccountAppDetailsQuery } from '@/redux/features/loan/loanApi';
+import { ErrorState } from '../Error/ErrorState';
 
 export interface loanApplication {
   id: number;
@@ -62,14 +63,11 @@ export default function LoanDetailsView() {
 
   if (isError || !loanData || loanData.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50 flex items-center justify-center">
-        <Card className="p-8 max-w-md">
-          <CardContent className="text-center space-y-4">
-            <XCircle className="w-16 h-16 text-red-500 mx-auto" />
-            <h2 className="text-2xl font-bold">Error Loading Loan Details</h2>
-            <p className="text-gray-600">Unable to fetch loan application details. Please try again later.</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex items-center justify-center">
+        <ErrorState 
+          title="Unable to Load Loan Details"
+          message="There was an error loading the loan application details. Please try again later."
+        />
       </div>
     );
   }

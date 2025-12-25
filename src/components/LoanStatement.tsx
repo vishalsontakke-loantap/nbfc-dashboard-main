@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import PaginationComponent from "@/components/PaginationComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetLoanAccountStatementQuery } from "@/redux/features/loan/loanApi";
+import { ErrorState, EmptyContentState } from "./Error";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { CardDescription, CardHeader, CardTitle } from "./ui/card";
 
@@ -177,6 +178,18 @@ export default function LoanStatement() {
         );
     }
 
+    if (error) {
+        return (
+            <div className="w-full px-6 py-4 flex justify-center items-center min-h-[400px]">
+                <ErrorState 
+                    title="Unable to Load Statement"
+                    message="There was an error loading the loan statement. Please try again later."
+                    onRetry={refetch}
+                />
+            </div>
+        );
+    }
+
 
     return (
         <div className="w-full px-6 py-4">
@@ -273,8 +286,13 @@ function StatementTable({ table, columns }: StatementTableProps) {
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={columns.length} className="text-center h-24 text-gray-500">
-                                No statements found.
+                            <TableCell colSpan={columns.length} className="p-0">
+                                <div className="flex justify-center py-8">
+                                    <EmptyContentState 
+                                        title="No Statement Data"
+                                        message="There are no statement records available for this loan account."
+                                    />
+                                </div>
                             </TableCell>
                         </TableRow>
                     )}

@@ -28,6 +28,8 @@ import useDebounce from "@/hooks/useDebounce";
 import { useGetDisbursementsQuery } from "@/redux/features/disbursement/disbursementApi";
 import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { Button as ActionButton } from "@/components/ui/button";
+import { ErrorState, EmptyContentState } from "../Error";
+import { SkeletonTable } from "@/components/ui/Skelton";
 
 /* ---------------- Types ---------------- */
 type Disbursement = {
@@ -60,6 +62,7 @@ export default function PendingApplication() {
     isLoading,
     isFetching,
     isError,
+    refetch,
   } = useGetDisbursementsQuery(
     {
       page: currentPage,
@@ -182,20 +185,25 @@ export default function PendingApplication() {
                   </TableRow>
                 ) : isError ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No records found.
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <ErrorState 
+                          title="Unable to Load Data"
+                          message="There was an error loading pending applications. Please try again later."
+                          onRetry={refetch}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : displayData.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No Records Found.
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <EmptyContentState 
+                          title="No Pending Applications"
+                          message="There are no pending applications at this time."
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (

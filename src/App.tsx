@@ -1,6 +1,7 @@
   import { Route, Routes, useNavigate } from "react-router-dom";
   import "./App.css";
 
+  import NotFound from "./components/NotFound";
   import NBFCRoutes from "./components/NBFC/NBFCRoutes";
   import OverviewRoutes from "./components/Overview/OverviewRoutes";
   import ApplicationRoutes from "./components/Application/ApplicationRoutes";
@@ -74,6 +75,7 @@
 
 
             {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </>
       );
@@ -118,6 +120,7 @@
 
 
             {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </>
       );
@@ -162,6 +165,7 @@
 
 
             {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </>
       );

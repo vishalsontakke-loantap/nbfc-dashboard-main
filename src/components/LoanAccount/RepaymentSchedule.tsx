@@ -6,7 +6,7 @@ import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { useSelector } from "react-redux";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { ErrorState } from "../Error/ErrorState";
+import { EmptyContentState } from "../Error";
 
 interface RPSItem {
   installment_no: number;
@@ -134,8 +134,11 @@ export function RepaymentSchedule() {
 
           <div className="overflow-x-auto">
             {selectedData.length === 0 ? (
-              <div className="text-center py-[40px]">
-                <p className="text-[#62748e]">No repayment schedule data available</p>
+              <div className="flex justify-center py-12">
+                <EmptyContentState 
+                  title="No Repayment Schedule"
+                  message="There is no repayment schedule data available for this selection."
+                />
               </div>
             ) : (
               <table className="w-full">
