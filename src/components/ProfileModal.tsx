@@ -177,7 +177,7 @@ export function ProfileModal({
                     <span className="text-sm text-red-700 transition-colors">Logout</span>
                 </button>
 
-                <a
+                {/* <a
                     onClick={() => {
                         onResetPassword();
                         onClose();
@@ -185,7 +185,7 @@ export function ProfileModal({
                     className="text-blue-600 hover:underline cursor-pointer"
                 >
                     Reset Password
-                </a>
+                </a> */}
             </div>
         </div>
     );
