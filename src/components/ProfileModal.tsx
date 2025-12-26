@@ -102,13 +102,13 @@ export function ProfileModal({
                     <div className="space-y-3.5">
                         {/* Mobile No */}
                         <div className="flex items-center gap-3 group">
-                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0 group-hover:from-blue-100 group-hover:to-blue-200 transition-colors">
+                            {/* <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0 group-hover:from-blue-100 group-hover:to-blue-200 transition-colors">
                                 <Phone className="w-4 h-4 text-blue-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
+                            </div> */}
+                            {/* <div className="flex-1 min-w-0">
                                 <p className="text-xs text-gray-500 mb-0.5">Mobile Number</p>
                                 <p className="text-sm text-gray-900 truncate">{userData.mobileNo}</p>
-                            </div>
+                            </div> */}
                         </div>
 
                         {/* Employee ID */}
@@ -177,7 +177,7 @@ export function ProfileModal({
                     <span className="text-sm text-red-700 transition-colors">Logout</span>
                 </button>
 
-                <a
+                {/* <a
                     onClick={() => {
                         onResetPassword();
                         onClose();
@@ -185,7 +185,7 @@ export function ProfileModal({
                     className="text-blue-600 hover:underline cursor-pointer"
                 >
                     Reset Password
-                </a>
+                </a> */}
             </div>
         </div>
     );
