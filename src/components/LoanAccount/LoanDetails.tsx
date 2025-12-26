@@ -71,7 +71,7 @@ function LoanDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#c3eeff] ">
       <div className="max-w-[1600px] mx-auto p-6">
         {/* Header Section */}
         <LoanHeader
@@ -90,29 +90,33 @@ function LoanDetails() {
         />
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm mb-6 overflow-hidden">
-          <div className="flex border-b border-gray-200">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-4 text-sm font-medium transition-colors relative ${activeTab === tab
-                  ? 'text-gray-900 bg-white'
-                  : 'text-gray-500 hover:text-gray-700 bg-gray-50'
-                  }`}
-              >
-                {tab}
-                {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
         <div className="grid grid-cols-[1fr_380px] gap-6">
-          {/* LEFT COLUMN – changes per tab */}
-          <div>
+          {/* LEFT COLUMN */}
+          <div >
+            {/* TAB NAVBAR */}
+            <div className="bg-white shadow-sm overflow-hidden rounded-t-md">
+              <div className="flex border-b border-gray-200">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-6 py-4 text-sm font-medium transition-colors relative
+                    ${activeTab === tab
+                        ? "text-gray-900 bg-white"
+                        : "text-gray-500 hover:text-gray-700 bg-gray-50"
+                      }`}
+                  >
+                    {tab}
+
+                    {activeTab === tab && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* TAB CONTENT */}
             {activeTab === "Dashboard" && (
               <>
                 <LoanInformations />
@@ -121,27 +125,25 @@ function LoanDetails() {
               </>
             )}
 
-            {activeTab === "Repayments" && (
-              <RepaymentSchedule />
-            )}
+            {activeTab === "Repayments" && <RepaymentSchedule />}
 
             {activeTab !== "Dashboard" && activeTab !== "Repayments" && (
-              <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+              <div className="bg-white shadow-sm p-8 text-center ">
                 <p className="text-gray-500">
-                  Content for {activeTab} tab
+                  Content for <span className="font-medium">{activeTab}</span> tab
                 </p>
               </div>
             )}
           </div>
 
-          {/* RIGHT COLUMN – always visible */}
+          {/* RIGHT COLUMN — FIXED WIDTH */}
           <div className="space-y-6">
             <Attachments />
             <Payments />
           </div>
         </div>
-
       </div>
+
     </div>
   );
 }

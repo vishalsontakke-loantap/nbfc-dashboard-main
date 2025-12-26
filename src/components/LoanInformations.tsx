@@ -3,7 +3,7 @@ import { StatCard } from './StatCard';
 
 export function LoanInformations() {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+    <div className="bg-white p-6 shadow-sm mb-6">
       <div className="flex items-center gap-2 mb-6">
         <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
