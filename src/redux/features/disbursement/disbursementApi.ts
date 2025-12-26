@@ -19,14 +19,15 @@ export interface GetDisbursementsParams {
 
 export type Disbursement = {
   id: number;
-  app_id: string;
+  app_id?: string;
   lead_id: string;
   customer_name: string;
-  mobilenumber: string;
+  mobilenumber?: string;
   sanction_limit: string;
   bank_sanction_amount?: string | null;
   nbfc_sanction_amount?: string | null;
   created_at: string;
+  status: string;
 };
 
 export type DisbursementResponse = {
@@ -111,7 +112,6 @@ export const disbursementApi = createApi({
         return response.data || [];
       },
     }),
-
 
     getDisburseDataById: builder.query<any, string>({
       query: (id) =>

@@ -2,10 +2,9 @@ import { Route, Routes } from "react-router-dom";
 import Layout from "../Layout";
 import LoanAccount from "./LoanAccount";
 import NotFound from "../NotFound";
-import LoanDetailsView from "./LoanDetailsView";
 import { RepaymentSchedule } from "./RepaymentSchedule";
 import LoanStatement from "../LoanStatement";
-
+import LoanDetails from "./LoanDetails";
 const LoanAccountRoutes = () => {
   return (
     <>
@@ -22,7 +21,7 @@ const LoanAccountRoutes = () => {
           path="/:id"
           element={
             <Layout>
-              <LoanDetailsView />
+              <LoanDetails />
             </Layout>
           }
         />

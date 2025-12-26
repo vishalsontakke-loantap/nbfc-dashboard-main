@@ -38,6 +38,7 @@ type Disbursement = {
   mobilenumber: string;
   sanction_limit: string;
   created_at: string;
+  status: string;
 };
 
 export default function PendingApplication() {
@@ -149,6 +150,7 @@ export default function PendingApplication() {
                 <SelectItem value="Approved">Approved</SelectItem>
                 <SelectItem value="Rejected">Rejected</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="disbursed">Disbursed</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -162,12 +164,10 @@ export default function PendingApplication() {
             <Table className="!text-xs">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-center">SL</TableHead>
                   <TableHead className="text-center">Lead ID</TableHead>
-                  <TableHead className="text-center">App ID</TableHead>
                   <TableHead className="text-center">Customer</TableHead>
-                  <TableHead className="text-center">Mobile</TableHead>
                   <TableHead className="text-center">Sanction</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
                   <TableHead className="text-center">Created At</TableHead>
                   <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
@@ -208,34 +208,28 @@ export default function PendingApplication() {
 
                     return (
                       <TableRow key={d.id}>
-                        <TableCell className="text-center font-xs">
-                          {serial}
-                        </TableCell>
                         <TableCell className="text-center">
                           {d.lead_id}
                         </TableCell>
                         <TableCell className="text-center">
-                          {d.app_id}
-                        </TableCell>
-                        <TableCell className="text-center capitalize">
-                          {d.customer_name}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {d.mobilenumber}
+                          {d.customer_name.toUpperCase()}
                         </TableCell>
                         <TableCell className="text-center">
                           ₹{" "}
-                          {(Number(d.sanction_limit) || 0).toLocaleString()}
+                          {Number(d.sanction_limit) || 0}
                         </TableCell>
                         <TableCell className="text-center">
-                          {new Date(d.created_at).toLocaleString()}
+                          {d?.status || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {new Date(d.created_at).toISOString().split('T')[0]}
                         </TableCell>
                         <TableCell className="text-center">
                           <ActionButton
                             variant="outline"
                             size="sm"
                             onClick={() =>
-                              navigate(`/applications/${d.app_id}`)
+                              navigate(`/applications/${d.lead_id}`)
                             }
                           >
                             View

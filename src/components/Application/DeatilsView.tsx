@@ -51,78 +51,106 @@ import { Button } from '../ui/button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetDisburseDataByIdQuery } from '@/redux/features/disbursement/disbursementApi';
 import DetailsViewSkeleton from '../DetailsViewSkeleton';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
 
-// Mock data for demonstration
-// const loanApplication = {
-//   status: 'Approved', // 'Approved', 'Rejected', 'Pending'
-//   applicantName: 'Rajesh Kumar Sharma',
-//   applicationId: 'LA-2025-00847',
-//   nbfcId: 'NBFC-45821',
-//   accountNumber: '4578 9632 1047 8523',
-//   nbfcName: 'Bajaj Finserv Ltd.',
-//   poolBatchId: 'PB-2025-Q1-102',
-//   dateOfSubmission: '05-Nov-2025',
-//   loanType: 'Titanium',
+const cbs_rows = [
+  { label: "createPersonalCIF", key: "cif_number" },
+  { label: "PlantAndMachineAmend", key: "plantAndMachineAmendJournalNo" },
+  { label: "LoanAccountCreation", key: "loan_account_number" },
+  { label: "LoanAccountAdditionalDetails", key: "LoanAccAdditionalDetails_journal_no" },
+  { label: "LoanApproval", key: "LoanApproval_journal_no" },
+  { label: "LoanDisbursementCreation", key: "LoanDisbursmentCreation_journal_no" },
+  { label: "RepayScheduleEMI", key: "repaySchedule_journal_no" },
+  { label: "LoanAcceptance", key: "LoanAcceptance_journal_no" },
+  { label: "CreateCollateralAccount", key: "collateralNo" },
+  { label: "CreateCollateralGold", key: "collateralGold_journal_no" },
+  { label: "SecurityAuthorize", key: "AuthorizeSecurity_journal_no" },
+  { label: "Disbursement", key: "disbursement_journal_no" },
+];
 
-//   // Loan Details
-//   approvedLoanAmount: '₹15,00,000',
-//   buyoutAmount: '₹12,75,000',
-//   nbfcDisbursedAmount: '₹15,00,000',
-//   nbfcTenure: '60 months',
-//   bankTenure: '48 months',
-//   bankROI: '9.5%',
-//   processingFee: '₹15,000',
-//   emiAmount: '₹31,272',
-//   disbursementDate: '10-Nov-2025',
-//   collateralType: 'Property - Residential',
-
-//   // Risk & Analytics
-//   creditScore: 760,
-//   riskLevel: 'Low', // 'Low', 'Medium', 'High'
-//   defaultProbability: 8.2,
-//   debtToIncomeRatio: 32,
-//   loanToValueRatio: 65,
-
-//   // Remarks
-//   underwritingRemarks: 'Applicant has strong credit history with consistent income from salaried employment. Property valuation completed and found satisfactory. All KYC documents verified.',
-//   breResult: 'Pass',
-//   approvalNotes: 'Approved with standard terms. No additional collateral required.',
-//   lastUpdated: '10-Nov-2025, 2:45 PM',
-//   updatedBy: 'Priya Deshmukh (Senior Underwriter)'
-// };
-
-
-
-
-
-// Chart data
-const paymentHistoryData = [
-  { month: 'Jan', onTime: 100, delayed: 0 },
-  { month: 'Feb', onTime: 100, delayed: 0 },
-  { month: 'Mar', onTime: 95, delayed: 5 },
-  { month: 'Apr', onTime: 100, delayed: 0 },
-  { month: 'May', onTime: 100, delayed: 0 },
-  { month: 'Jun', onTime: 100, delayed: 0 },
-  { month: 'Jul', onTime: 100, delayed: 0 },
-  { month: 'Aug', onTime: 100, delayed: 0 },
+const apiRows = [
+  {
+    label: "Plant & Machine Amend",
+    journalKey: "plantAndMachineAmendJournalNo",
+    failedKey: "p&m_failed",
+  },
+  {
+    label: "Loan Account Creation",
+    journalKey: "loan_account_number",
+    failedKey: "loan_account_failed",
+  },
+  {
+    label: "Loan Account Additional Details",
+    journalKey: "LoanAccAdditionalDetails_journal_no",
+    failedKey: "loan_additional_failed",
+  },
+  {
+    label: "Loan Approval",
+    journalKey: "LoanApproval_journal_no",
+    failedKey: "loan_approval_failed",
+  },
+  {
+    label: "Loan Disbursement Creation",
+    journalKey: "LoanDisbursmentCreation_journal_no",
+    failedKey: "loan_disbursement_failed",
+  },
+  {
+    label: "Repay Schedule EMI",
+    journalKey: "repaySchedule_journal_no",
+    failedKey: "repay_schedule_failed",
+  },
+  {
+    label: "Create Collateral Account",
+    journalKey: "collateralNo",
+    failedKey: "collateral_failed",
+  },
+  {
+    label: "Create Collateral Gold",
+    journalKey: "collateralGold_journal_no",
+    failedKey: "collateral_gold_failed",
+  },
+  {
+    label: "Security Authorize",
+    journalKey: "AuthorizeSecurity_journal_no",
+    failedKey: "security_authorize_failed",
+  },
+  {
+    label: "Loan Acceptance",
+    journalKey: "LoanAcceptance_journal_no",
+    failedKey: "loan_acceptance_failed",
+  },
+  {
+    label: "Disbursement",
+    journalKey: "disbursement_journal_no",
+    failedKey: "disbursement_failed",
+  },
 ];
 
 
 export default function DetailsView() {
-  const navigate = useNavigate();
-  const repaymentView = () => {
-    navigate("/history/payment-details");
-  };
-  
-const { id } = useParams();
-console.log("get id from url",id)
 
- const { data:loanApplication, isLoading, error } =
+  const { id } = useParams();
+  console.log("get id from url", id)
+
+  const getStatus = (journalValue, failedKey, cbsStatus = {}) => {
+    if (journalValue) return "success";
+    if (cbsStatus?.[failedKey]) return "failed";
+    return "pending";
+  };
+
+  const { data: loanApplication, isLoading, error } =
     useGetDisburseDataByIdQuery(id!, {
       skip: !id,
-  });
+    });
 
-  console.log("getting data ",loanApplication)
+  console.log("getting data ", loanApplication)
 
   const [currentStatus] = useState("Pending");
 
@@ -153,19 +181,19 @@ console.log("get id from url",id)
   };
 
   if (isLoading) {
-  return <DetailsViewSkeleton />;
-}
+    return <DetailsViewSkeleton />;
+  }
 
-if (error || !loanApplication) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-red-600">Failed to load disbursement details</p>
-    </div>
-  );
-}
+  if (error || !loanApplication) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-600">Failed to load disbursement details</p>
+      </div>
+    );
+  }
 
   return (
-    
+
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50">
 
       {/* Main Content */}
@@ -204,30 +232,30 @@ if (error || !loanApplication) {
                       <p className="text-gray-900">{loanApplication.customer_name}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">BANK Application ID</p>
+                      <p className="text-sm text-gray-500 mb-1">NBFC Application ID</p>
                       <p className="text-gray-900">{loanApplication.lead_id}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">NBFC Application ID</p>
+                      <p className="text-sm text-gray-500 mb-1">BANK Application ID</p>
                       <p className="text-gray-900">{loanApplication.app_id}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">NBFC Name</p>
-                      <p className="text-gray-900">{loanApplication?.app_id}</p>
+                      <p className="text-sm text-gray-500 mb-1">Mobile Number</p>
+                      <p className="text-gray-900">{loanApplication?.mobilenumber}</p>
                     </div>
-                    
+
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Date of Submission</p>
                       <p className="text-gray-900 flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-sky-600" />
-                        {loanApplication.created_at}
+                        {new Date(loanApplication.created_at).toISOString().split('T')[0]}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">Loan Type</p>
-                        {"GOLD LOAN"}
+                      <p className="text-sm text-gray-500 mb-1">Tenure</p>
+                      {loanApplication?.loan_tenure}
                     </div>
                   </div>
                 </div>
@@ -248,68 +276,125 @@ if (error || !loanApplication) {
               </div>
               {/* </CardHeader> */}
               <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="space-y-4">
-                    <div className="p-4 bg-sky-50 rounded-xl border border-sky-100">
-                      <p className="text-sm text-gray-600 mb-1">Sanctioned Amount</p>
-                      <p className="text-gray-900">{loanApplication.sanction_limit}</p>
-                    </div>
-                    <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                      <p className="text-sm text-gray-600 mb-1">Bank Sanction Amount</p>
-                      <p className="text-gray-900">{loanApplication.bank_sanction_amount}</p>
-                    </div>
-                    <div className="p-4 bg-cyan-50 rounded-xl border border-cyan-100">
-                      <p className="text-sm text-gray-600 mb-1">NBFC Sanction Amount</p>
-                      <p className="text-gray-900">{loanApplication.nbfc_sanction_amount}</p>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-sky-50 rounded-xl border border-sky-100">
+                    <p className="text-sm text-gray-600 mb-1">Sanctioned Amount</p>
+                    <p className="text-gray-900">{loanApplication?.sanction_limit}</p>
                   </div>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                      <p className="text-sm text-gray-600 mb-1">NBFC Tenure</p>
-                      <p className="text-gray-900">{loanApplication?.nbfcTenure || 12}</p>
-                    </div>
-                    <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                      <p className="text-sm text-gray-600 mb-1">Bank Tenure</p>
-                      <p className="text-gray-900">{loanApplication?.bankTenure || 12}</p>
-                    </div>
-                    <div className="p-4 bg-violet-50 rounded-xl border border-violet-100">
-                      <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
-                        <Percent className="w-3 h-3" />
-                        Bank ROI
-                      </p>
-                      <p className="text-gray-900">{loanApplication?.bankROI || 9.85}</p>
-                    </div>
+
+                  <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <p className="text-sm text-gray-600 mb-1">Bank Sanction Amount</p>
+                    <p className="text-gray-900">{loanApplication?.bank_sanction_amount}</p>
                   </div>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                      <p className="text-sm text-gray-600 mb-1">NBFC ROI</p>
-                      <p className="text-gray-900">{loanApplication?.nbfcROI || 26.00}</p>
-                    </div>
-                    <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                      <p className="text-sm text-gray-600 mb-1">Blended ROI</p>
-                      <p className="text-gray-900">{loanApplication?.bankTenure || 13.08}</p>
-                    </div>
-                    {/* <div className="p-4 bg-violet-50 rounded-xl border border-violet-100">
-                      <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
-                        <Percent className="w-3 h-3" />
-                        Bank ROI
-                      </p>
-                      <p className="text-gray-900">{loanApplication?.bankROI || 9.85}</p>
-                    </div> */}
+
+                  <div className="p-4 bg-cyan-50 rounded-xl border border-cyan-100">
+                    <p className="text-sm text-gray-600 mb-1">NBFC Sanction Amount</p>
+                    <p className="text-gray-900">{loanApplication?.nbfc_sanction_amount}</p>
                   </div>
-                  <div className="space-y-4">
-                    {/* <div className="p-4 bg-rose-50 rounded-xl border border-rose-100">
-                      <p className="text-sm text-gray-600 mb-1">Processing Fee</p>
-                      <p className="text-gray-900">{loanApplication.processingFee}</p>
-                    </div> */}
-                    {/* <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
-                      <p className="text-sm text-gray-600 mb-1">EMI Amount</p>
-                      <p className="text-gray-900">{loanApplication.emiAmount}</p>
-                    </div> */}
-                    
+                  <div className="p-4 bg-sky-50 rounded-xl border border-sky-100">
+                    <p className="text-sm text-gray-600 mb-1">BRE status</p>
+                    <p className="text-gray-900">{loanApplication?.bre_status}</p>
+                  </div>
+
+                  <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <p className="text-sm text-gray-600 mb-1">Document Status</p>
+                    <p className="text-gray-900">{loanApplication?.doc_status}</p>
+                  </div>
+
+                  <div className="p-4 bg-cyan-50 rounded-xl border border-cyan-100">
+                    <p className="text-sm text-gray-600 mb-1">CBS Status</p>
+                    <p className="text-gray-900">{loanApplication?.cbs_status}</p>
+                  </div>
+                  <div className="p-4 bg-sky-50 rounded-xl border border-sky-100">
+                    <p className="text-sm text-gray-600 mb-1">BRE Message</p>
+                    <p className="text-gray-900">{loanApplication?.bre_message}</p>
+                  </div>
+
+                  <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <p className="text-sm text-gray-600 mb-1">Document Message</p>
+                    <p className="text-gray-900">{loanApplication?.doc_message}</p>
+                  </div>
+
+                  <div className="p-4 bg-cyan-50 rounded-xl border border-cyan-100">
+                    <p className="text-sm text-gray-600 mb-1">CBS Message</p>
+                    <p className="text-gray-900">{loanApplication?.cbs_message}</p>
                   </div>
                 </div>
+
                 <Separator className="my-6" />
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-md rounded-2xl border-0 p-2">
+              {/* <CardHeader className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-t-2xl"> */}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center ml-2">
+                  <BarChart3 className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <CardTitle>CBS API's Status</CardTitle>
+                  <CardDescription>Comprehensive CBS API status information</CardDescription>
+                </div>
+              </div>
+              {/* </CardHeader> */}
+              <CardContent>
+                {/* Credit Score and Risk Level */}
+                <div className="rounded-lg border bg-white ">
+                  <Table className="text-xs">
+                    <TableHeader>
+                      <TableRow className="bg-muted/40">
+                        <TableHead className="w-[45%] text-left font-semibold">
+                          API Name
+                        </TableHead>
+                        <TableHead className="text-start font-semibold">
+                          Journal
+                        </TableHead>
+                        <TableHead className="text-center font-semibold">
+                          Status
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+
+                    <TableBody>
+                      {apiRows.map(({ label, journalKey, failedKey }) => {
+                        const journal = loanApplication?.[journalKey];
+                        const status = getStatus(journal, failedKey, loanApplication?.cbs_status);
+
+                        return (
+                          <TableRow key={journalKey} className="hover:bg-muted/30">
+                            <TableCell className="py-2 text-muted-foreground">
+                              {label}
+                            </TableCell>
+
+                            <TableCell className="py-2 text-center font-mono text-[11px]">
+                              {journal || "—"}
+                            </TableCell>
+
+                            <TableCell className="py-2 text-center">
+                              <span
+                                className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium
+              ${status === "success"
+                                    ? "bg-green-100 text-green-700"
+                                    : status === "failed"
+                                      ? "bg-red-100 text-red-700"
+                                      : "bg-yellow-100 text-yellow-700"
+                                  }
+            `}
+                              >
+                                {status === "success"
+                                  ? "Success"
+                                  : status === "failed"
+                                    ? "Failed"
+                                    : "Pending"}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+
+                  </Table>
+                </div>
               </CardContent>
             </Card>
 
@@ -353,7 +438,7 @@ if (error || !loanApplication) {
                             stroke="#10b981"
                             strokeWidth="8"
                             fill="none"
-                            strokeDasharray={`${((loanApplication?.creditScore||751 )/ 850) * 251.2} 251.2`}
+                            strokeDasharray={`${((loanApplication?.creditScore || 751) / 850) * 251.2} 251.2`}
                             strokeLinecap="round"
                           />
                         </svg>
@@ -371,8 +456,8 @@ if (error || !loanApplication) {
                         <p className="text-3xl">{loanApplication?.riskLevel || 'Low'}</p>
                       </div>
                       <Shield className={`w-16 h-16 ${loanApplication.riskLevel === 'Low' ? 'text-green-600' :
-                          loanApplication.riskLevel === 'Medium' ? 'text-amber-600' :
-                            'text-red-600'
+                        loanApplication.riskLevel === 'Medium' ? 'text-amber-600' :
+                          'text-red-600'
                         }`} />
                     </div>
                     <Progress
@@ -429,7 +514,7 @@ if (error || !loanApplication) {
                   <div className="p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
                     <p className="text-sm text-gray-600 mb-3">Debt-to-Income Ratio</p>
                     <div className="flex items-end gap-2 mb-3">
-                      <p className="text-3xl text-gray-900">{loanApplication?.debtToIncomeRatio|| 48}%</p>
+                      <p className="text-3xl text-gray-900">{loanApplication?.debtToIncomeRatio || 48}%</p>
                       <CreditCard className="w-5 h-5 text-blue-500 mb-1" />
                     </div>
                     <Progress
@@ -462,7 +547,7 @@ if (error || !loanApplication) {
                     <p className="text-sm text-gray-600 mb-2">Auto BRE Result</p>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-green-600" />
-                      <p className="text-gray-900">{ "Approved"}</p>
+                      <p className="text-gray-900">{"Approved"}</p>
                     </div>
                   </div>
 
@@ -482,7 +567,7 @@ if (error || !loanApplication) {
                     <Clock className="w-4 h-4" />
                     <span>Last Updated: {loanApplication.update_at}</span>
                   </div>
-                  
+
                 </div>
               </CardContent>
             </Card>
@@ -492,8 +577,8 @@ if (error || !loanApplication) {
           <div className="lg:col-span-1">
             <div className="sticky top-16 space-y-6"></div>
           </div>
-        </div>
-      </main>
-    </div>
+        </div >
+      </main >
+    </div >
   );
 }
