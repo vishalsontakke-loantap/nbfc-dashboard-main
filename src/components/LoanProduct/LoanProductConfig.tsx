@@ -291,14 +291,14 @@ const LoanProductConfig: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col space-y-4 p-5">
+    <div className="flex flex-col space-y-4 p-3">
       <CardHeader
         title={productId ? "Edit Loan Product" : "Loan Product Details"}
         subtitle={productId ? "Edit existing product" : `Create product for NBFC ${nbfcId ?? ""}`}
       />
 
       {loading || (productId && isFetchingDetails) ? (
-         <div className="flex flex-col space-y-4 p-5">
+         <div className="flex flex-col space-y-4 p-3">
           <div className="mx-auto">
             <MultiSectionForm sections={formSkeletons} inputColumns={3} spacing="tight" />
           </div>

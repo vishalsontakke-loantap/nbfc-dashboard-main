@@ -53,7 +53,7 @@ const DisbursementFileRundown = () => {
 
     
   return (
-    <div className="flex flex-col space-y-4 p-5">
+    <div className="flex flex-col space-y-4 p-3">
       <div className="flex flex-col bg-white shadow-sm rounded-lg p-5 space-y-3 space-x-4">
         <div className="flex items-center justify-between">
           {/** DISBURSEMENT FILE NAME */}

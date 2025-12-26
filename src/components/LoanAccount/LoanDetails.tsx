@@ -59,7 +59,7 @@ function LoanDetails() {
 
   return (
     <div className="min-h-screen bg-[#c3eeff] ">
-      <div className="max-w-[1600px] mx-auto p-6">
+      <div className="max-w-[1600px] mx-auto p-3">
         {/* Header Section */}
         <LoanHeader
           customer_name={loanData?.customer_name}
@@ -74,7 +74,7 @@ function LoanDetails() {
         />
 
         {/* Navigation Tabs */}
-        <div className="grid grid-cols-[1fr_380px] gap-6">
+        <div className="grid grid-cols-[1fr_380px] gap-3">
           {/* LEFT COLUMN */}
           <div >
             {/* TAB NAVBAR */}

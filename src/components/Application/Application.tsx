@@ -20,7 +20,7 @@ const Application = () => {
   }, []);
 
   return (
-    <div className="flex flex-col space-y-4 p-5">
+    <div className="flex flex-col space-y-4 p-3">
       {loading ? (
         <Card className="mt-40">
           <CardContent>

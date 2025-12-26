@@ -68,18 +68,9 @@ const Dashboard = () => {
     navigate("/applications");
   };
   return (
-    <div className="">
-      <Card className="scale-95 w-full h-full flex flex-col p-2 px-6 py-4">
-        {/* Section Title */}
-        {/* <CardHeadline title="Dashboard Overview" /> */}
-
+    <div className="flex flex-col space-y-4 p-3">
+      <Card className="w-full h-full flex flex-col p-2 px-6 py-4">
         <CardContent className="space-y-6">
-          {/* Header */}
-          {/* <PageHeader
-            title=""
-            description="Pool Buyout Module Overview - Real-time insights and performance metrics"
-          /> */}
-
           {/* Quick Actions */}
           <Card className="p-3 bg-gradient-to-r from-[#0B5FFF] to-[#00A676] text-white shadow-lg">
             <div className="flex items-center justify-between flex-wrap gap-4">
@@ -237,59 +228,6 @@ const Dashboard = () => {
               </LineChart>
             </ResponsiveContainer>
           </Card>
-
-          {/* Recent Activity */}
-          {/* <Card className="p-3">
-            <h3 className="mb-4 font-semibold">Recent Activity</h3>
-            <div className="space-y-4">
-              {[
-                {
-                  action: "New lead created",
-                  nbfc: "Muthoot Finance",
-                  time: "5 mins ago",
-                },
-                {
-                  action: "Application approved",
-                  nbfc: "MAS Financial",
-                  time: "12 mins ago",
-                },
-                {
-                  action: "Document verified",
-                  nbfc: "Capri Global",
-                  time: "23 mins ago",
-                },
-                {
-                  action: "Loan disbursed",
-                  nbfc: "Muthoot Finance",
-                  time: "1 hour ago",
-                },
-              ].map((activity, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div className="flex-1">
-                    <p className="font-medium">{activity.action}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {activity.nbfc}
-                    </p>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {activity.time}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </Card> */}
-
-          {/* Decorative Segment */}
-          {/* <SegmentsCard
-            imgSrc={assetPath("/images/pool_buyout_segment.svg")}
-            imgAlt="Pool Buyout Segment"
-            badge="overview"
-            heading="Dashboard Summary"
-            subtext="A complete visual overview of Pool Buyout activity."
-          /> */}
         </CardContent>
       </Card>
     </div>

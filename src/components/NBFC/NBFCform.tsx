@@ -207,14 +207,14 @@ const NBFCform: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col space-y-4 p-5">
+    <div className="flex flex-col space-y-4 p-3">
       <CardHeader
         title={id ? "Edit NBFC Profile" : "NBFC Profile Details"}
         subtitle="Tell us about your NBFC to begin your onboarding journey."
       />
 
       {loading || (id && isFetchingDetails) ? (
-        <div className="flex flex-col space-y-4 p-5 mt-5">
+        <div className="flex flex-col space-y-4 p-3 mt-5">
           <div className="mx-auto">
             <MultiSectionForm sections={formSkeletons} inputColumns={4} spacing="tight" />
           </div>

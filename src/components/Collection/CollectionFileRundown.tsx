@@ -89,7 +89,7 @@ const CollectionFileRundown = () => {
         (isError || rows.length === 0);
 
     return (
-        <div className="flex flex-col space-y-4 p-5">
+        <div className="flex flex-col space-y-4 p-3">
             {/* HEADER */}
             <div className="flex flex-col bg-white shadow-sm rounded-lg p-5 space-y-3">
                 <div className="flex items-center justify-between">
@@ -152,9 +152,9 @@ const CollectionFileRundown = () => {
             </div>
 
             {/* ACTIONS */}
-            <div className="flex justify-end mr-5">
+            {/* <div className="flex justify-end mr-5">
                 <CollectionConfirmation />
-            </div>
+            </div> */}
 
             {/* TABLE */}
             <div className="bg-white shadow-sm rounded-lg p-5">

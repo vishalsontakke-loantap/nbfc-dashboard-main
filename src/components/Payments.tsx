@@ -1,58 +1,44 @@
-interface Payment {
-  date: string;
-  month: string;
-  year: string;
-  amount: string;
-}
-
-const paidDues: Payment[] = [
-  { date: '28', month: 'AUG', year: '2019', amount: '3,20,000' },
-  { date: '28', month: 'JUL', year: '2019', amount: '3,20,000' },
-  { date: '28', month: 'JUN', year: '2019', amount: '3,20,000' },
-  { date: '28', month: 'MAY', year: '2019', amount: '3,20,000' },
-];
+import { Calendar, IndianRupee } from 'lucide-react';
 
 export function Payments() {
+  const payments = [
+    { date: '28 SEP', year: '2019', amount: '4,00,000', status: 'upcoming', label: 'NEXT PAYMENT' },
+    { date: '28 AUG', year: '2019', amount: '3,20,000', status: 'paid', label: 'PAID DUE' },
+    { date: '28 JUL', year: '2019', amount: '-', status: 'paid', label: 'PAID DUE' },
+    { date: '28 JUN', year: '2019', amount: '3,20,000', status: 'paid', label: 'PAID DUE' },
+    { date: '28 MAY', year: '2019', amount: '3,20,000', status: 'paid', label: 'PAID DUE' },
+  ];
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="font-semibold text-gray-900 mb-6">Payments</h2>
-      
-      <div className="mb-6">
-        <p className="text-xs text-gray-500 mb-3">NEXT PAYMENT</p>
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900 italic">28</p>
-              <p className="text-sm font-medium text-gray-600 italic">SEP</p>
-              <p className="text-xs text-gray-400">2019</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Due Amount</p>
-              <p className="text-xl font-semibold text-gray-900">4,00,000</p>
-            </div>
-          </div>
-        </div>
+    <div className="bg-white border border-gray-200 rounded-lg">
+      <div className="p-4 border-b border-gray-200">
+        <h3 className="font-semibold text-gray-900">Payments</h3>
       </div>
-      
-      <div>
-        <p className="text-xs text-gray-500 mb-3">PAID DUE</p>
-        <div className="space-y-3">
-          {paidDues.map((payment, index) => (
-            <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <p className="text-xl font-bold text-gray-900 italic">{payment.date}</p>
-                  <p className="text-sm font-medium text-gray-600 italic">{payment.month}</p>
-                  <p className="text-xs text-gray-400">{payment.year}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Due Amount</p>
-                  <p className="text-base font-semibold text-gray-900">{payment.amount}</p>
-                </div>
+      <div className="p-4 space-y-4">
+        {payments.map((payment, index) => (
+          <div key={index} className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                payment.status === 'upcoming' ? 'bg-blue-100' : 'bg-green-100'
+              }`}>
+                <Calendar className={`w-5 h-5 ${
+                  payment.status === 'upcoming' ? 'text-blue-600' : 'text-green-600'
+                }`} />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase">{payment.label}</p>
+                <p className="font-semibold text-gray-900">
+                  {payment.date}
+                  <span className="text-xs text-gray-400 ml-1">{payment.year}</span>
+                </p>
               </div>
             </div>
-          ))}
-        </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500">Due Amount</p>
+              <p className="font-semibold text-gray-900">{payment.amount}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
