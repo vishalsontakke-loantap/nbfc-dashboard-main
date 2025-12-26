@@ -124,12 +124,12 @@ const columns: ColumnDef<StatementRow>[] = [
 
 export default function LoanStatement() {
     const navigate = useNavigate();
-    const {loan_id} = useParams();
+    const {id} = useParams();
 
     const [activeTab, setActiveTab] = React.useState<"nbfc" | "bank" | "total">("nbfc");
 
     const {data: loanStatementResponse, error, isLoading, isFetching, refetch} = useGetLoanAccountStatementQuery({ 
-        loan_id: loan_id || "",
+        loan_id: id || "",
         statement_type: activeTab 
     });
     console.log("Loan Statement Data:", loanStatementResponse, error);
@@ -169,8 +169,8 @@ export default function LoanStatement() {
 
     if (isLoading || isFetching) {
         return (
-            <div className="w-full px-6 py-4">
-                <div className="bg-white shadow-sm rounded-lg border border-[#D1E9FF] p-4">
+            <div className="w-full">
+                <div className="bg-white shadow-sm border border-[#D1E9FF] p-4">
                     <SkeletonTable rows={10} columns={7} />
                 </div>
             </div>
@@ -179,14 +179,14 @@ export default function LoanStatement() {
 
 
     return (
-        <div className="w-full px-6 py-4">
+        <div className="w-full">
 
-            <CardHeader className="mb-3">
+            {/* <CardHeader className="mb-3">
                 <CardTitle>Account Statement</CardTitle>
                 <CardDescription>
-                    Loan Account - {loan_id}
+                    Loan Account - {id}
                 </CardDescription>
-            </CardHeader>
+            </CardHeader> */}
 
             {/* Statement Table */}
             <div className="bg-white shadow-sm rounded-lg border border-[#D1E9FF]">
