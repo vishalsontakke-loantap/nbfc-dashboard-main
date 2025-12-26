@@ -24,7 +24,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import useDebounce from "@/hooks/useDebounce";
+import useDebounce from "@/hooks/UseDebounce";
 import { useGetDisbursementsQuery } from "@/redux/features/disbursement/disbursementApi";
 import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { Button as ActionButton } from "@/components/ui/button";

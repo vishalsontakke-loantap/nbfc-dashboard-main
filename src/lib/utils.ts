@@ -41,3 +41,10 @@ export function assetPath(path: string): string {
   return `${base}${path.replace(/^\//, "")}`;
 }
 
+export function formatIndianCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2,
+  }).format(amount);
+}

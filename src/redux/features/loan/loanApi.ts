@@ -13,6 +13,8 @@ export interface LoanAccount {
   customer_name: string;
   mobilenumber: string;
   loan_amount: string;
+  loan_status:string;
+  bank_loan_date:string;
   status: string;
   created_at: string;
   nbfcName?: string;
@@ -20,7 +22,7 @@ export interface LoanAccount {
   bank_sanction_amount?: string;
   nbfc_sanction_amount?: string;
   nbfcTenure?: number;
-  loan_tenure?: number;
+  loan_tenure: number;
   bank_interest?: string;
   creditScore?: number;
   riskLevel?: string;
@@ -28,6 +30,10 @@ export interface LoanAccount {
   loanToValueRatio?: number;
   breResult?: string;
   lastUpdated?: string;
+  sanction_limit?: number;
+  blended_interest?: string;
+  nbfc_ref_no?: string;
+  mobile_number?: string;
 }
 
 export interface LoanPaginationResponse {
@@ -85,7 +91,7 @@ export const loanApi = createApi({
       transformResponse: (response: LoanPaginationResponse) => response,
     }),
 
-    getLoanAccountAppDetails: builder.query<LoanAccount[], string>({
+    getLoanAccountAppDetails: builder.query<LoanAccount, string>({
       query: (loan_id) => ({
         url: "/loan-account-app-details",
         method: "GET",

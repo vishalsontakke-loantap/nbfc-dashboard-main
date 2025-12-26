@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { LoanHeader } from '../LoanHeader';
 import { CustomerMetaInfo } from '../CustomerMetaInfo';
 import { LoanInformations } from '../LoanInformations';
+import CollectionsTable from "../CollectionsTable";
 import { UserInformations } from '../UserInformations';
 import { GoldSecorInformation } from '../GoldSecorInformation';
 import { Attachments } from '../Attachments';
@@ -24,22 +25,6 @@ const tabs = [
 
 function LoanDetails() {
   const [activeTab, setActiveTab] = useState('Dashboard');
-
-  // Exact data from the image
-  const customerData = {
-    name: 'Ramesh Sharam',
-    location: 'Chennai, Tamil Nadu',
-    status: 'Approved',
-    applicationId: 'APP098907890',
-    date: '04/10/2025',
-    loanAmount: '₹ 1,35,000',
-    email: 'Ramesh@gmail.com',
-    phone: '8234834394',
-    loanType: 'Gold Loan',
-    interestRate: '17%',
-    tenure: '24 Months',
-    loanId: 'MFL0008123'
-  };
 
   const userInfo = {
     pan: 'CLBPM1603D',
@@ -76,18 +61,15 @@ function LoanDetails() {
       <div className="max-w-[1600px] mx-auto p-6">
         {/* Header Section */}
         <LoanHeader
-          customerName={customerData.name}
-          location={customerData.location}
-          status={customerData.status}
-          applicationId={customerData.applicationId}
-          date={customerData.date}
-          loanAmount={customerData.loanAmount}
-          email={customerData.email}
-          phone={customerData.phone}
-          loanType={customerData.loanType}
-          interestRate={customerData.interestRate}
-          tenure={customerData.tenure}
-          loanId={customerData.loanId}
+          customer_name={loanData?.customer_name}
+          loan_status={loanData?.loan_status}
+          loan_account_number={loanData?.loan_account_number}
+          bank_loan_date={loanData?.bank_loan_date}
+          sanction_limit={loanData?.sanction_limit}
+          mobile_number={loanData?.mobile_number}
+          interestRate={loanData?.blended_interest}
+          loan_tenure={loanData?.loan_tenure}
+          nbfc_ref_no={loanData?.nbfc_ref_no}
         />
 
         {/* Navigation Tabs */}
@@ -121,6 +103,12 @@ function LoanDetails() {
             {activeTab === "Dashboard" && (
               <>
                 <LoanInformations />
+                <CollectionsTable />
+              </>
+            )}
+            {activeTab == "Detailed Loan Info" && (
+              <>
+              
                 <UserInformations userInfo={userInfo} />
                 <GoldSecorInformation goldSecorInfo={goldSecorInfo} />
               </>
@@ -129,7 +117,7 @@ function LoanDetails() {
             {activeTab === "Repayments" && <RepaymentSchedule />}
             {activeTab === "Statement" && <LoanStatement />}
 
-            {activeTab !== "Dashboard" && activeTab !== "Repayments" && activeTab !== "Statement"&& (
+            {activeTab !== "Dashboard" && activeTab !== "Repayments" && activeTab !== "Statement" && (
               <div className="bg-white shadow-sm p-8 text-center ">
                 <p className="text-gray-500">
                   Content for <span className="font-medium">{activeTab}</span> tab

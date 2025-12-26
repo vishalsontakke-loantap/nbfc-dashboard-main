@@ -139,7 +139,7 @@ export default function DetailsView() {
   const { id } = useParams();
   console.log("get id from url", id)
 
-  const getStatus = (journalValue, failedKey, cbsStatus = {}) => {
+  const getStatus = (journalValue:any, failedKey:any, cbsStatus:any = {}) => {
     if (journalValue) return "success";
     if (cbsStatus?.[failedKey]) return "failed";
     return "pending";
@@ -366,7 +366,7 @@ export default function DetailsView() {
                               {label}
                             </TableCell>
 
-                            <TableCell className="py-2 text-center font-mono text-[11px]">
+                            <TableCell className="py-2 text-start font-mono text-[11px]">
                               {journal || "—"}
                             </TableCell>
 

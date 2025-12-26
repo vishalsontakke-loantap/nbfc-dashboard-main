@@ -250,7 +250,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
 
               {/* Remember Me and Forgot Password */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2 display-none">
                   <Checkbox
                     id="remember"
                     checked={rememberMe}
@@ -262,7 +262,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
                   >
                     Remember Me
                   </label>
-                </div>
+                </div> */}
                 <a
                   href="#"
                   className="text-[#00ADEF] hover:text-[#1B4E9B] transition-colors"
