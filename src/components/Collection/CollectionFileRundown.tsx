@@ -152,9 +152,9 @@ const CollectionFileRundown = () => {
             </div>
 
             {/* ACTIONS */}
-            <div className="flex justify-end mr-5">
+            {/* <div className="flex justify-end mr-5">
                 <CollectionConfirmation />
-            </div>
+            </div> */}
 
             {/* TABLE */}
             <div className="bg-white shadow-sm rounded-lg p-5">

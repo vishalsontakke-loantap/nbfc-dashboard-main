@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ArrowUpDown, Funnel } from "lucide-react";
+import { ChevronDown, ArrowUpDown, Funnel, Upload } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 
 import CardHeader from "../CardHeader";
@@ -65,6 +66,7 @@ const CollectionFileUpload: React.FC = () => {
   const selectedNbfcId = useSelector(getSelectedNbfcId);
   const navigate = useNavigate();
   const [globalFilter, setGlobalFilter] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -117,6 +119,7 @@ useEffect(() => {
       // Clear the file input element
       const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       if (fileInput) fileInput.value = "";
+      setIsModalOpen(false); // Close modal on success
       refetch(); // 🔄 Refresh table after upload
     } catch (err) {
       console.error("Upload failed", err);
@@ -131,89 +134,118 @@ useEffect(() => {
     <div className="flex flex-col space-y-4 p-5">
       <CardHeader title="Collection File Upload" subtitle="Upload your collection files here." />
 
-      {/* Upload form */}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="bg-white shadow-sm rounded-lg p-4 space-y-3 space-x-4">
-            <div className="flex items-center justify-between">
-              <CardHeadline title="Upload Collection File" hr="no" />
-              <Button
-                type="button"
-                variant="outline"
-                className="rounded-sm bg-white text-blue-600 border-blue-500 hover:bg-blue-50"
-              >
-                Export Sample File
-                <ChevronDown />
-              </Button>
-            </div>
-
-            <hr />
-
-            <span className="flex flex-col items-center justify-center pt-10">
-              <img src={assetPath("/images/icons/file_open.svg")} alt="Upload" className="w-14" />
-              <h3 className="font-semibold text-muted-foreground">
-                Key Platform Fields & Expected Mapping Columns
-              </h3>
-              <p className="text-xs text-muted-foreground text-center mt-2 mb-4 max-w-[85dvh]">
-                Download the sample format, upload your collection file, and map your columns.
-              </p>
-
-              <FormField
-                control={form.control}
-                name="file"
-                render={({ field }) => {
-                  const fileRef = useRef<HTMLInputElement | null>(null);
-                  return (
-                    <FormItem>
-                      <input
-                        type="file"
-                        accept=".csv,.xls,.xlsx,.xlsm"
-                        ref={(e) => {
-                          fileRef.current = e;
-                          field.ref(e);
-                        }}
-                        onChange={(e) => field.onChange(e.target.files?.[0])}
-                        className="hidden"
-                      />
-                      <div className="flex gap-2">
-                        <Button type="button" onClick={() => fileRef.current?.click()} disabled={!!field.value}>
-                          {field.value?.name ? "Uploaded" : "Upload"}
-                        </Button>
-
-                        {field.value?.name && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => {
-                              form.setValue("file", undefined);
-                              if (fileRef.current) fileRef.current.value = "";
-                            }}
-                          >
-                            Clear
-                          </Button>
-                        )}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            </span>
-              <span className="flex justify-end items-center space-x-2 mr-8">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Uploading..." : "Next"}
-            </Button>
-          </span>
-          </div>
-
-        </form>
-      </Form>
-
       {/* Batch Table */}
       <div className="w-full">
         <div className="bg-white shadow-sm rounded-lg mb-6 border border-[#D1E9FF]">
           <div className="flex items-center justify-between p-4 border-b-2 border-[#C3EEFF]">
             <h2 className="text-lg font-bold text-[#0A4DA2]">Batch List</h2>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload Collection File
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold text-[#0A4DA2]">Upload Collection File</DialogTitle>
+                  <DialogDescription>
+                    Download the sample format, upload your collection file, and map your columns.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="space-y-4">
+                      <div className="flex justify-end">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="rounded-sm bg-white text-blue-600 border-blue-500 hover:bg-blue-50"
+                        >
+                          Export Sample File
+                          <ChevronDown className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+                        <img src={assetPath("/images/icons/file_open.svg")} alt="Upload" className="w-16 mb-4" />
+                        <h3 className="font-semibold text-gray-700 mb-2">
+                          Key Platform Fields & Expected Mapping Columns
+                        </h3>
+                        <p className="text-sm text-gray-500 text-center mb-6 max-w-md">
+                          Upload your collection file in CSV, XLS, XLSX, or XLSM format.
+                        </p>
+
+                        <FormField
+                          control={form.control}
+                          name="file"
+                          render={({ field }) => {
+                            const fileRef = useRef<HTMLInputElement | null>(null);
+                            return (
+                              <FormItem>
+                                <input
+                                  type="file"
+                                  accept=".csv,.xls,.xlsx,.xlsm"
+                                  ref={(e) => {
+                                    fileRef.current = e;
+                                    field.ref(e);
+                                  }}
+                                  onChange={(e) => field.onChange(e.target.files?.[0])}
+                                  className="hidden"
+                                />
+                                <div className="flex flex-col items-center gap-3">
+                                  {field.value?.name ? (
+                                    <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                                      <span className="text-sm text-blue-700 font-medium">{field.value.name}</span>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          form.setValue("file", undefined);
+                                          if (fileRef.current) fileRef.current.value = "";
+                                        }}
+                                        className="h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                      >
+                                        Remove
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <Button
+                                      type="button"
+                                      onClick={() => fileRef.current?.click()}
+                                      className="bg-blue-600 hover:bg-blue-700"
+                                    >
+                                      Choose File
+                                    </Button>
+                                  )}
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsModalOpen(false)}
+                        disabled={isLoading}
+                      >
+                        Cancel
+                      </Button>
+                      <Button type="submit" disabled={isLoading || !form.watch("file")} className="bg-blue-600 hover:bg-blue-700">
+                        {isLoading ? "Uploading..." : "Upload & Process"}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <div className="overflow-x-auto">

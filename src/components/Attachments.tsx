@@ -34,14 +34,7 @@ export function Attachments() {
         </div>
       </div>
       
-      <div className="p-6">
-        <div className="flex justify-end mb-4">
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1">
-            <Download className="w-4 h-4" />
-            Download All
-          </button>
-        </div>
-        
+      <div className="p-6">        
         <div className="space-y-3">
           {attachments.map((attachment, index) => (
             <div key={index} className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
@@ -58,6 +51,12 @@ export function Attachments() {
               </div>
             </div>
           ))}
+        </div>
+         <div className="flex justify-center ">
+          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1">
+            <Download className="w-4 h-4" />
+            Download All
+          </button>
         </div>
       </div>
     </div>
