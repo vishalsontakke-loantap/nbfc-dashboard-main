@@ -201,7 +201,7 @@ export default function PendingApplication() {
                       <div className="flex justify-center py-8">
                         <EmptyContentState 
                           title={`No ${statusFilter} Applications`}
-                          message="There are no pending applications at this time."
+                          message={`There are no ${statusFilter} applications at this time.`}
                         />
                       </div>
                     </TableCell>

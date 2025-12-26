@@ -17,6 +17,7 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/components/ui/pagination";
+import { EmptyContentState } from '@/components/Error';
 
 export function CheckerDashboard() {
   const navigate = useNavigate();
@@ -168,7 +169,7 @@ export function CheckerDashboard() {
                   <TableRow>
                     <TableCell colSpan={7} className="p-0">
                       <div className="flex justify-center py-8">
-                        <EmptyContentState 
+                        <EmptyContentState
                           title="No Requests Found"
                           message="There are no pending requests at this time."
                         />
