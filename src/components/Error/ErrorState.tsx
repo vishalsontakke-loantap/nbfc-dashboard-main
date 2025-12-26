@@ -17,7 +17,7 @@ export function ErrorState({
 
   const handleClick = () => {
     if (onRetry) {
-      onRetry();
+      navigate("/");
     } else {
       navigate("/");
     }
@@ -25,7 +25,7 @@ export function ErrorState({
 
   return (
     <div className="flex items-center justify-center min-h-[400px] p-8">
-      <div className="bg-white rounded-[24px] shadow-lg max-w-[450px] w-full p-12">
+      <div className=" max-w-[450px] w-full p-12">
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">

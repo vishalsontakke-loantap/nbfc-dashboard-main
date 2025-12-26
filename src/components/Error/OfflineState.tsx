@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import Layout from "../Layout";
 
 interface OfflineStateProps {
   onRetry?: () => void;
@@ -14,8 +14,9 @@ export function OfflineState({ onRetry }: OfflineStateProps) {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[400px] p-8">
-      <div className="bg-white rounded-[24px] shadow-lg max-w-[400px] w-full p-12">
+    <Layout>
+      <div className="flex items-center justify-center min-h-[500px] p-8">
+      <div className=" max-w-[500px] w-full p-12">
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
@@ -40,5 +41,7 @@ export function OfflineState({ onRetry }: OfflineStateProps) {
         </div>
       </div>
     </div>
+    </Layout>
+
   );
 }

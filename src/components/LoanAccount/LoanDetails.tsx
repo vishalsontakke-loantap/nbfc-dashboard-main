@@ -12,6 +12,7 @@ import { useGetLoanAccountAppDetailsQuery } from '@/redux/features/loan/loanApi'
 import DetailsViewSkeleton from '../DetailsViewSkeleton';
 import { RepaymentSchedule } from './RepaymentSchedule';
 import LoanStatement from './LoanStatement';
+import { Documents } from './Documents';
 
 // Navigation tabs
 const tabs = [
@@ -116,6 +117,7 @@ function LoanDetails() {
 
             {activeTab === "Repayments" && <RepaymentSchedule />}
             {activeTab === "Statement" && <LoanStatement />}
+            {activeTab === "Documents" && <Documents />}
 
             {activeTab !== "Dashboard" && activeTab !== "Repayments" && activeTab !== "Statement" && (
               <div className="bg-white shadow-sm p-8 text-center ">

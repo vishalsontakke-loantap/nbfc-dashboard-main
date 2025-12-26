@@ -31,6 +31,7 @@ import {
 
 import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { useSelector } from "react-redux";
+import { EmptyContentState, ErrorState } from "../Error";
 
 const CollectionFileRundown = () => {
     const { batchId } = useParams<{ batchId: string }>();
@@ -159,10 +160,17 @@ const CollectionFileRundown = () => {
             <div className="bg-white shadow-sm rounded-lg p-5">
                 {isLoading || isFetching ? (
                     <SkeletonTable rows={5} columns={6} />
-                ) : showNoData ? (
-                    <div className="text-center py-10 text-sm text-muted-foreground">
-                        No data found.
-                    </div>
+                ) : isError ? (
+                    <ErrorState
+                        title="Unable to Load Collection Data"
+                        message="There was an error loading the collection batch data. Please try again later."
+                        onRetry={refetchCollectionData}
+                    />
+                ) : rows.length === 0 ? (
+                    <EmptyContentState
+                        title="No Leads Found found for this Batch."
+                        message="There are no collection leads available in this batch at the moment." 
+                    />
                 ) : (
                     <>
                         <Table>

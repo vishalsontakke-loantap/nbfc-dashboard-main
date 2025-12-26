@@ -11,7 +11,7 @@ export function EmptyContentState({
 }: EmptyContentStateProps) {
   return (
     <div className="flex items-center justify-center min-h-[400px] p-8">
-      <div className="bg-white rounded-[24px] shadow-lg max-w-[400px] w-full p-12">
+      <div className=" w-full p-12">
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">

@@ -14,8 +14,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import PaginationComponent from "@/components/PaginationComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetLoanAccountStatementQuery } from "@/redux/features/loan/loanApi";
+// import { ErrorState, EmptyContentState } from "./Error";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { EmptyContentState, ErrorState } from "../Error";
 
 interface StatementRow {
     date: string;
@@ -124,13 +126,13 @@ const columns: ColumnDef<StatementRow>[] = [
 
 export default function LoanStatement() {
     const navigate = useNavigate();
-    const {id} = useParams();
+    const { id } = useParams();
 
     const [activeTab, setActiveTab] = React.useState<"nbfc" | "bank" | "total">("nbfc");
 
-    const {data: loanStatementResponse, error, isLoading, isFetching, refetch} = useGetLoanAccountStatementQuery({ 
+    const { data: loanStatementResponse, error, isLoading, isFetching, refetch } = useGetLoanAccountStatementQuery({
         loan_id: id || "",
-        statement_type: activeTab 
+        statement_type: activeTab
     });
     console.log("Loan Statement Data:", loanStatementResponse, error);
 
@@ -141,7 +143,7 @@ export default function LoanStatement() {
     // Transform API data to table format
     const transformedData: StatementRow[] = React.useMemo(() => {
         if (!loanStatementResponse?.data) return [];
-        
+
         return loanStatementResponse.data.map((item: ApiStatementItem) => ({
             date: item.date,
             description: item.particulars,
@@ -177,6 +179,28 @@ export default function LoanStatement() {
         );
     }
 
+    if (error) {
+        return (
+            <div className="w-full px-6 py-4 flex justify-center items-center min-h-[400px]">
+                <ErrorState
+                    title="Unable to Load Statement"
+                    message="There was an error loading the loan statement. Please try again later."
+                    onRetry={refetch}
+                />
+            </div>
+        );
+    }
+
+    if (!transformedData.length) {
+        return (
+            <div className="w-full px-6 py-4 flex justify-center items-center min-h-[400px]">
+                <EmptyContentState
+                    title="No Statement Data"
+                    message="There are no statement records available for this loan account."
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="w-full">
@@ -193,7 +217,7 @@ export default function LoanStatement() {
                 <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
                     <div className="flex items-center gap-[16px]">
                         <p className="font-['Poppins:Bold',sans-serif] text-[16px] text-[#62748e]">
-                           Loan Account Statement
+                            Loan Account Statement
                         </p>
                         <div className="w-[250px]">
                             <Select value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
@@ -261,23 +285,15 @@ function StatementTable({ table, columns }: StatementTableProps) {
                     ))}
                 </TableHeader>
                 <TableBody>
-                    {table.getRowModel().rows.length ? (
-                        table.getRowModel().rows.map((row) => (
-                            <TableRow key={row.id} className="border-b hover:bg-blue-50">
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id} className="py-3">
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={columns.length} className="text-center h-24 text-gray-500">
-                                No statements found.
-                            </TableCell>
+                    {table.getRowModel().rows.map((row) => (
+                        <TableRow key={row.id} className="border-b hover:bg-blue-50">
+                            {row.getVisibleCells().map((cell) => (
+                                <TableCell key={cell.id} className="py-3">
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </TableCell>
+                            ))}
                         </TableRow>
-                    )}
+                    ))}
                 </TableBody>
             </Table>
         </div>

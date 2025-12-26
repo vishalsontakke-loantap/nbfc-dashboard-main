@@ -1,6 +1,7 @@
   import { Route, Routes, useNavigate } from "react-router-dom";
   import "./App.css";
 
+  import NotFound from "./components/NotFound";
   import NBFCRoutes from "./components/NBFC/NBFCRoutes";
   import OverviewRoutes from "./components/Overview/OverviewRoutes";
   import ApplicationRoutes from "./components/Application/ApplicationRoutes";
@@ -19,6 +20,8 @@
   import CollectionFileRoutes from "./components/Collection/CollectionFileRoutes";
   import LoanStatement from "./components/LoanAccount/LoanStatement";
   import { useSelector } from "react-redux";
+import useNetworkStatus from "./hooks/useNetworkStatus";
+import { OfflineState } from "./components/Error";
   // import NbfcList from "./components/NBFC/NbfcList";
 
 
@@ -26,7 +29,13 @@
   function App() {
     const user = useSelector((state: any) => state.auth.user);
     // console.log("SSS", user)
-      if (!user) {
+
+    const isOnline = useNetworkStatus();
+
+    if (!isOnline) {
+      return <OfflineState />;
+    }
+    if (!user) {
     return (
       <Routes>
         <Route path="/*" element={<AuthScreens />} />
@@ -74,6 +83,7 @@
 
 
             {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </>
       );
@@ -118,6 +128,7 @@
 
 
             {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </>
       );
@@ -162,6 +173,7 @@
 
 
             {/* <Route path="/nbfc/nbfc-list" element={<NbfcList/>} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </>
       );

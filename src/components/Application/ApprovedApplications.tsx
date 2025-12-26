@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { Button as ActionButton } from "@/components/ui/button";
 import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { useSelector } from "react-redux";
+import { ErrorState, EmptyContentState } from "../Error";
 
 type Disbursement = {
   id: number;
@@ -58,6 +59,7 @@ export default function DisbursementListScreen() {
     isFetching,
     isError,
     error,
+    refetch,
   } = useGetDisbursementsQuery(
     {
       page: currentPage,
@@ -172,23 +174,26 @@ export default function DisbursementListScreen() {
                     </TableCell>
                   </TableRow>
                 ) : isError ? (
-                  /* Error */
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-red-500"
-                    >
-                       No Records Found..
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <ErrorState 
+                          title="Unable to Load Data"
+                          message="There was an error loading approved applications. Please try again later."
+                          onRetry={refetch}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : displayData.length === 0 ? (
-                  /* Empty success */
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No Records Found.
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <EmptyContentState 
+                          title="No Approved Applications"
+                          message="There are no approved applications at this time."
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (

@@ -89,9 +89,12 @@ export function RoleManagementScreen({
   // Show error state
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen space-y-4">
-        <p className="text-red-600">Failed to load roles</p>
-        <Button onClick={() => refetch()}>Retry</Button>
+      <div className="flex justify-center items-center h-screen">
+        <ErrorState 
+          title="Unable to Load Roles"
+          message="There was an error loading roles. Please try again."
+          onRetry={() => refetch()}
+        />
       </div>
     );
   }

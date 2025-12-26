@@ -33,6 +33,8 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination";
 
+import { EmptyContentState } from "../Error";
+
 // ------------------ Form Schema ------------------
 const formSchema = z.object({
   file: z
@@ -246,8 +248,13 @@ useEffect(() => {
                   </TableRow>
                 ) : batches.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-6">
-                      No batches found.
+                    <TableCell colSpan={10} className="p-0">
+                      <div className="flex justify-center py-8">
+                        <EmptyContentState 
+                          title="No Batches Found"
+                          message="There are no collection batches available."
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (
