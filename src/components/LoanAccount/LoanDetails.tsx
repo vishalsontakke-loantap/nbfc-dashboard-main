@@ -10,13 +10,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useGetLoanAccountAppDetailsQuery } from '@/redux/features/loan/loanApi';
 import DetailsViewSkeleton from '../DetailsViewSkeleton';
 import { RepaymentSchedule } from './RepaymentSchedule';
+import LoanStatement from './LoanStatement';
 
 // Navigation tabs
 const tabs = [
   'Dashboard',
   'Detailed Loan Info',
   'Repayments',
-  'Collections',
+  'Statement',
   'Documents',
   'Settings'
 ];
@@ -126,8 +127,9 @@ function LoanDetails() {
             )}
 
             {activeTab === "Repayments" && <RepaymentSchedule />}
+            {activeTab === "Statement" && <LoanStatement />}
 
-            {activeTab !== "Dashboard" && activeTab !== "Repayments" && (
+            {activeTab !== "Dashboard" && activeTab !== "Repayments" && activeTab !== "Statement"&& (
               <div className="bg-white shadow-sm p-8 text-center ">
                 <p className="text-gray-500">
                   Content for <span className="font-medium">{activeTab}</span> tab

@@ -15,7 +15,7 @@ import PaginationComponent from "@/components/PaginationComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetLoanAccountStatementQuery } from "@/redux/features/loan/loanApi";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 interface StatementRow {
     date: string;
