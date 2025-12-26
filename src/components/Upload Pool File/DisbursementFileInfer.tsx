@@ -124,7 +124,7 @@ const DisbursementFileInfer = () => {
   }
 
   return (
-    <div className="flex flex-col space-y-4 p-5">
+    <div className="flex flex-col space-y-4 p-3">
       <CardHeader
         title="Disbursement File Column Mapping"
         subtitle="Map your disbursement file columns to platform fields to ensure smooth processing."

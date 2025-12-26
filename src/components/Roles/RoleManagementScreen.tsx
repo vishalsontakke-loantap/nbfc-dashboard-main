@@ -76,7 +76,7 @@ export function RoleManagementScreen({
   // Show loading state
   if (isLoading) {
     return (
-      <div className="flex flex-col space-y-4 p-5">
+      <div className="flex flex-col space-y-4 p-3">
         <Card className=" mt-40">
           <CardContent>
             <SkeletonTableShimmer rows={4} columns={3} />

@@ -131,7 +131,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="flex flex-col space-y-4 p-5">
+    <div className="flex flex-col space-y-4 p-3">
       <CardHeader title="Collection File Upload" subtitle="Upload your collection files here." />
 
       {/* Batch Table */}

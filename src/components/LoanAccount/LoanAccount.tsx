@@ -20,7 +20,7 @@ const LoanAccount = () => {
   }, []);
 
   return (
-    <div className="flex flex-col space-y-4 p-5">
+    <div className="flex flex-col space-y-4 p-3">
       <CardHeader title="Loan Accounts" />
 
       {loading ? (
