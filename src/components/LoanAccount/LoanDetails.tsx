@@ -9,6 +9,7 @@ import { Payments } from '../Payments';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetLoanAccountAppDetailsQuery } from '@/redux/features/loan/loanApi';
 import DetailsViewSkeleton from '../DetailsViewSkeleton';
+import { RepaymentSchedule } from './RepaymentSchedule';
 
 // Navigation tabs
 const tabs = [
@@ -109,30 +110,37 @@ function LoanDetails() {
           </div>
         </div>
 
-        {/* Dashboard Content */}
-        {activeTab === 'Dashboard' && (
-          <div className="grid grid-cols-[1fr_380px] gap-6">
-            {/* Left Column */}
-            <div>
-              <LoanInformations />
-              <UserInformations userInfo={userInfo} />
-              <GoldSecorInformation goldSecorInfo={goldSecorInfo} />
-            </div>
+        <div className="grid grid-cols-[1fr_380px] gap-6">
+          {/* LEFT COLUMN – changes per tab */}
+          <div>
+            {activeTab === "Dashboard" && (
+              <>
+                <LoanInformations />
+                <UserInformations userInfo={userInfo} />
+                <GoldSecorInformation goldSecorInfo={goldSecorInfo} />
+              </>
+            )}
 
-            {/* Right Column */}
-            <div className="space-y-6">
-              <Attachments />
-              <Payments />
-            </div>
-          </div>
-        )}
+            {activeTab === "Repayments" && (
+              <RepaymentSchedule />
+            )}
 
-        {/* Other tab content would go here */}
-        {activeTab !== 'Dashboard' && (
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-500">Content for {activeTab} tab</p>
+            {activeTab !== "Dashboard" && activeTab !== "Repayments" && (
+              <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                <p className="text-gray-500">
+                  Content for {activeTab} tab
+                </p>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* RIGHT COLUMN – always visible */}
+          <div className="space-y-6">
+            <Attachments />
+            <Payments />
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ export function RepaymentSchedule() {
 
   if (isLoading || isFetching) {
     return (
-      <div className="bg-[#c3eeff] min-h-screen">
+      <div className="bg-white min-h-screen">
         <div className="ml-4 mr-4 mt-4 mb-4">
           <div className="bg-white rounded-[12px] overflow-hidden border border-[#cad5e2]">
             <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
@@ -69,7 +69,7 @@ export function RepaymentSchedule() {
 
   if (!data?.data || error) {
     return (
-      <div className="bg-[#c3eeff] min-h-screen">
+      <div className="bg-white min-h-screen">
         <div className="ml-4 mr-4 mt-4 mb-4">
           <div className="bg-white rounded-[12px] overflow-hidden border border-[#cad5e2]">
             <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
@@ -99,17 +99,17 @@ export function RepaymentSchedule() {
   }
 
   return (
-    <div className="bg-[#c3eeff] min-h-screen">
+    <div className="bg-white min-h-screen">
 
       {/* <ErrorState title="Repayment Schedule Unavailable" message="The repayment schedule data could not be loaded at this time. Please try again later." /> */}
       <div className="ml-4 mr-4 mt-4 mb-4">
 
-        <CardHeader className="mb-3">
+        {/* <CardHeader className="mb-3">
           <CardTitle>Repayment Schedule</CardTitle>
           <CardDescription>
            loan account repayment schedule details - {id}
           </CardDescription>
-        </CardHeader>
+        </CardHeader> */}
         {/* Repayment Schedule Table */}
         <div className="bg-white rounded-[12px] overflow-hidden border border-[#cad5e2]">
           <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
