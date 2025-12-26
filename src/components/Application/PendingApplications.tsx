@@ -189,7 +189,7 @@ export default function PendingApplication() {
                       <div className="flex justify-center py-8">
                         <ErrorState 
                           title="Unable to Load Data"
-                          message="There was an error loading pending applications. Please try again later."
+                          message={`There was an error loading ${statusFilter} applications. Please try again later.`}
                           onRetry={refetch}
                         />
                       </div>
@@ -200,7 +200,7 @@ export default function PendingApplication() {
                     <TableCell colSpan={8} className="p-0">
                       <div className="flex justify-center py-8">
                         <EmptyContentState 
-                          title="No Pending Applications"
+                          title={`No ${statusFilter} Applications`}
                           message="There are no pending applications at this time."
                         />
                       </div>

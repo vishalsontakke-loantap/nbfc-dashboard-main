@@ -50,7 +50,7 @@ export function RepaymentSchedule() {
 
   if (isLoading || isFetching) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-white ">
         {/* <div className="ml-4 mr-4 mt-4 mb-4"> */}
           <div className="bg-white  overflow-hidden border border-[#cad5e2]">
             <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
@@ -99,7 +99,7 @@ export function RepaymentSchedule() {
   }
 
   return (
-    <div className="bg-white min-h-screen w-full">
+    <div className="bg-white">
 
       {/* <ErrorState title="Repayment Schedule Unavailable" message="The repayment schedule data could not be loaded at this time. Please try again later." /> */}
       {/* <div className="ml-4 mr-4 mt-4 mb-"> */}

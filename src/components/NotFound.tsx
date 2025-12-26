@@ -1,16 +1,15 @@
 import { PageNotFoundState } from "./Error";
+import Layout from "./Layout";
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+      <Layout>
       <PageNotFoundState />
-    </div>
+      </Layout>
   );
 };
 
 export default NotFound;
-
-//               <Button asChild variant="outline" size="lg" className="gap-2">
 //                 <Link to="/contact">
 //                   <span>Contact Support</span>
 //                   <ArrowRight className="h-4 w-4" />

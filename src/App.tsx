@@ -20,6 +20,8 @@
   import CollectionFileRoutes from "./components/Collection/CollectionFileRoutes";
   import LoanStatement from "./components/LoanAccount/LoanStatement";
   import { useSelector } from "react-redux";
+import useNetworkStatus from "./hooks/useNetworkStatus";
+import { OfflineState } from "./components/Error";
   // import NbfcList from "./components/NBFC/NbfcList";
 
 
@@ -27,7 +29,13 @@
   function App() {
     const user = useSelector((state: any) => state.auth.user);
     // console.log("SSS", user)
-      if (!user) {
+
+    const isOnline = useNetworkStatus();
+
+    if (!isOnline) {
+      return <OfflineState />;
+    }
+    if (!user) {
     return (
       <Routes>
         <Route path="/*" element={<AuthScreens />} />
