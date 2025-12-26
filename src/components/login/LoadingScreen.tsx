@@ -2,7 +2,7 @@ import { assetPath } from "@/lib/utils";
 import { motion } from "framer-motion";
 export default function LoadingScreen() {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1B4E9B' }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0089CF' }}>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -52,6 +52,11 @@ export default function LoadingScreen() {
           Secure Access Portal
         </motion.p>
 
+        <img
+          src={assetPath("/images/loantap_new.svg")}
+          alt="LoanTap"
+          className="w-full h-[2rem] mb-2 mt-2"
+        />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

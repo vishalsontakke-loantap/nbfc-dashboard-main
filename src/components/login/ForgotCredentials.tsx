@@ -496,9 +496,14 @@ export default function ForgotCredentials({ onBack }: ForgotCredentialsProps) {
           {currentStep === 'success' && renderSuccessStep()}
         </div>
 
-        <p className="text-center text-gray-500 mt-6">
+        {/* <p className="text-center text-gray-500 mt-6">
           © 2025 Bank of Maharashtra. All rights reserved.
-        </p>
+        </p> */}
+        <img
+                  src={assetPath("/images/loantap.svg")}
+                  alt="LoanTap"
+                  className="w-full h-[1rem] mb-2 mt-2"
+                />
       </div>
     </div>
   );

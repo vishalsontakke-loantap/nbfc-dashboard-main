@@ -258,7 +258,11 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
         </div>
 
             {/* <img src="?hhh" alt="hhhhjhj" /> */}
-        <p className="text-center text-gray-500 mt-2">All rights reserved.</p>
+          <img
+                src={assetPath("/images/loantap.svg")}
+                alt="LoanTap"
+                className="w-full h-[1rem] mb-2 mt-2"
+              />
       </div>
     </div>
   );

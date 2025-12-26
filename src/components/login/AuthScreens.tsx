@@ -21,7 +21,7 @@ export default function AuthScreens() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setCurrentScreen('login');
-    }, 1000);
+    }, 3000);
     return () => clearTimeout(timer);
   }, []);
 

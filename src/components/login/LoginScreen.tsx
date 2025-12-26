@@ -302,6 +302,11 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
             </form>
           </div>
 
+               <img
+                src={assetPath("/images/loantap.svg")}
+                alt="LoanTap"
+                className="w-full h-[1rem] mb-2 mt-2"
+              />
           {/* Footer */}
           {/* <p className="text-center text-gray-500 mt-6">
             © 2025 Bank of Maharashtra. All rights reserved.
@@ -312,7 +317,7 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
       {/* Right Panel - Illustration */}
       <div
         className="hidden lg:flex flex-1 items-center justify-center p-8"
-        style={{ backgroundColor: '#1B4E9B' }}
+        style={{ backgroundColor: '#0089CF' }}
       >
         <div className="max-w-lg align-center">
           <img
@@ -332,5 +337,6 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
         </div>
       </div>
     </div>
+    
   );
 }
