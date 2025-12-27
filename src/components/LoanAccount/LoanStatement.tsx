@@ -127,7 +127,7 @@ const columns: ColumnDef<StatementRow>[] = [
     },
 ];
 
-export default function LoanStatement() {
+export default function LoanStatement(customer_name_prop: any) {
     const { id } = useParams();
 
     const [activeTab, setActiveTab] = React.useState<"nbfc" | "bank" | "total">("nbfc");
@@ -137,6 +137,11 @@ export default function LoanStatement() {
         statement_type: activeTab
     });
     console.log("Loan Statement Data:", loanStatementResponse, error);
+    
+    // Extract customer name from API response
+    const customer_name = customer_name_prop.customer_name_prop || "N/A";
+
+    console.log("Customer Name for Statement:", customer_name);
 
     useEffect(() => {
         refetch();
@@ -195,7 +200,7 @@ export default function LoanStatement() {
 
         // Add Bank of Maharashtra logo in the center
         const logoImg = new Image();
-        logoImg.src = assetPath('/loaders/bom.png');
+        logoImg.src = assetPath('/images/bom_logo.png');
         
         logoImg.onload = () => {
             const logoWidth = 45;
@@ -212,7 +217,8 @@ export default function LoanStatement() {
             // Add loan ID
             doc.setFontSize(12);
             doc.setFont('helvetica', 'normal');
-            doc.text(`Loan Account Number: ${id}`, pageWidth / 2, 43, { align: 'center' });
+            doc.text(`Customer Name: ${customer_name}`, pageWidth / 2, 43, { align: 'center' });
+            doc.text(`Loan Account Number: ${id}`, pageWidth / 2, 50, { align: 'center' });
 
             // Add date
             const today = new Date().toLocaleDateString('en-GB', {
@@ -221,11 +227,11 @@ export default function LoanStatement() {
                 year: 'numeric'
             });
             doc.setFontSize(10);
-            doc.text(`Generated on: ${today}`, pageWidth / 2, 49, { align: 'center' });
+            doc.text(`Generated on: ${today}`, pageWidth / 2, 75, { align: 'center' });
 
             // Generate table with ALL data and proper multi-page support
             autoTable(doc, {
-                startY: 56,
+                startY: 80,
                 head: [['Date', 'Particulars', 'Debit (Rs.)', 'Credit (Rs.)', 'O/S Interest (Rs.)', 'O/S Principal (Rs.)', 'O/S Balance (Rs.)']],
                 body: tableData,
                 theme: 'grid',
