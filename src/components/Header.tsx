@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Menu } from "lucide-react";
+import { Menu, UserIcon } from "lucide-react";
 import { useLogoutMutation } from "@/redux/features/auth/authApi";
 import { useNavigate } from "react-router-dom";
 import { useGetAllNbfcQuery } from "@/redux/features/nbfc/nbfcApi";
@@ -151,7 +151,7 @@ const Header: React.FC = () => {
               onClick={handleProfileClick}
               className="flex items-center space-x-2"
             >
-              <Menu className="w-6 h-6 text-gray-600 cursor-pointer" />
+              <UserIcon className="w-6 h-6 text-gray-600 cursor-pointer" />
             </button>
 
             {open && (
