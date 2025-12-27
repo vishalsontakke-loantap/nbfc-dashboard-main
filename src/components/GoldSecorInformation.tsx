@@ -1,13 +1,12 @@
 import { Shield } from 'lucide-react';
 
 interface GoldSecorInfo {
-  pan: string;
-  aadhar: string;
-  dob: string;
-  maritalStatus: string;
-  address: string;
-  pincode: string;
-  state: string;
+  gross_weight: string;
+  net_weight: string;
+  gold_purity: string;
+  gold_rate: string;
+  market_rate: string;
+  gold_value: string;
 }
 
 export function GoldSecorInformation({ goldSecorInfo }: { goldSecorInfo: GoldSecorInfo }) {
@@ -20,44 +19,37 @@ export function GoldSecorInformation({ goldSecorInfo }: { goldSecorInfo: GoldSec
       
       <div className="grid grid-cols-2 gap-x-12 gap-y-4 mb-6">
         <div>
-          <p className="text-xs text-gray-500 mb-1">PAN</p>
-          <p className="text-sm text-gray-900">{goldSecorInfo.pan}</p>
+          <p className="text-xs text-gray-500 mb-1">Gross Weight</p>
+          <p className="text-sm text-gray-900">{goldSecorInfo?.gross_weight}</p>
         </div>
         
         <div>
-          <p className="text-xs text-gray-500 mb-1">Address</p>
-          <p className="text-sm text-gray-900">{goldSecorInfo.address}</p>
+          <p className="text-xs text-gray-500 mb-1">Net Weight</p>
+          <p className="text-sm text-gray-900">{goldSecorInfo?.net_weight}</p>
         </div>
         
         <div>
-          <p className="text-xs text-gray-500 mb-1">Aadhar</p>
-          <p className="text-sm text-gray-900">{goldSecorInfo.aadhar}</p>
+          <p className="text-xs text-gray-500 mb-1">Gold Purity</p>
+          <p className="text-sm text-gray-900">{goldSecorInfo?.gold_purity}</p>
         </div>
         
         <div>
-          <p className="text-xs text-gray-500 mb-1">Pincode</p>
-          <p className="text-sm text-gray-900">{goldSecorInfo.pincode}</p>
+          <p className="text-xs text-gray-500 mb-1">Gold Rate</p>
+          <p className="text-sm text-gray-900">{goldSecorInfo?.gold_rate}</p>
         </div>
         
         <div>
-          <p className="text-xs text-gray-500 mb-1">DOB</p>
-          <p className="text-sm text-gray-900">{goldSecorInfo.dob}</p>
+          <p className="text-xs text-gray-500 mb-1">Market rate</p>
+          <p className="text-sm text-gray-900">{goldSecorInfo?.market_rate}</p>
         </div>
         
         <div>
-          <p className="text-xs text-gray-500 mb-1">State</p>
-          <p className="text-sm text-gray-900">{goldSecorInfo.state}</p>
+          <p className="text-xs text-gray-500 mb-1">Gold Value</p>
+          <p className="text-sm text-gray-900">{goldSecorInfo?.gold_value}</p>
         </div>
         
-        <div>
-          <p className="text-xs text-gray-500 mb-1">Maritial Status</p>
-          <p className="text-sm text-gray-900">{goldSecorInfo.maritalStatus}</p>
-        </div>
       </div>
       
-      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-        View More Information
-      </button>
     </div>
   );
 }

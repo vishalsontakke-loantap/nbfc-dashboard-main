@@ -1,11 +1,12 @@
+import { mask } from '@/lib/utils';
 import { User } from 'lucide-react';
 
 interface UserInfo {
-  pan: string;
-  aadhar: string;
+  pan_number: string;
+  aadhar_number: string;
   dob: string;
-  maritalStatus: string;
-  address: string;
+  address1: string;
+  address2: string;
   pincode: string;
   state: string;
   creditScore: number;
@@ -24,17 +25,17 @@ export function UserInformations({ userInfo }: { userInfo: UserInfo }) {
         <div className="flex-1 grid grid-cols-2 gap-x-12 gap-y-4">
           <div>
             <p className="text-xs text-gray-500 mb-1">PAN</p>
-            <p className="text-sm text-gray-900">{userInfo.pan}</p>
+            <p className="text-sm text-gray-900">{mask(userInfo.pan_number)}</p>
           </div>
           
           <div>
             <p className="text-xs text-gray-500 mb-1">Address</p>
-            <p className="text-sm text-gray-900">{userInfo.address}</p>
+            <p className="text-sm text-gray-900">{userInfo?.address1} {userInfo?.address2}</p>
           </div>
           
           <div>
             <p className="text-xs text-gray-500 mb-1">Aadhar</p>
-            <p className="text-sm text-gray-900">{userInfo.aadhar}</p>
+            <p className="text-sm text-gray-900">{mask(userInfo?.aadhar_number)}</p>
           </div>
           
           <div>
@@ -52,10 +53,6 @@ export function UserInformations({ userInfo }: { userInfo: UserInfo }) {
             <p className="text-sm text-gray-900">{userInfo.state}</p>
           </div>
           
-          <div>
-            <p className="text-xs text-gray-500 mb-1">Maritial Status</p>
-            <p className="text-sm text-gray-900">{userInfo.maritalStatus}</p>
-          </div>
         </div>
         
         <div className="flex flex-col items-center justify-center px-6">

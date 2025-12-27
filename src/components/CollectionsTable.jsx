@@ -1,7 +1,26 @@
+import { useGetCollectionSummaryQuery } from "@/redux/features/collection/collectionApi";
+import { useParams } from "react-router-dom";
+
 const CollectionsTable = () => {
+  const { id } = useParams();
+  const {
+    data: collectionSummary,
+    isLoading,
+    isError,
+  } = useGetCollectionSummaryQuery(id || "");
   const rows = [
-    { entity: "PRINCIPAL", total: 13, bank: 11, nbfc: 11 },
-    { entity: "INTEREST", total: 12, bank: 11, nbfc: 11 },
+    {
+      entity: "PRINCIPAL",
+      total: Number(collectionSummary?.data?.total_principal || 0),
+      bank: Number(collectionSummary?.data?.bank_principal || 0),
+      nbfc: Number(collectionSummary?.data?.nbfc_principal || 0),
+    },
+    {
+      entity: "INTEREST",
+      total: Number(collectionSummary?.data?.total_interest || 0),
+      bank: Number(collectionSummary?.data?.bank_interest || 0),
+      nbfc: Number(collectionSummary?.data?.nbfc_interest || 0),
+    },
   ];
 
   // 👉 Calculate SUM dynamically
@@ -29,9 +48,7 @@ const CollectionsTable = () => {
           <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
           <path d="M9 3v18M3 9h6M3 15h6" strokeWidth="2" />
         </svg>
-        <h2 className="font-semibold text-gray-900">
-          Collection Information
-        </h2>
+        <h2 className="font-semibold text-gray-900">Collection Information</h2>
       </div>
 
       <table className="w-full border-collapse text-sm">
