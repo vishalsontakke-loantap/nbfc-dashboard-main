@@ -1,3 +1,5 @@
+import { assetPath } from "@/lib/utils";
+
 interface NoMessagesStateProps {
   onSendMessage?: () => void;
 }
@@ -9,7 +11,7 @@ export function NoMessagesState({ onSendMessage }: NoMessagesStateProps) {
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-            <img src="/error/no_massage.png" alt="No Messages Illustration" />
+            <img src={assetPath("/error/no_massage.png")} alt="No Messages Illustration" />
           </div>
 
           {/* Content */}

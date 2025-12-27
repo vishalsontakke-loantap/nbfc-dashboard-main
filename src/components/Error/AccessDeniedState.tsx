@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { assetPath } from "@/lib/utils";
 
 interface AccessDeniedStateProps {
   onGoBack?: () => void;
@@ -21,7 +22,7 @@ export function AccessDeniedState({ onGoBack }: AccessDeniedStateProps) {
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-            <img src="/error/access_denied.png" alt="Access Denied Illustration" />
+            <img src={assetPath("/error/access_denied.png")} alt="Access Denied Illustration" />
           </div>
 
           {/* Content */}

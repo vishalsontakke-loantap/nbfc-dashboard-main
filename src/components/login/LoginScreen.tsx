@@ -330,7 +330,6 @@ export default function LoginScreen({ onLoginSubmit, onForgotCredentials, userId
               Secure Co-Lending Experience
             </h2>
             <p className="text-blue-100">
-              <img src="" alt="" />
               Multi-layer authentication ensures your account remains protected at all times.
             </p>
           </div>

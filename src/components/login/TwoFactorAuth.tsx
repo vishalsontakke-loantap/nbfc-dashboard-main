@@ -64,7 +64,7 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
           })
         );
         setIsVerified(true);
-        navigate('/overview/');
+        window.location.href = '/overview/';
       } else {
         console.log('OTP validation responded with success:false', res);
       }
@@ -123,7 +123,7 @@ export default function TwoFactorAuth({ onBack, userId }: TwoFactorAuthProps) {
           })
         );
         setIsVerified(true);
-        navigate('/overview/');
+        window.location.href = '/overview/';
       } else {
         console.log('OTP validation failed', response);
       }

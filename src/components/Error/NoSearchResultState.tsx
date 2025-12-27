@@ -1,3 +1,5 @@
+import { assetPath } from "@/lib/utils";
+
 interface NoSearchResultStateProps {
   onSearchAgain?: () => void;
   searchQuery?: string;
@@ -16,7 +18,7 @@ export function NoSearchResultState({ onSearchAgain, searchQuery }: NoSearchResu
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-            <img src="/error/no_result_found.png" alt="No Results Illustration" />
+            <img src={assetPath("/error/no_result_found.png")} alt="No Results Illustration" />
           </div>
 
           {/* Content */}

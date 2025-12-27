@@ -1,3 +1,5 @@
+import { assetPath } from "@/lib/utils";
+
 interface EmptyContentStateProps {
   onExplore?: () => void;
   title?: string;
@@ -15,7 +17,7 @@ export function EmptyContentState({
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-            <img src="/error/empty.png" alt="Empty Content Illustration" />
+            <img src={assetPath("/error/empty.png")} alt="Empty Content Illustration" />
           </div>
 
           {/* Content */}

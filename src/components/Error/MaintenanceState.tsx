@@ -1,3 +1,5 @@
+import { assetPath } from "@/lib/utils";
+
 interface MaintenanceStateProps {
   onRefresh?: () => void;
 }
@@ -17,7 +19,7 @@ export function MaintenanceState({ onRefresh }: MaintenanceStateProps) {
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-            <img src="/error/fail_to_load.png" alt="Maintenance Illustration" />
+            <img src={assetPath("/error/fail_to_load.png")} alt="Maintenance Illustration" />
           </div>
 
           {/* Content */}

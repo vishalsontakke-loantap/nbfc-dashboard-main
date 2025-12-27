@@ -1,4 +1,5 @@
 import Layout from "../Layout";
+import { assetPath } from "@/lib/utils";
 
 interface OfflineStateProps {
   onRetry?: () => void;
@@ -20,7 +21,7 @@ export function OfflineState({ onRetry }: OfflineStateProps) {
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-            <img src="/error/offline.png" alt="Offline Illustration" />
+            <img src={assetPath("/error/offline.png")} alt="Offline Illustration" />
           </div>
 
           {/* Content */}

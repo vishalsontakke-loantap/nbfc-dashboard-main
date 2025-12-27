@@ -1,3 +1,5 @@
+import { assetPath } from "@/lib/utils";
+
 interface TooManyRequestsStateProps {
   onRetry?: () => void;
 }
@@ -17,7 +19,7 @@ export function TooManyRequestsState({ onRetry }: TooManyRequestsStateProps) {
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-            <img src="/error/too_many_req.png" alt="Too Many Requests Illustration" />
+            <img src={assetPath("/error/too_many_req.png")} alt="Too Many Requests Illustration" />
           </div>
 
           {/* Content */}

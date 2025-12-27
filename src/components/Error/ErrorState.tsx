@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { assetPath } from "@/lib/utils";
 
 interface ErrorStateProps {
   title?: string;
@@ -29,7 +30,7 @@ export function ErrorState({
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-           <img src="/error/fail_to_load.png" alt="Error Illustration" />
+           <img src={assetPath("/error/fail_to_load.png")} alt="Error Illustration" />
           </div>
 
           {/* Content */}

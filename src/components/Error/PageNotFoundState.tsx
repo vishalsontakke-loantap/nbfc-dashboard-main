@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { assetPath } from "@/lib/utils";
 
 interface PageNotFoundStateProps {
   onGoBack?: () => void;
@@ -21,7 +22,7 @@ export function PageNotFoundState({ onGoBack }: PageNotFoundStateProps) {
         <div className="flex flex-col items-center text-center">
           {/* Illustration */}
           <div className="mb-8">
-            <img src="/error/page_not_found.png" alt="Page Not Found Illustration" />
+            <img src={assetPath("/error/page_not_found.png")} alt="Page Not Found Illustration" />
           </div>
 
           {/* Content */}
