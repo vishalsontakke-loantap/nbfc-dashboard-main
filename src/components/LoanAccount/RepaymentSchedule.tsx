@@ -6,7 +6,7 @@ import { getSelectedNbfcId } from "@/redux/features/nbfc/nbfcSlice";
 import { useSelector } from "react-redux";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { EmptyContentState } from "../Error";
+import { EmptyContentState, ErrorState } from "../Error";
 
 interface RPSItem {
   installment_no: number;
@@ -77,19 +77,15 @@ export function RepaymentSchedule() {
                 Repayment Schedule
               </p>
             </div>
-            <div className="flex flex-col items-center justify-center py-[80px] px-[40px]">
-              <div className="w-[80px] h-[80px] mb-[24px] rounded-full bg-[#eaf2ff] flex items-center justify-center">
-                <svg className="w-[40px] h-[40px] text-[#62748e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <p className="font-['Poppins:Bold',sans-serif] text-[18px] text-[#1d2d3e] mb-[8px]">
-                {error ? "Unable to Load Data" : "No Repayment Schedule"}
-              </p>
+            <div className="flex flex-col items-center justify-center ">
               <p className="font-['Poppins:Regular',sans-serif] text-[14px] text-[#62748e] text-center max-w-[400px]">
                 {error 
-                  ? "There was an error loading the repayment schedule. Please try again later." 
-                  : "No repayment schedule data is available for this loan account at the moment."}
+                  ? <ErrorState title="Repayment Schedule Unavailable" message="The repayment schedule data could not be loaded at this time. Please try again later." /> 
+                  : <EmptyContentState 
+                      title="No Repayment Schedule" 
+                      message="There is no repayment schedule data available for this loan account." 
+                    /> 
+                }
               </p>
             </div>
           </div>
