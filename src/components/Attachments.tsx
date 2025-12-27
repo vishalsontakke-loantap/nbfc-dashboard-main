@@ -34,10 +34,10 @@ export function Attachments() {
         </div>
       </div>
       
-      <div className="p-6">        
+      <div className="p-3">        
         <div className="space-y-3">
           {attachments.map((attachment, index) => (
-            <div key={index} className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+            <div key={index} className="flex items-center gap-3  hover:bg-gray-50 rounded-lg cursor-pointer">
               <div className={`w-10 h-10 rounded flex items-center justify-center ${
                 attachment.type === 'pdf' ? 'bg-red-100' : 'bg-green-100'
               }`}>

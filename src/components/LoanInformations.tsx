@@ -4,7 +4,7 @@ import { Card } from './ui/card';
 
 export function LoanInformations({ loanData }: { loanData: any }) {
   return (
-    <div className="bg-white p-6 shadow-sm mb-3">
+    <div className="bg-white p-6  mb-3">
       <div className="flex items-center gap-2">
 
         <h2 className="font-medium text-gray-900">Loan Information(total)</h2>

@@ -92,7 +92,7 @@ function LoanDetails() {
             )}
 
             {activeTab === "Repayments" && <RepaymentSchedule />}
-            {activeTab === "Statement" && <LoanStatement />}
+            {activeTab === "Statement" && <LoanStatement customer_name_prop={loanData?.customer_name} />}
             {activeTab === "Documents" && <Documents />}
 
            

@@ -11,8 +11,7 @@ const OnboardingPage = () => {
         <div className="flex flex-col items-center max-w-[120dvh]">
           <h1 className="text-3xl font-bold">Welcome to Onboarding</h1>
           <p className="text-xs text-center text-muted-foreground mt-4 mb-6">
-            Welcome to the NBFC onboarding journey for Pool Buyout and Pool
-            Buyout partnerships. Get started by sharing your company details,
+            Welcome to the NBFC onboarding journey. Get started by sharing your company details,
             uploading key documents, and configuring your integration settings.
           </p>
         </div>
@@ -30,8 +29,8 @@ const OnboardingPage = () => {
               Register New NBFC
               <ChevronRight />
             </Button>
-          </Link> ̰
-        </CardContent>
+          </Link>
+          </CardContent>
         <CardFooter className="mb-auto">
           <img src={assetPath("/loaders/nbfc.gif")} alt="row" />
         </CardFooter>
