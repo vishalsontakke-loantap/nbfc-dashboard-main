@@ -75,9 +75,9 @@ export function Documents() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Actions Bar */}
-      <div className="bg-white border border-gray-200 p-4">
+      <div className="bg-white border border-gray-200 p-2">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-gray-900">Document Repository</h3>
@@ -93,7 +93,7 @@ export function Documents() {
       </div>
 
       {/* Documents Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {documents.map((doc, index) => (
           <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start gap-4">

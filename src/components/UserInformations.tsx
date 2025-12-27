@@ -15,7 +15,7 @@ interface UserInfo {
 
 export function UserInformations({ userInfo }: { userInfo: UserInfo }) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+    <div className="bg-white p-6  shadow-sm mb-3">
       <div className="flex items-center gap-2 mb-6">
         <User className="w-5 h-5 text-gray-700" />
         <h2 className="font-semibold text-gray-900">User Informations</h2>
