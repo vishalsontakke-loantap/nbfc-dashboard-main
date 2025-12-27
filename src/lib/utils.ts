@@ -48,3 +48,8 @@ export function formatIndianCurrency(amount: number): string {
     minimumFractionDigits: 2,
   }).format(amount);
 }
+
+export function mask(doc:string | null | undefined): string | null | undefined {
+  if (!doc) return doc;
+  return doc.slice(0, -4).replace(/./g, 'X') + doc.slice(-4);
+}

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getSelectedNbfcId } from "../nbfc/nbfcSlice";
+import { get } from "http";
 
 export const collectionApi = createApi({
     reducerPath: "collectionApi",
@@ -60,6 +61,12 @@ export const collectionApi = createApi({
                 },
             }),
         }),
+        getCollectionSummary: builder.query<any, string>({
+            query: (loan_id: string) => ({
+                url: `collection/${loan_id}`,
+                method: "GET",
+            }),
+        }),
 
 
     }),
@@ -67,4 +74,4 @@ export const collectionApi = createApi({
 
 });
 
-export const { useUploadCollectionMutation, useGetCollectionBatchListQuery, useGetCollectionListByBatchIdQuery, useGetCollectionBatchDetailsQuery } = collectionApi;
+export const { useUploadCollectionMutation, useGetCollectionBatchListQuery, useGetCollectionListByBatchIdQuery, useGetCollectionBatchDetailsQuery, useGetCollectionSummaryQuery } = collectionApi;

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { LoanHeader } from '../LoanHeader';
-import { CustomerMetaInfo } from '../CustomerMetaInfo';
 import { LoanInformations } from '../LoanInformations';
 import CollectionsTable from "../CollectionsTable";
 import { UserInformations } from '../UserInformations';
@@ -27,32 +26,9 @@ const tabs = [
 function LoanDetails() {
   const [activeTab, setActiveTab] = useState('Dashboard');
 
-  const userInfo = {
-    pan: 'CLBPM1603D',
-    aadhar: '473837283723',
-    dob: '22/09/1991, 38 Years',
-    maritalStatus: 'Single',
-    address: '5, Mangadu, Kanchipuram,',
-    pincode: '600122',
-    state: 'Tamil Nadu',
-    creditScore: 781,
-    creditScoreDate: 'as of Mar 2019'
-  };
-
-  const goldSecorInfo = {
-    pan: 'CLBPM1603D',
-    aadhar: '473837283723',
-    dob: '22/09/1991, 38 Years',
-    maritalStatus: 'Single',
-    address: '5, Mangadu, Kanchipuram,',
-    pincode: '600122',
-    state: 'Tamil Nadu'
-  };
-
-  const navigate = useNavigate();
   const { id } = useParams();
   const { data: loanData, isLoading, isError } = useGetLoanAccountAppDetailsQuery(id || "");
-
+  console.log("LOAN",loanData);
   if (isLoading) {
     return <DetailsViewSkeleton />;
   }
@@ -103,15 +79,15 @@ function LoanDetails() {
             {/* TAB CONTENT */}
             {activeTab === "Dashboard" && (
               <>
-                <LoanInformations />
+                <LoanInformations loanData={loanData}/>
                 <CollectionsTable />
               </>
             )}
             {activeTab == "Detailed Loan Info" && (
               <>
               
-                <UserInformations userInfo={userInfo} />
-                <GoldSecorInformation goldSecorInfo={goldSecorInfo} />
+                <UserInformations userInfo={loanData} />
+                <GoldSecorInformation goldSecorInfo={loanData} />
               </>
             )}
 
@@ -119,13 +95,7 @@ function LoanDetails() {
             {activeTab === "Statement" && <LoanStatement customer_name_prop={loanData?.customer_name} />}
             {activeTab === "Documents" && <Documents />}
 
-            {activeTab !== "Dashboard" && activeTab !== "Repayments" && activeTab !== "Statement" && (
-              <div className="bg-white shadow-sm p-8 text-center ">
-                <p className="text-gray-500">
-                  Content for <span className="font-medium">{activeTab}</span> tab
-                </p>
-              </div>
-            )}
+           
           </div>
 
           {/* RIGHT COLUMN — FIXED WIDTH */}

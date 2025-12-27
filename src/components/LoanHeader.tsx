@@ -7,7 +7,7 @@ interface LoanHeaderProps {
   loan_status: string;
   loan_account_number: string;
   bank_loan_date: string;
-  sanction_limit: string;
+  sanction_limit: string|number|null;
   mobile_number: string;
   interestRate: string;
   loan_tenure: string;
