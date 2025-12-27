@@ -11,13 +11,16 @@ import {
 } from "@tanstack/react-table";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import PaginationComponent from "@/components/PaginationComponent";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGetLoanAccountStatementQuery } from "@/redux/features/loan/loanApi";
-// import { ErrorState, EmptyContentState } from "./Error";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { EmptyContentState, ErrorState } from "../Error";
+import { Download } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { assetPath } from "@/lib/utils";
 
 interface StatementRow {
     date: string;
@@ -125,7 +128,6 @@ const columns: ColumnDef<StatementRow>[] = [
 ];
 
 export default function LoanStatement() {
-    const navigate = useNavigate();
     const { id } = useParams();
 
     const [activeTab, setActiveTab] = React.useState<"nbfc" | "bank" | "total">("nbfc");
@@ -168,6 +170,208 @@ export default function LoanStatement() {
             },
         },
     });
+
+    const handleDownloadPDF = () => {
+        const doc = new jsPDF('landscape'); // Use landscape for better column spacing
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        // Prepare table data - use ALL data from API, not just paginated view
+        const tableData = transformedData.map(row => [
+            new Date(row.date).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            }),
+            row.description,
+            row.debit > 0 ? row.debit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-',
+            row.credit > 0 ? row.credit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-',
+            Math.abs(row.osInterest).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            Math.abs(row.osPrincipal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            Math.abs(row.osBalance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        ]);
+
+        console.log('Total rows for PDF:', tableData.length); // Debug log
+
+        // Add Bank of Maharashtra logo in the center
+        const logoImg = new Image();
+        logoImg.src = assetPath('/loaders/bom.png');
+        
+        logoImg.onload = () => {
+            const logoWidth = 45;
+            const logoHeight = 17;
+            const logoX = (pageWidth - logoWidth) / 2;
+            doc.addImage(logoImg, 'PNG', logoX, 10, logoWidth, logoHeight);
+
+            // Add title
+            doc.setFontSize(18);
+            doc.setFont('helvetica', 'bold');
+            const title = `Loan Account Statement (${activeTab.toUpperCase()})`;
+            doc.text(title, pageWidth / 2, 35, { align: 'center' });
+
+            // Add loan ID
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Loan Account Number: ${id}`, pageWidth / 2, 43, { align: 'center' });
+
+            // Add date
+            const today = new Date().toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            doc.setFontSize(10);
+            doc.text(`Generated on: ${today}`, pageWidth / 2, 49, { align: 'center' });
+
+            // Generate table with ALL data and proper multi-page support
+            autoTable(doc, {
+                startY: 56,
+                head: [['Date', 'Particulars', 'Debit (Rs.)', 'Credit (Rs.)', 'O/S Interest (Rs.)', 'O/S Principal (Rs.)', 'O/S Balance (Rs.)']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [27, 78, 155],
+                    textColor: 255,
+                    fontSize: 10,
+                    fontStyle: 'bold',
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                bodyStyles: {
+                    fontSize: 9,
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                alternateRowStyles: {
+                    fillColor: [245, 247, 250]
+                },
+                columnStyles: {
+                    0: { cellWidth: 30, halign: 'center' },  // Date
+                    1: { cellWidth: 50, halign: 'left' },    // Particulars
+                    2: { cellWidth: 35, halign: 'right' },   // Debit
+                    3: { cellWidth: 35, halign: 'right' },   // Credit
+                    4: { cellWidth: 40, halign: 'right' },   // O/S Interest
+                    5: { cellWidth: 40, halign: 'right' },   // O/S Principal
+                    6: { cellWidth: 40, halign: 'right' }    // O/S Balance
+                },
+                margin: { top: 56, left: 14, right: 14, bottom: 20 },
+                styles: {
+                    cellPadding: 3,
+                    overflow: 'linebreak',
+                    lineColor: [200, 200, 200],
+                    lineWidth: 0.1
+                },
+                // Enable page break handling
+                showHead: 'everyPage',
+                // Add page numbers and headers on each page
+                didDrawPage: function (data) {
+                    // Footer with page number
+                    doc.setFontSize(9);
+                    doc.setTextColor(100);
+                    const str = 'Page ' + doc.getCurrentPageInfo().pageNumber;
+                    doc.text(str, pageWidth - 20, pageHeight - 10, { align: 'right' });
+
+                    // Add header on subsequent pages
+                    if (doc.getCurrentPageInfo().pageNumber > 1) {
+                        doc.setFontSize(11);
+                        doc.setTextColor(0);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Bank of Maharashtra - Loan Statement', 14, 10);
+                        doc.setFontSize(9);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(`Loan Account: ${id}`, 14, 16);
+                    }
+                }
+            });
+
+            // Save the PDF
+            doc.save(`Loan_Statement_${id}_${activeTab}_${new Date().getTime()}.pdf`);
+        };
+
+        logoImg.onerror = () => {
+            // If logo fails to load, generate PDF without logo
+            doc.setFontSize(18);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Bank of Maharashtra', pageWidth / 2, 15, { align: 'center' });
+            const title = `Loan Account Statement (${activeTab.toUpperCase()})`;
+            doc.text(title, pageWidth / 2, 25, { align: 'center' });
+
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Loan Account Number: ${id}`, pageWidth / 2, 33, { align: 'center' });
+
+            const today = new Date().toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            doc.setFontSize(10);
+            doc.text(`Generated on: ${today}`, pageWidth / 2, 39, { align: 'center' });
+
+            // Generate table with ALL data and proper multi-page support
+            autoTable(doc, {
+                startY: 46,
+                head: [['Date', 'Particulars', 'Debit (Rs.)', 'Credit (Rs.)', 'O/S Interest (Rs.)', 'O/S Principal (Rs.)', 'O/S Balance (Rs.)']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [27, 78, 155],
+                    textColor: 255,
+                    fontSize: 10,
+                    fontStyle: 'bold',
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                bodyStyles: {
+                    fontSize: 9,
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                alternateRowStyles: {
+                    fillColor: [245, 247, 250]
+                },
+                columnStyles: {
+                    0: { cellWidth: 30, halign: 'center' },  // Date
+                    1: { cellWidth: 50, halign: 'left' },    // Particulars
+                    2: { cellWidth: 35, halign: 'right' },   // Debit
+                    3: { cellWidth: 35, halign: 'right' },   // Credit
+                    4: { cellWidth: 40, halign: 'right' },   // O/S Interest
+                    5: { cellWidth: 40, halign: 'right' },   // O/S Principal
+                    6: { cellWidth: 40, halign: 'right' }    // O/S Balance
+                },
+                margin: { top: 46, left: 14, right: 14, bottom: 20 },
+                styles: {
+                    cellPadding: 3,
+                    overflow: 'linebreak',
+                    lineColor: [200, 200, 200],
+                    lineWidth: 0.1
+                },
+                // Enable page break handling
+                showHead: 'everyPage',
+                // Add page numbers and headers on each page
+                didDrawPage: function (data) {
+                    // Footer with page number
+                    doc.setFontSize(9);
+                    doc.setTextColor(100);
+                    const str = 'Page ' + doc.getCurrentPageInfo().pageNumber;
+                    doc.text(str, pageWidth - 20, pageHeight - 10, { align: 'right' });
+
+                    // Add header on subsequent pages
+                    if (doc.getCurrentPageInfo().pageNumber > 1) {
+                        doc.setFontSize(11);
+                        doc.setTextColor(0);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Bank of Maharashtra - Loan Statement', 14, 10);
+                        doc.setFontSize(9);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(`Loan Account: ${id}`, 14, 16);
+                    }
+                }
+            });
+
+            doc.save(`Loan_Statement_${id}_${activeTab}_${new Date().getTime()}.pdf`);
+        };
+    };
 
     if (isLoading || isFetching) {
         return (
@@ -215,22 +419,31 @@ export default function LoanStatement() {
             {/* Statement Table */}
             <div className="bg-white shadow-sm rounded-lg border border-[#D1E9FF]">
                 <div className="bg-[#f8f9fa] border-b border-[#c3eeff] px-[40px] py-[16px]">
-                    <div className="flex items-center gap-[16px]">
-                        <p className="font-['Poppins:Bold',sans-serif] text-[16px] text-[#62748e]">
-                            Loan Account Statement
-                        </p>
-                        <div className="w-[250px]">
-                            <Select value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-                                <SelectTrigger className="bg-white border-[#cad5e2] h-[32px]">
-                                    <SelectValue placeholder="Select Statement Type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="nbfc">Loan Statement (NBFC)</SelectItem>
-                                    <SelectItem value="bank">Loan Statement (Bank)</SelectItem>
-                                    <SelectItem value="total">Loan Statement (Total)</SelectItem>
-                                </SelectContent>
-                            </Select>
+                    <div className="flex items-center justify-between gap-[16px]">
+                        <div className="flex items-center gap-[16px]">
+                            <p className="font-['Poppins:Bold',sans-serif] text-[16px] text-[#62748e]">
+                                Loan Account Statement
+                            </p>
+                            <div className="w-[250px]">
+                                <Select value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+                                    <SelectTrigger className="bg-white border-[#cad5e2] h-[32px]">
+                                        <SelectValue placeholder="Select Statement Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="nbfc">Loan Statement (NBFC)</SelectItem>
+                                        <SelectItem value="bank">Loan Statement (Bank)</SelectItem>
+                                        <SelectItem value="total">Loan Statement (Total)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
+                        <Button 
+                            onClick={handleDownloadPDF}
+                            className="bg-[#1B4E9B] hover:bg-[#00ADEF] text-white h-[32px] px-4 flex items-center gap-2"
+                        >
+                            <Download className="w-4 h-4" />
+                            Download Statement
+                        </Button>
                     </div>
                 </div>
 
